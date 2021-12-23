@@ -1,0 +1,263 @@
+@font-primary   : 'IBM Plex Sans', sans-serif;
+@font-size0:35px;
+@font-text01:30px;
+@font-text02:10px;
+@color-w:#fff;
+@color_menu:#A8CCE0;
+@bgr_01:#004469;
+.container{
+	max-width: 100%;
+	width: 100%;
+	margin: 0 auto;
+}
+a{
+	text-decoration: none;
+}
+a:focus, a:hover {
+	text-decoration: none;
+}
+body {
+  font-weight: normal;
+  font-size: 16px;
+	line-height: 20px;
+  min-height: 100vh;
+  height: 100%;
+  font-family: @font-primary;
+}
+.btn.active, .btn:active{
+	box-shadow: none!important;
+}
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.loadding{
+	.content-loadding{
+		position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    .loader{
+    	position: absolute;
+	    top: 50%;
+	    left: 50%;
+	    border: 10px solid #f3f3f3;
+	    border-radius: 50%;
+	    border-top: 10px solid #02BC77;
+	    width: 90px;
+	    height: 90px;
+	    animation: spin 2s linear infinite;
+    }
+	}
+}
+input{
+	 appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  box-shadow: none!important;
+}
+.page-container{
+  position: relative;
+  z-index: 1;
+  .content-wrapper{
+  	padding-top: 40px;
+  }
+}
+.btn-back{
+		margin-bottom: 20px;
+		a{
+			color: #fff;
+	    background-color: #6C6C6C;
+	    border-radius: 10px;
+	    padding: 10px 10px;
+	    display: table;
+	    max-width: 100px;
+	    width: 100%;
+	    text-align: center;
+	    i{
+	    	padding-right: 5px;
+	    }
+		}
+		
+	}
+.green{
+	color: #02BC77!important;
+}
+.red{
+	color: #FF0000!important;
+}
+.yellow{
+	color: #F5A623!important;
+}
+
+label{
+	font-weight: inherit;
+}
+ul{
+	list-style: none;
+	padding-left:0px;
+}
+.modal-backdrop.in{
+	opacity: 0.8;
+}
+.page-sidebar.navbar-collapse{
+  max-width: 140px;
+  width: 100%;
+  min-height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding-top: 32px;
+  .content-logout{
+  	position: absolute;
+    bottom: 33px;
+    width: 100%;
+    left: 0;
+    ul{
+    	display: flex;
+    	justify-content: space-between;
+    	padding: 0 25px;
+	    align-items: center;
+	    align-content: center;
+	    li{
+	    	a{
+	    		color: #009B74;
+	    		font-size: 14px;
+	    		line-height: 19px;
+	    		font-weight: 500;
+	    		font-family: @font-primary;
+	    	}
+	    }
+    }
+  }
+}
+.page-content-wrapper{
+  padding-left: 300px;
+  padding-bottom: 20px;
+  .page-content{
+    margin-left:0px;
+    padding: 20px 60px 20px 50px!important;
+    background-color: transparent;
+    .cos-table-item{
+    	.cos-item-content{
+    		box-shadow: none;
+    	}
+    }
+  }
+}
+
+.page-sidebar{
+	text-align: center;
+	background:@bgr_01;
+	padding: 30px 0 30px!important;
+	.cnt-hec-logo{
+		a{
+			display: inline-flex;
+	    align-items: center;
+	    justify-content: center;
+	    border-radius: 30px;
+	    line-height: 38px;
+	    padding: 10px;
+	    width: 100%;
+	    max-width: 210px;
+	    span{
+	    	color: rgba(0,39,0,0.5);
+	    	padding-left: 10px;
+	    	font-weight: 500;
+	    }
+		}
+	}
+	.logo{
+		padding:40px 0;
+		img{
+			max-width: 100%;
+		}
+	}
+	.page-sidebar-menu{
+		padding: 48px 0px 38px 0px;
+		li{
+			&:first-child{
+				a{
+					padding-top: 0px;
+				}
+			}
+			&:last-child{
+				a{
+					padding-bottom: 0px;
+				}
+			}
+			a{
+				font-size: 16px;
+		    line-height: 21px;
+		    border-top: none;
+		    color: @color_menu;
+		    padding: 18px 30px!important;
+		    font-weight: 500;
+		    font-family: @font-primary;
+		    display: flex;
+		    align-items: center;
+				flex-direction: column;
+		    .icon{
+		    	width: 42px;
+			    height: 42px;
+			    display: inline-flex;
+			    justify-content: center;
+			    align-items: center;
+			    border-radius: 15px;
+					margin-bottom: 10px;
+		    	.active{
+		    		display: none;
+		    	}
+		    }
+				span{
+					line-height:21px;
+				}
+			}
+			&.menu-active{
+				background-color: #14537F;
+				a{
+					.icon{
+						.default{
+							display: none;
+						}
+						.active{
+							display: block;
+						}
+					}
+					color:@color-w;
+					font-weight:700;
+				}
+			}
+			
+			&:hover{
+				background-color: #14537F;
+				a{
+					color:@color-w;
+					font-weight:700;
+					.icon{
+						.default{
+							display: none;
+						}
+						.active{
+							display: block;
+						}
+					}
+				}
+
+			}
+
+		}
+	}
+}
+.page-content{
+	color: #fff;
+}
