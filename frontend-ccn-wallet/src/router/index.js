@@ -7,11 +7,11 @@ Vue.use(VueRouter)
 
 const routes = [
     {
-        path: '',
+        path: '/',
         component: Master,
         children: [
             {
-                path: 'dashboard',
+                path: '',
                 component: Dashboard
             }
         ]

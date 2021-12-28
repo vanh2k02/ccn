@@ -11,6 +11,91 @@ export const defaultData = [
         url: '',
         name: 'PROPOSALS'
     },
-
 ]
+export const defaultItemToken = [
+    {
+        title: 'Available Tokens',
+        count: '112',
+        function: [
+            {
+                titleFunction: 'STAKE',
+                class: ''
+            }
+        ],
+
+    }, {
+        title: ' Staked Tokens',
+        count: '23',
+        function: [
+            {
+                titleFunction: 'UNDELEGATE',
+                class: 'active'
+            },
+            {
+                titleFunction: 'REDELEGATE',
+                class: ''
+            }
+        ],
+
+    }, {
+        title: 'Rewards',
+        count: '0',
+        function: [
+            {
+                titleFunction: 'CLAIM',
+                class: 'disable'
+            }
+        ],
+    }, {
+        title: 'Unstaked Tokens',
+        count: '0',
+        function: ''
+    },
+]
+export const accountValidators=[
+    {
+        validator:'Bro_n_Bro',
+        status:'Action',
+        voting:'78,233.10',
+        commission:'5%',
+        tokenStaked:'N/A',
+        action:'DELEGATE'
+    },{
+        validator:'Bro_n_Bro',
+        status:'Action',
+        voting:'78,233.10',
+        commission:'5%',
+        tokenStaked:'N/A',
+        action:'DELEGATE'
+    },{
+        validator:'Bro_n_Bro',
+        status:'Action',
+        voting:'78,233.10',
+        commission:'5%',
+        tokenStaked:'N/A',
+        action:'DELEGATE'
+    },{
+        validator:'Bro_n_Bro',
+        status:'Action',
+        voting:'78,233.10',
+        commission:'5%',
+        tokenStaked:'N/A',
+        action:'DELEGATE'
+    },{
+        validator:'Bro_n_Bro',
+        status:'Action',
+        voting:'78,233.10',
+        commission:'5%',
+        tokenStaked:'N/A',
+        action:'DELEGATE'
+    },{
+        validator:'Bro_n_Bro',
+        status:'Action',
+        voting:'78,233.10',
+        commission:'5%',
+        tokenStaked:'N/A',
+        action:'DELEGATE'
+    },
+]
+
 

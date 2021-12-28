@@ -2,7 +2,6 @@
     <div class="page-container">
         <SideBar/>
         <router-view/>
-
     </div>
 </template>
 
