@@ -4,8 +4,8 @@
             <Logo/>
             <ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
                 <li class="menu-active"><a href="#">
-                    <div class="icon"><img class="default" src="/admin/assets/images/logo.png" alt="index"/><img
-                        class="active" src="/admin/assets/images/icon/dash_ac.svg" alt="index"/></div>
+                    <div class="icon"><img class="default" src="@frontend/images/logo.png" alt="index"/><img
+                        class="active" src="@frontend/images/icon/dash_ac.svg" alt="index"/></div>
                     <span class="title">DASHBOARD</span></a></li>
                 <TabSideBar/>
             </ul>

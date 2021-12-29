@@ -4,6 +4,8 @@ import App from './App.vue'
 import VueRouter from 'vue-router'
 import routers from './routes'
 
+import "@frontend/css/font-awesome.min.css"
+import "@frontend/css/bootstrap.min.css"
 import "@frontend/css/custom.css"
 import "@frontend/css/admin.css"
 
