@@ -1,6 +1,6 @@
 <template>
     <div class="col-md-5 float-right">
-        <div class="cnt-btn-wallet"><a href="#">CONNECT WALLET</a></div>
+        <div class="cnt-btn-wallet"><a href="javascript:void (0)">CONNECT WALLET</a></div>
     </div>
 </template>
 

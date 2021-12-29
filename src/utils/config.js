@@ -52,50 +52,6 @@ export const defaultItemToken = [
         function: ''
     },
 ]
-export const accountValidators=[
-    {
-        validator:'Bro_n_Bro',
-        status:'Action',
-        voting:'78,233.10',
-        commission:'5%',
-        tokenStaked:'N/A',
-        action:'DELEGATE'
-    },{
-        validator:'Bro_n_Bro',
-        status:'Action',
-        voting:'78,233.10',
-        commission:'5%',
-        tokenStaked:'N/A',
-        action:'DELEGATE'
-    },{
-        validator:'Bro_n_Bro',
-        status:'Action',
-        voting:'78,233.10',
-        commission:'5%',
-        tokenStaked:'N/A',
-        action:'DELEGATE'
-    },{
-        validator:'Bro_n_Bro',
-        status:'Action',
-        voting:'78,233.10',
-        commission:'5%',
-        tokenStaked:'N/A',
-        action:'DELEGATE'
-    },{
-        validator:'Bro_n_Bro',
-        status:'Action',
-        voting:'78,233.10',
-        commission:'5%',
-        tokenStaked:'N/A',
-        action:'DELEGATE'
-    },{
-        validator:'Bro_n_Bro',
-        status:'Action',
-        voting:'78,233.10',
-        commission:'5%',
-        tokenStaked:'N/A',
-        action:'DELEGATE'
-    },
-]
+
 
 
