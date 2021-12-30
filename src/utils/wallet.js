@@ -1,7 +1,7 @@
-import {QueryClient, setupDistributionExtension, setupGovExtension} from "@cosmjs/stargate";
+import {QueryClient, setupDistributionExtension, setupGovExtension, setupStakingExtension, setupBankExtension} from "@cosmjs/stargate";
 import {Tendermint34Client} from "@cosmjs/tendermint-rpc";
-import {setupStakingExtension} from "@cosmjs/stargate/build/queries/staking";
-import {setupBankExtension} from "@cosmjs/stargate/build/queries/bank";
+import {Any} from "cosmjs-types/google/protobuf/any";
+
 
 const endpoint = process.env.VUE_APP_END_POINT
 export class WalletHelper {
@@ -66,8 +66,17 @@ export class WalletHelper {
     async getDelegation(addressValidations) {
         return await this.getStakingExtension().staking.delegatorDelegations(addressValidations)
     }
+    
     async getStakedValidators(addressValidations){
         return await this.getStakingExtension().staking.delegatorValidators(addressValidations)
+    }
+
+    converContent(content) {
+        const {typeUrl, value} = Any.decode(content)
+        return {
+            typeUrl,
+            content: Buffer.from(value).toString()
+        }
     }
 }
 

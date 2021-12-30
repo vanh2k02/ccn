@@ -8,8 +8,9 @@
                 </div>
             </div>
             <div class="box-item-detail">
-                <h3>Fixing Centralization From Gamed Stakedrop</h3>
-                <div class="sub-title-item">{{ des }}
+                <h3>{{ des.typeUrl }}</h3>
+                <div class="sub-title-item" style="height: 100px!important;,width: 350px;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
+                    {{ des.content }}
                 </div>
                 <ul class="info-item">
                     <li><span class="title">Proposer:</span><span
@@ -44,13 +45,14 @@
 <script>
 
 import {proposalStatus} from "../../utils/constant";
+import {WalletHelper} from "../../utils/wallet";
 
 export default {
     name: "ItemProposals",
     props: {
         index: Number,
         status: Number,
-        description: Object,
+        title: Object,
         submitTime: {type: Date, default: ''},
         votingStartTime: {type: Date, default: ''},
         votingEndTime: {type: Date, default: ''},
@@ -85,8 +87,9 @@ export default {
                 }
             })
         },
-        getDescription() {
-            this.des = Buffer.from(this.description).toString()
+        async getDescription() {
+            const wallet = await WalletHelper.connect()
+            this.des = wallet.converContent(this.title)
         }
     }
 }
