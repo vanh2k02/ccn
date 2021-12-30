@@ -4,8 +4,7 @@
             <div class="title-item-vali">
                 <div class="number">{{ index + 1 }}</div>
                 <div class="cnt-text"><a href="#">Status</a><a
-                    :class="{active:status===3,unActive:status===4}" href="#">Voting
-                    Perlod</a>
+                    :style="{backgroundColor:style}" href="#">{{ name }}</a>
                 </div>
             </div>
             <div class="box-item-detail">
@@ -42,6 +41,9 @@
 </template>
 
 <script>
+
+import {proposalStatus} from "../../utils/constant";
+
 export default {
     name: "ItemProposals",
     props: {
@@ -59,21 +61,30 @@ export default {
             noWithVeto: this.vote.noWithVeto,
             abstain: this.vote.abstain,
             totalVote: 0,
+            name: '',
+            style: ''
         }
     },
     mounted() {
         this.getTotal()
+        this.checkStatus()
     },
     methods: {
         getTotal() {
             this.totalVote = Number(this.no) + Number(this.yes) + Number(this.noWithVeto) + Number(this.abstain)
+        },
+        checkStatus() {
+            proposalStatus.forEach(item => {
+                if (item.status === this.status) {
+                    this.name = item.name
+                    this.style = item.style
+                }
+            })
         }
     }
 }
 </script>
 
 <style scoped>
-.unActive {
-    background-color: rgba(255, 0, 68, 0.85);
-}
+
 </style>

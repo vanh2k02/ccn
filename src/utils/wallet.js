@@ -36,7 +36,7 @@ export class WalletHelper {
     }
 
     async getListProposal() {
-        return await this.getGovExtension().gov.proposals(0, "", "")
+        return await this.getGovExtension().gov.proposals(3, "", "")
     }
 
     async getDetailProposal(proposalId) {

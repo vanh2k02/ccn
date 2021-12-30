@@ -1,34 +1,6 @@
 <template>
     <div class="content-wallet">
-        <div class="row">
-            <Login/>
-            <div class="col-md-7 float-left">
-                <div class="content-wall-left">
-                    <div class="blocks-status">
-                        <div class="status-items">
-                            <div class="title">Available Tokens</div>
-                            <div class="number">{{ availableTokens.toFixed(2) }}</div>
-                            <div class="list-link"><a href="#">Stake</a></div>
-                        </div>
-                        <div class="status-items">
-                            <div class="title">Staked Tokens</div>
-                            <div class="number">{{ stakedTokens.toFixed(1) }}</div>
-                            <div class="list-link"><a class="active" href="#">UNDELEGATE</a><a href="#">REDELEGATE</a>
-                            </div>
-                        </div>
-                        <div class="status-items">
-                            <div class="title">Rewards</div>
-                            <div class="number">{{ reward.toFixed(1) }}</div>
-                            <div class="list-link"><a class="disable" href="#">CLAIM</a></div>
-                        </div>
-                        <div class="status-items">
-                            <div class="title">Unstaked Tokens</div>
-                            <div class="number">0</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <Login/>
         <div class="content-validate-detail">
             <div class="row">
                 <div class="col-md-7">
@@ -133,27 +105,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-5">
-                    <div class="cnt-wallet-right">
-                        <div class="cnt-validator">
-                            <div class="title-vali">
-                                <div class="title top-ac">Top Active Proposals</div>
-                                <div class="link-see-all">See all ></div>
-                            </div>
-                            <div class="content-detail-vali">
-                                <ul>
-                                    <ItemProposals v-for="(proposal,index) in proposals" :key="index"
-                                                   :index="index"
-                                                   :status="proposal.status"
-                                                   :submitTime="proposal.submitTime"
-                                                   :votingStartTime="proposal.votingStartTime"
-                                                   :votingEndTime="proposal.votingEndTime"
-                                                   :vote="proposal.finalTallyResult"/>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -162,12 +113,22 @@
 <script>
 import Login from "@/components/login/Login";
 import {WalletHelper} from "@/utils/wallet";
-import ItemProposals from "@/components/item-top-proposals/ItemProposals";
 
-const DENOM = process.env.VUE_APP_DENOM
 export default {
-    name: "Dashboard",
-    components: {ItemProposals, Login},
+    name: "stake",
+    components: {Login},
+    data: function () {
+        return {
+            allValidators: [],
+            activeTab: "allValidators",
+            stakedValidators: [],
+        }
+    },
+    async mounted() {
+        await this.getWallet()
+        this.getAllValidators()
+        this.stakeds()
+    },
     filters: {
         getMoniker(validator) {
             if (validator.description) {
@@ -187,30 +148,6 @@ export default {
             }
         }
     },
-    data: function () {
-        return {
-            allValidators: [],
-            activeTab: "allValidators",
-            stakedValidators: [],
-            wallet: '',
-            availableTokens: 0,
-            reward: 0,
-            stakedTokens: 0,
-            proposals: [],
-        }
-    },
-    async mounted() {
-        await this.getWallet()
-        this.getAllValidators()
-        this.getProposals()
-        this.detailValidator()
-        this.detailProposal()
-        this.getRewards()
-        this.getBalances()
-        this.delegation()
-        this.unbonding()
-        this.stakeds()
-    },
     methods: {
         setActiveTab(tabId) {
             this.activeTab = tabId
@@ -225,64 +162,15 @@ export default {
             this.wallet = await WalletHelper.connect()
         },
         async getAllValidators() {
-            const data = await this.wallet.getValidators("BOND_STATUS_BONDED")
-
-            data.validators.splice(10, data.validators.length - 10)
-            this.allValidators = data
-        },
-        async getProposals() {
-            const res = await this.wallet.getListProposal()
-            this.proposals = res.proposals
-            console.log(this.proposals, 'proposals')
-        },
-        async detailProposal() {
-            const proposal = await this.wallet.getDetailProposal(4)
-            console.log(proposal)
-        },
-        async detailValidator() {
-            const validator = await this.wallet.getDetailValidator('junovaloper196ax4vc0lwpxndu9dyhvca7jhxp70rmcqcnylw')
-            console.log(validator)
-        },
-        async getRewards() {
-            const response = await this.wallet.getRewards('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
-            response.total.forEach(item => {
-                if (item.denom === DENOM) {
-                    this.reward = item.amount / 10 ** 24
-                }
-            })
-            console.log(response, 'rewards')
-        },
-        async getBalances() {
-            const balances = await this.wallet.getBalances('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
-            balances.forEach(item => {
-                if (item.denom === DENOM) {
-                    this.availableTokens = item.amount / 10 ** 6
-                }
-            })
-            console.log(balances, 'bal')
-        },
-        async unbonding() {
-            const unbonding = await this.wallet.getUnbonding('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
-            console.log(unbonding, 'unbon')
-        },
-        async delegation() {
-            const delegation = await this.wallet.getDelegation('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
-            delegation.delegationResponses.forEach(item => {
-                if (item.balance.denom === DENOM) {
-                    this.stakedTokens = item.balance.amount / 10 ** 8
-                }
-            })
-            console.log(delegation.delegationResponses, 'delegation')
+            this.allValidators = await this.wallet.getValidators("BOND_STATUS_BONDED")
         }, async stakeds() {
             this.stakedValidators = await this.wallet.getStakedValidators('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
             console.log(this.stakedValidators, 'staked')
         },
-    },
+    }
 }
 </script>
 
 <style scoped>
-.dkdk{
-    color: #8dff2f;
-}
+
 </style>
