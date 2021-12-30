@@ -233,7 +233,8 @@ export default {
         async getProposals() {
             const res = await this.wallet.getListProposal()
             this.proposals = res.proposals
-            console.log(this.proposals, 'proposals')
+            const json = this.wallet.converContent(this.proposals[0].content.value)
+            console.log(json , 'proposals')
         },
         async detailProposal() {
             const proposal = await this.wallet.getDetailProposal(4)
