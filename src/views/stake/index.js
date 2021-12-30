@@ -1,4 +1,4 @@
-import Stake from "./index";
+import Stake from "./Index.vue";
 export default [
     {
         path: '/stake',

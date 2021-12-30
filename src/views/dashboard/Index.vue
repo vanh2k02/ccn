@@ -148,7 +148,8 @@
                                                    :submitTime="proposal.submitTime"
                                                    :votingStartTime="proposal.votingStartTime"
                                                    :votingEndTime="proposal.votingEndTime"
-                                                   :vote="proposal.finalTallyResult"/>
+                                                   :vote="proposal.finalTallyResult"
+                                                   :description="proposal.content.value"/>
                                 </ul>
                             </div>
                         </div>
@@ -231,9 +232,10 @@ export default {
             this.allValidators = data
         },
         async getProposals() {
-            const res = await this.wallet.getListProposal()
+            const res = await this.wallet.getListProposal(4, "", "")
             this.proposals = res.proposals
-            console.log(this.proposals, 'proposals')
+            const val = Buffer.from(this.proposals[4].content.value).toString()
+            console.log(val, 'proposals')
         },
         async detailProposal() {
             const proposal = await this.wallet.getDetailProposal(4)
@@ -282,7 +284,5 @@ export default {
 </script>
 
 <style scoped>
-.dkdk{
-    color: #8dff2f;
-}
+
 </style>

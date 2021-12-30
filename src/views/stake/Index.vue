@@ -3,7 +3,7 @@
         <Login/>
         <div class="content-validate-detail">
             <div class="row">
-                <div class="col-md-7">
+                <div class="col-md-12">
                     <div class="cnt-wallet-left">
                         <div class="cnt-validator">
                             <div class="title-vali">
@@ -122,6 +122,7 @@ export default {
             allValidators: [],
             activeTab: "allValidators",
             stakedValidators: [],
+            wallet: ''
         }
     },
     async mounted() {

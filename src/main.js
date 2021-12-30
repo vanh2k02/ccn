@@ -9,7 +9,7 @@ import "@frontend/css/bootstrap.min.css"
 import "@frontend/css/custom.css"
 import "@frontend/css/admin.css"
 
-
+Vue.use(require('vue-moment'));
 Vue.use(VueRouter);
 
 Vue.config.productionTip = false

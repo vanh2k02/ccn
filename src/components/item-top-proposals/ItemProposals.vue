@@ -9,16 +9,17 @@
             </div>
             <div class="box-item-detail">
                 <h3>Fixing Centralization From Gamed Stakedrop</h3>
-                <div class="sub-title-item">This is the account that gamed
-                    the fair stakedrop.
+                <div class="sub-title-item">{{ des }}
                 </div>
                 <ul class="info-item">
                     <li><span class="title">Proposer:</span><span
                         class="info"> juno1r…jhwwccx</span></li>
                     <li><span class="title">Submitted on:</span><span
-                        class="info"> {{ submitTime }}</span></li>
+                        class="info"> {{ submitTime| moment("dddd, MMMM Do YYYY, h:mm:ss a") }}</span></li>
                     <li><span class="title">Voting Period:</span><span
-                        class="info"> {{ votingStartTime }} to {{ votingEndTime }}</span>
+                        class="info"> {{
+                            votingStartTime| moment("dddd, MMMM Do YYYY, h:mm:ss a")
+                        }} to {{ votingEndTime| moment("dddd, MMMM Do YYYY, h:mm:ss a") }}</span>
                     </li>
                 </ul>
             </div>
@@ -49,6 +50,7 @@ export default {
     props: {
         index: Number,
         status: Number,
+        description: Object,
         submitTime: {type: Date, default: ''},
         votingStartTime: {type: Date, default: ''},
         votingEndTime: {type: Date, default: ''},
@@ -62,12 +64,14 @@ export default {
             abstain: this.vote.abstain,
             totalVote: 0,
             name: '',
-            style: ''
+            style: '',
+            des: ''
         }
     },
     mounted() {
         this.getTotal()
         this.checkStatus()
+        this.getDescription()
     },
     methods: {
         getTotal() {
@@ -80,6 +84,9 @@ export default {
                     this.style = item.style
                 }
             })
+        },
+        getDescription() {
+            this.des = Buffer.from(this.description).toString()
         }
     }
 }

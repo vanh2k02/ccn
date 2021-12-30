@@ -35,8 +35,8 @@ export class WalletHelper {
         return setupBankExtension(this.getQueryClient())
     }
 
-    async getListProposal() {
-        return await this.getGovExtension().gov.proposals(3, "", "")
+    async getListProposal(status,depositor,voter) {
+        return await this.getGovExtension().gov.proposals(status,depositor,voter)
     }
 
     async getDetailProposal(proposalId) {
