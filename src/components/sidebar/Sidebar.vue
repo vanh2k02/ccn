@@ -3,10 +3,6 @@
         <div class="page-sidebar navbar-collapse collapse">
             <Logo/>
             <ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
-                <li class="menu-active"><a href="#">
-                    <div class="icon"><img class="default" src="@frontend/images/logo.png" alt="index"/><img
-                        class="active" src="@frontend/images/icon/dash_ac.svg" alt="index"/></div>
-                    <span class="title">DASHBOARD</span></a></li>
                 <TabSideBar/>
             </ul>
             <div class="content-logout">
@@ -20,14 +16,14 @@
 
 <script>
 
-import TabSideBar from "@/components/sidebar/TabSideBar";
 import Logo from "@/components/sidebar/Logo";
+import TabSideBar from "./TabSideBar";
 
 export default {
     name: "SideBar",
     components: {
-        Logo, 
-        TabSideBar
+        TabSideBar,
+        Logo,
     },
 }
 </script>

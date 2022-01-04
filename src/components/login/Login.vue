@@ -1,9 +1,9 @@
 <template>
     <div>
-        <div class="col-md-5 float-right">
-            <div class="cnt-btn-wallet"><a href="javascript:void (0)">CONNECT WALLET</a></div>
+        <div class="col-md-5 float-right" v-if="!address">
+            <div class="cnt-btn-wallet"><a href="javascript:void (0)" @click="connectWallet()">CONNECT WALLET</a></div>
         </div>
-        <div class="row">
+        <div class="row" v-if="address">
             <div class="col-md-12">
                 <div class="cnt-acount-user">
                     <div class="name-acount">
@@ -23,8 +23,30 @@
 </template>
 
 <script>
+import {WalletHelper} from "@/utils/wallet";
+import {connectKeplr} from "@/utils/connectKeplr";
+
 export default {
-    name: "Login"
+    name: "Login",
+    data: function () {
+        return {
+            address: ''
+        }
+    },
+    mounted() {
+        this.getAddress()
+    },
+    methods: {
+        async connectWallet() {
+            this.address = await connectKeplr.connectWallet()
+            await WalletHelper.connect()
+            this.getAddress()
+
+        },
+        getAddress() {
+            this.address = localStorage.getItem("address");
+        },
+    }
 }
 </script>
 

@@ -55,7 +55,7 @@ export default {
     props: {
         index: Number,
         status: Number,
-        title: Object,
+        title: Uint8Array,
         submitTime: {type: Date, default: ''},
         votingStartTime: {type: Date, default: ''},
         votingEndTime: {type: Date, default: ''},
@@ -73,7 +73,7 @@ export default {
             des: ''
         }
     },
-    mounted() {
+    created() {
         this.getTotal()
         this.checkStatus()
         this.getDescription()
@@ -92,8 +92,8 @@ export default {
         },
         async getDescription() {
             const wallet = await WalletHelper.connect()
-            this.des = wallet.converContent(this.title)
-            console.log(this.title)
+            this.des = wallet.convertContent(this.title)
+
         }
     }
 }

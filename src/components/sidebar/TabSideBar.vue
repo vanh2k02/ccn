@@ -18,10 +18,8 @@ export default {
     data: function () {
         return {
             tabs: defaultData,
+            check:'/'
         }
-    },
-    props:{
-      check:String
     },
     methods: {
         checkClass(path) {

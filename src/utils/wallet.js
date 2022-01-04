@@ -1,9 +1,17 @@
-import {QueryClient, setupDistributionExtension, setupGovExtension, setupStakingExtension, setupBankExtension} from "@cosmjs/stargate";
+import {
+    QueryClient,
+    setupDistributionExtension,
+    setupGovExtension,
+    setupStakingExtension,
+    setupBankExtension
+} from "@cosmjs/stargate";
 import {Tendermint34Client} from "@cosmjs/tendermint-rpc";
 import {Any} from "cosmjs-types/google/protobuf/any";
+import {StargateClient} from "@cosmjs/stargate/build/stargateclient";
 
 
 const endpoint = process.env.VUE_APP_END_POINT
+
 export class WalletHelper {
     constructor(queryClient = null) {
         this.queryClient = queryClient
@@ -27,6 +35,10 @@ export class WalletHelper {
         return setupStakingExtension(this.getQueryClient())
     }
 
+    getStargateClient() {
+        return new StargateClient.connect(endpoint)
+    }
+
     getDistributionExtension() {
         return setupDistributionExtension(this.getQueryClient())
     }
@@ -35,8 +47,8 @@ export class WalletHelper {
         return setupBankExtension(this.getQueryClient())
     }
 
-    async getListProposal(status,depositor,voter) {
-        return await this.getGovExtension().gov.proposals(status,depositor,voter)
+    async getListProposal(status, depositor, voter) {
+        return await this.getGovExtension().gov.proposals(status, depositor, voter)
     }
 
     async getDetailProposal(proposalId) {
@@ -66,12 +78,13 @@ export class WalletHelper {
     async getDelegation(addressValidations) {
         return await this.getStakingExtension().staking.delegatorDelegations(addressValidations)
     }
-    
-    async getStakedValidators(addressValidations){
+
+    async getStakedValidators(addressValidations) {
         return await this.getStakingExtension().staking.delegatorValidators(addressValidations)
     }
 
-    converContent(content) {
+
+    convertContent(content) {
         const {typeUrl, value} = Any.decode(content)
         return {
             typeUrl,
