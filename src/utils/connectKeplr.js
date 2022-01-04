@@ -1,12 +1,14 @@
-import {WalletHelper} from "./wallet";
-
+import {
+    SigningStargateClient
+} from "@cosmjs/stargate";
 const chainId = process.env.VUE_APP_CHAIN_ID;
 const coinDenom = process.env.VUE_APP_DENOM;
 const coinMinimalDenom = process.env.VUE_APP_COIN_MINIMAL_DENOM;
 const prefix = process.env.VUE_APP_PREFIX;
-
-export class connectKeplr {
-
+export class KelprWallet {
+    constructor (client = null) {
+        this.client = client
+    }
     static async connectWallet() {
         if (!window.getOfflineSigner || !window.keplr) {
             throw new Error("Please install keplr extension")
@@ -61,9 +63,9 @@ export class connectKeplr {
                     // @ts-ignore
                     const keplrOfflineSigner = window.getOfflineSigner(chainId);
                     const accounts = await keplrOfflineSigner.getAccounts();
-                    await WalletHelper.getStargateClient()
+                    
                     const address = accounts[0].address;
-                    localStorage.setItem("address", address);
+                    setAddress(address);
                 } catch (error) {
                     throw new Error(error.message)
                 }
@@ -73,5 +75,30 @@ export class connectKeplr {
         }
     }
 
+    static getKeplrWallet(){
+        const keplrOfflineSigner = window.getOfflineSigner(chainId);
+        const client =  SigningStargateClient.connectWithSigner(
+                        process.env.VUE_APP_REST,
+                        keplrOfflineSigner,
+                    );
+        const keplrWallet = new KelprWallet(client)
+        return keplrWallet
+    }
+
+    getClient() {
+        return this.client
+    }
+
+    static setAddress(address) {
+        return localStorage.setItem("address", address);
+    }
+
+    static getAddress() {
+        return localStorage.getItem("address", "");
+    }
+
+    async delegateTokens(delegatorAddress, validatorAddress, amount, fee, memo = "") {
+        return await this.getClient().delegateTokens(delegatorAddress, validatorAddress, amount, fee, memo)
+    }
 }
 

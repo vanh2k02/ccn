@@ -24,7 +24,7 @@
 
 <script>
 import {WalletHelper} from "@/utils/wallet";
-import {connectKeplr} from "@/utils/connectKeplr";
+import {KelprWallet} from "@/utils/connectKeplr";
 
 export default {
     name: "Login",
@@ -38,7 +38,7 @@ export default {
     },
     methods: {
         async connectWallet() {
-            this.address = await connectKeplr.connectWallet()
+            this.address = await KelprWallet.connectWallet()
             await WalletHelper.connect()
             this.getAddress()
 
