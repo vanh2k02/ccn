@@ -11,7 +11,9 @@
             </div>
             <div class="box-item-detail-proposal">
                 <div class="left-item-detail">
-                    <div class="sub-title-item" style="height: 100px!important;,width: 350px;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">{{ des.content }}
+                    <div class="sub-title-item"
+                         style="height: 100px!important;,width: 350px;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
+                        {{ des.content }}
                     </div>
                     <ul class="info-item">
                         <li><span class="title">Proposer:</span><span
@@ -73,7 +75,7 @@ export default {
             des: ''
         }
     },
-    created() {
+    mounted() {
         this.getTotal()
         this.checkStatus()
         this.getDescription()
@@ -81,6 +83,8 @@ export default {
     methods: {
         getTotal() {
             this.totalVote = Number(this.no) + Number(this.yes) + Number(this.noWithVeto) + Number(this.abstain)
+
+
         },
         checkStatus() {
             proposalStatus.forEach(item => {
@@ -93,7 +97,6 @@ export default {
         async getDescription() {
             const wallet = await WalletHelper.connect()
             this.des = wallet.convertContent(this.title)
-
         }
     }
 }
