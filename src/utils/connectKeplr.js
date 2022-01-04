@@ -65,7 +65,7 @@ export class KelprWallet {
                     const accounts = await keplrOfflineSigner.getAccounts();
                     
                     const address = accounts[0].address;
-                    setAddress(address);
+                    KelprWallet.setAddress(address);
                 } catch (error) {
                     throw new Error(error.message)
                 }

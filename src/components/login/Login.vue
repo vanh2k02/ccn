@@ -44,7 +44,7 @@ export default {
 
         },
         getAddress() {
-            this.address = localStorage.getItem("address");
+            this.address = KelprWallet.getAddress();
         },
     }
 }
