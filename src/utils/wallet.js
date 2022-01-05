@@ -35,8 +35,8 @@ export class WalletHelper {
         return setupStakingExtension(this.getQueryClient())
     }
 
-    getStargateClient() {
-        return new StargateClient.connect(endpoint)
+    static async getStargateClient() {
+        return await StargateClient.connect(endpoint)
     }
 
     getDistributionExtension() {
@@ -90,6 +90,39 @@ export class WalletHelper {
             typeUrl,
             content: Buffer.from(value).toString()
         }
+    }
+
+    static async getSumitProposer(proposal) {
+        const stargateclient = await WalletHelper.getStargateClient()
+        const query = {
+            tags: [
+                {
+                    key: "message.module",
+                    value: "governance"
+                },
+                {
+                    key: "submit_proposal.proposal_id",
+                    value: proposal
+                },
+            ]
+        }
+        const result = await stargateclient.searchTx(query)
+        const rawLog = JSON.parse(result[0].rawLog)[0]
+        const { events } = rawLog
+        let proposer = ""
+        events.forEach(element => {
+            if(element.type == "coin_spent") {
+                const {attributes} = element
+                attributes.forEach(attr => {
+                    if(attr.key == "spender") {
+                        proposer = attr.value
+                        return
+                    }
+                })
+                return
+            }
+        })
+        return proposer
     }
 }
 
