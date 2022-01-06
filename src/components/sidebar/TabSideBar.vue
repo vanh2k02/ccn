@@ -18,7 +18,7 @@ export default {
     data: function () {
         return {
             tabs: defaultData,
-            check:'/'
+            check:this.$route.path,
         }
     },
     methods: {
