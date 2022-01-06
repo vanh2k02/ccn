@@ -9,8 +9,8 @@
                     <div class="name-acount">
                         <div class="name"></div>
                         <div class="cnt-link-copy">
-                            <div class="link">{{ address }}</div>
-                            <button class="btn btn-copy">Copy</button>
+                            <div class="link">{{address}}</div>
+                            <button class="btn btn-copy" @click="doCopy">Copy</button>
                         </div>
                     </div>
                 </div>
@@ -36,8 +36,9 @@ export default {
             default: ''
         }
     },
-    mounted() {
+    mounted: function () {
         this.getAddress()
+
     },
     methods: {
         async connectWallet() {
@@ -47,7 +48,15 @@ export default {
         },
         getAddress() {
             this.address = KelprWallet.getAddress();
-        },
+        }, doCopy: function () {
+            this.$copyText(this.address).then(function (e) {
+                alert('Copied')
+                console.log(e)
+            }, function (e) {
+                alert('Can not copy')
+                console.log(e)
+            })
+        }
     }
 }
 </script>

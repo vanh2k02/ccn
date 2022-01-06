@@ -45,7 +45,7 @@
                                             Validators</a></li>
                                     </ul>
                                 </div>
-                                <div class="link-see-all">See all ></div>
+                                <div class="link-see-all"><router-link to="/stake"> See all </router-link></div>
                             </div>
                             <div class="content-tab-vali">
                                 <div class="content-tab" id="allvali"
@@ -139,7 +139,7 @@
                         <div class="cnt-validator">
                             <div class="title-vali">
                                 <div class="title top-ac">Top Active Proposals</div>
-                                <div class="link-see-all">See all ></div>
+                                <div class="link-see-all"><router-link to="/proposals"> See all </router-link></div>
                             </div>
                             <div class="content-detail-vali">
                                 <ul>
