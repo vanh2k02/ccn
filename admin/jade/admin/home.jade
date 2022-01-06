@@ -16,23 +16,23 @@ append body-contents
         .container
           .content-wallet
             .row
-              .col-md-5.float-right
+              .col-md-5.col-xs-12.float-right
                 .cnt-btn-wallet
                   a(href="#") CONNECT WALLET
-              .col-md-7.float-left
+              .col-md-7.col-xs-12.float-left
                 .content-wall-left
                   .blocks-status
                     .status-items
                       .title Height
                       .number 112
                       .list-link 
-                        a(href="#") Stake
+                        a(href="#" data-toggle="modal" data-target="#popupStakeTokens") Stake
                     .status-items
                       .title Height
                       .number 23
                       .list-link 
-                        a.active(href="#") UNDELEGATE
-                        a(href="#") REDELEGATE
+                        a.active(href="#" data-toggle="modal" data-target="#popupUndelegate") UNDELEGATE
+                        a(href="#" data-toggle="modal" data-target="#popupRedelega") REDELEGATE
                     .status-items
                       .title Height
                       .number 0
@@ -368,5 +368,6 @@ append body-contents
   //.page-container
 
   ="\n"
-  // include ../includes/footer.jade
-
+  include ../includes/popupConfirmation.jade
+  include ../includes/popupUnde.jade
+  include ../includes/popuprede.jade

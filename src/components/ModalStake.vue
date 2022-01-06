@@ -1,0 +1,74 @@
+<template>
+    <div class="modal-body">
+        <div class="content-stake">
+            <div class="title-popup-stake">Stake Tokens</div>
+            <div class="form-token">
+                <div class="form-group">
+                    <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}"
+                                             href="#" @click="clickDropdown()">Select validator<i
+                        class="fa fa-angle-down"></i></a>
+                        <ul class="js-dropdown-list" :style="{display: style}">
+                            <li>
+                                <div class="item-stake">
+                                    <div class="icon"></div>
+                                    <div class="name">Bro_n_Bro</div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-stake">
+                                    <div class="icon"></div>
+                                    <div class="name">Bro_n_Bro</div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-stake">
+                                    <div class="icon"></div>
+                                    <div class="name">Bro_n_Bro</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="password" required="" name="pass"
+                           placeholder="Enter tokens to Stake"/>
+                    <div class="text-max">Max</div>
+                </div>
+                <div class="form-group">
+                    <div class="text-form"><span class="text">Max Available tokens:</span><span
+                        class="number">0</span></div>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-vote">STAKE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    name: "ModalStake",
+    data:function (){
+        return{
+            dropdown: false,
+            style: 'none'
+        }
+    },
+    methods:{
+        clickDropdown() {
+            if (this.dropdown === true) {
+                this.style = 'none'
+                this.dropdown = false
+            } else {
+                this.style = 'block'
+                this.dropdown = true
+            }
+        }
+    }
+}
+</script>
+
+<style scoped>
+
+</style>

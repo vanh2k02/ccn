@@ -10,7 +10,8 @@
             <div class="box-item-detail">
                 <h3>{{ des.typeUrl }}</h3>
                 <div class="sub-title-item"
-                     style="height: 100px!important;,width: 350px;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
+                     style="height: 100px!important;,width: 350px;overflow: hidden;display:
+                      -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
                     {{ des.content }}
                 </div>
                 <ul class="info-item">

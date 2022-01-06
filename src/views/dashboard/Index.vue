@@ -8,12 +8,15 @@
                         <div class="status-items">
                             <div class="title">Available Tokens</div>
                             <div class="number">{{ availableTokens.toFixed(2) }}</div>
-                            <div class="list-link"><a href="#">Stake</a></div>
+                            <div class="list-link"><a href="javascript:void (0)" @click="showModalStake()">Stake</a>
+                            </div>
                         </div>
                         <div class="status-items">
                             <div class="title">Staked Tokens</div>
                             <div class="number">{{ stakedTokens.toFixed(1) }}</div>
-                            <div class="list-link"><a class="active" href="#">UNDELEGATE</a><a href="#">REDELEGATE</a>
+                            <div class="list-link"><a class="active" href="javascript:void (0)"
+                                                      @click="showModalUnDelegate()">UNDELEGATE</a><a
+                                href="javascript:void (0)" @click="showModalDelegate()">REDELEGATE</a>
                             </div>
                         </div>
                         <div class="status-items">
@@ -45,7 +48,9 @@
                                             Validators</a></li>
                                     </ul>
                                 </div>
-                                <div class="link-see-all"><router-link to="/stake"> See all </router-link></div>
+                                <div class="link-see-all">
+                                    <router-link to="/stake"> See all</router-link>
+                                </div>
                             </div>
                             <div class="content-tab-vali">
                                 <div class="content-tab" id="allvali"
@@ -139,7 +144,9 @@
                         <div class="cnt-validator">
                             <div class="title-vali">
                                 <div class="title top-ac">Top Active Proposals</div>
-                                <div class="link-see-all"><router-link to="/proposals"> See all </router-link></div>
+                                <div class="link-see-all">
+                                    <router-link to="/proposals"> See all</router-link>
+                                </div>
                             </div>
                             <div class="content-detail-vali">
                                 <ul>
@@ -159,6 +166,45 @@
                 </div>
             </div>
         </div>
+        <div class="modal modal-dialog-centered fade popup_customer" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel" aria-hidden="true" ref="modalStake" id="popupStakeTokens">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
+                                @click="closeModalStake">
+                            <span aria-hidden="true"></span></button>
+                    </div>
+                    <ModalStake/>
+                </div>
+            </div>
+        </div>
+        <div class="modal modal-dialog-centered fade popup_customer" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel" aria-hidden="true" ref="modalUnDelegate" id="popupUndelegate">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
+                                @click="closeModalUnDelegate">
+                            <span aria-hidden="true"></span></button>
+                    </div>
+                    <ModalUndelegate/>
+                </div>
+            </div>
+        </div>
+        <div class="modal modal-dialog-centered fade popup_customer" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel" aria-hidden="true" ref="modalDelegate" id="popupRedelega">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
+                                @click="closeModalDelegate">
+                            <span aria-hidden="true"></span></button>
+                    </div>
+                    <ModalRelegate/>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -167,12 +213,15 @@ import Login from "@/components/login/Login";
 import {WalletHelper} from "@/utils/wallet";
 import ItemProposals from "@/components/item-top-proposals/ItemProposals";
 import {KelprWallet} from "../../utils/connectKeplr";
+import ModalStake from "../../components/ModalStake";
+import ModalRelegate from "../../components/ModalRelegate";
+import ModalUndelegate from "../../components/ModalUndelegate";
 
 
 const DENOM = process.env.VUE_APP_DENOM
 export default {
     name: "Dashboard",
-    components: {ItemProposals, Login},
+    components: {ModalUndelegate, ModalRelegate, ModalStake, ItemProposals, Login},
     filters: {
         getMoniker(validator) {
             if (validator.description) {
@@ -206,7 +255,8 @@ export default {
             reward: 0,
             stakedTokens: 0,
             proposals: [],
-            address_user: KelprWallet.getAddress()
+            address_user: KelprWallet.getAddress(),
+
         }
     },
     async mounted() {
@@ -287,20 +337,41 @@ export default {
                 }
             })
             console.log(delegation.delegationResponses, 'delegation')
-        }
-        ,
+        },
         async stakeds() {
             this.stakedValidators = await this.wallet.getStakedValidators(this.address_user)
             console.log(this.stakedValidators, 'staked')
-        }
-        ,
-    }
-    ,
+        },
+        showModalStake() {
+            this.$refs.modalStake.classList.toggle("in")
+            document.body.classList.toggle("modal-open");
+            this.$refs.modalStake.style.display = "block"
+        }, showModalUnDelegate() {
+            this.$refs.modalUnDelegate.classList.toggle("in")
+            document.body.classList.toggle("modal-open");
+            this.$refs.modalUnDelegate.style.display = "block"
+        }, showModalDelegate() {
+            this.$refs.modalDelegate.classList.toggle("in")
+            document.body.classList.toggle("modal-open");
+            this.$refs.modalDelegate.style.display = "block"
+        },
+        closeModalStake() {
+            this.$refs.modalStake.classList.toggle("in")
+            document.body.classList.toggle("modal-open");
+            this.$refs.modalStake.style.display = "none"
+        }, closeModalUnDelegate() {
+            this.$refs.modalUnDelegate.classList.toggle("in")
+            document.body.classList.toggle("modal-open");
+            this.$refs.modalUnDelegate.style.display = "none"
+        }, closeModalDelegate() {
+            this.$refs.modalDelegate.classList.toggle("in")
+            document.body.classList.toggle("modal-open");
+            this.$refs.modalDelegate.style.display = "none"
+        },
+    },
 }
 </script>
 
 <style scoped>
-.dkdk {
-    color: #8dff2f;
-}
+
 </style>

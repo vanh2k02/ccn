@@ -76,5 +76,34 @@
         });
         var height_treedad = $(".tree-binary .tree-structure .tree_dad .list_user-fa").height();
         $(".tree-binary .tree-structure .tree_dad:before").height(height_treedad);
+        var list = $('.js-dropdown-list');
+        var link = $('.js-link');
+        link.click(function(e) {
+            e.preventDefault();
+            list.slideToggle(200);
+            $(this).toggleClass("active");
+        });
+        list.find('li').click(function() {
+            var text = $(this).html();
+            var icon = '<i class="fa fa-angle-down"></i>';
+            link.html(text+icon);
+            list.slideToggle(200);
+            link.removeClass("active");
+        });
+        var lists = $('.js-dropdown-lists');
+        var links = $('.js-links');
+        links.click(function(e) {
+            e.preventDefault();
+            lists.slideToggle(200);
+            $(this).toggleClass("active");
+        });
+        lists.find('li').click(function() {
+            var text = $(this).html();
+            var icon = '<i class="fa fa-angle-down"></i>';
+            links.html(text+icon);
+            lists.slideToggle(200);
+            links.removeClass("active");
+        });
+        
     })
 })(jQuery)
