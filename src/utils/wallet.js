@@ -92,7 +92,7 @@ export class WalletHelper {
         }
     }
 
-    static async getSumitProposer(proposal) {
+    static async getSumitProposer(proposalId) {
         const stargateclient = await WalletHelper.getStargateClient()
         const query = {
             tags: [
@@ -102,7 +102,7 @@ export class WalletHelper {
                 },
                 {
                     key: "submit_proposal.proposal_id",
-                    value: proposal
+                    value: proposalId
                 },
             ]
         }
@@ -111,10 +111,10 @@ export class WalletHelper {
         const { events } = rawLog
         let proposer = ""
         events.forEach(element => {
-            if(element.type == "coin_spent") {
+            if(element.type === "coin_spent") {
                 const {attributes} = element
                 attributes.forEach(attr => {
-                    if(attr.key == "spender") {
+                    if(attr.key === "spender") {
                         proposer = attr.value
                         return
                     }

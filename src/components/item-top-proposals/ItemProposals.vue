@@ -9,12 +9,13 @@
             </div>
             <div class="box-item-detail">
                 <h3>{{ des.typeUrl }}</h3>
-                <div class="sub-title-item" style="height: 100px!important;,width: 350px;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
+                <div class="sub-title-item"
+                     style="height: 100px!important;,width: 350px;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
                     {{ des.content }}
                 </div>
                 <ul class="info-item">
                     <li><span class="title">Proposer:</span><span
-                        class="info"> juno1r…jhwwccx</span></li>
+                        class="info"> {{ proposal }}</span></li>
                     <li><span class="title">Submitted on:</span><span
                         class="info"> {{ submitTime| moment("dddd, MMMM Do YYYY, h:mm:ss a") }}</span></li>
                     <li><span class="title">Voting Period:</span><span
@@ -56,7 +57,9 @@ export default {
         submitTime: {type: Date, default: ''},
         votingStartTime: {type: Date, default: ''},
         votingEndTime: {type: Date, default: ''},
-        vote: Object
+        vote: Object,
+        proposalId: Number
+
     },
     data: function () {
         return {
@@ -67,13 +70,15 @@ export default {
             totalVote: 0,
             name: '',
             style: '',
-            des: ''
+            des: '',
+            proposal: ''
         }
     },
     mounted() {
         this.getTotal()
         this.checkStatus()
         this.getDescription()
+        this.getProposal()
     },
     methods: {
         getTotal() {
@@ -90,6 +95,14 @@ export default {
         async getDescription() {
             const wallet = await WalletHelper.connect()
             this.des = wallet.convertContent(this.title)
+        },
+        getProposal() {
+            console.log(this.proposalId)
+            const result = WalletHelper.getSumitProposer(this.proposalId)
+            Promise.resolve(result).then(res => {
+                this.proposal = res
+            })
+
         }
     }
 }

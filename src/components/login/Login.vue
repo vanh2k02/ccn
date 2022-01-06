@@ -7,13 +7,12 @@
             <div class="col-md-12">
                 <div class="cnt-acount-user">
                     <div class="name-acount">
-                        <div class="name">USERNAME</div>
+                        <div class="name"></div>
                         <div class="cnt-link-copy">
-                            <div class="link">juno1n…xyqq087</div>
+                            <div class="link">{{ address }}</div>
                             <button class="btn btn-copy">Copy</button>
                         </div>
                     </div>
-                    <div class="icon"></div>
                 </div>
             </div>
         </div>
@@ -29,8 +28,12 @@ import {KelprWallet} from "@/utils/connectKeplr";
 export default {
     name: "Login",
     data: function () {
-        return {
-            address: ''
+        return {}
+    },
+    props: {
+        address: {
+            type: String,
+            default: ''
         }
     },
     mounted() {
@@ -38,10 +41,9 @@ export default {
     },
     methods: {
         async connectWallet() {
-            this.address = await KelprWallet.connectWallet()
+            await KelprWallet.connectWallet()
             await WalletHelper.connect()
             this.getAddress()
-
         },
         getAddress() {
             this.address = KelprWallet.getAddress();

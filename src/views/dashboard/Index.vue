@@ -1,7 +1,7 @@
 <template>
     <div class="content-wallet">
         <div class="row">
-            <Login/>
+            <Login :address="address"/>
             <div class="col-md-7 float-left">
                 <div class="content-wall-left">
                     <div class="blocks-status">
@@ -82,6 +82,7 @@
                                                         <td>no tokens</td>
                                                         <td><a href="#">DELEGATE</a></td>
                                                     </tr>
+
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -144,6 +145,7 @@
                                 <ul>
                                     <ItemProposals v-for="(proposal,index) in proposals" :key="index"
                                                    :index="index"
+                                                   :proposalId="proposal.proposalId.low"
                                                    :status="proposal.status"
                                                    :submitTime="proposal.submitTime"
                                                    :votingStartTime="proposal.votingStartTime"
@@ -164,6 +166,8 @@
 import Login from "@/components/login/Login";
 import {WalletHelper} from "@/utils/wallet";
 import ItemProposals from "@/components/item-top-proposals/ItemProposals";
+import {KelprWallet} from "../../utils/connectKeplr";
+
 
 const DENOM = process.env.VUE_APP_DENOM
 export default {
@@ -188,6 +192,10 @@ export default {
             }
         }
     },
+    props: {
+        address: String
+
+    },
     data: function () {
         return {
             allValidators: [],
@@ -198,87 +206,96 @@ export default {
             reward: 0,
             stakedTokens: 0,
             proposals: [],
+            address_user: KelprWallet.getAddress()
         }
     },
     async mounted() {
         await this.getWallet()
         this.getAllValidators()
         this.getProposals()
-        this.detailValidator()
-        this.detailProposal()
+        // this.detailValidator()
         this.getRewards()
         this.getBalances()
         this.delegation()
         this.unbonding()
         this.stakeds()
-    },
+    }
+    ,
     methods: {
         setActiveTab(tabId) {
             this.activeTab = tabId
-        },
+        }
+        ,
         activeClass(tabId) {
             if (tabId === this.activeTab) {
                 return 'active'
             }
             return ''
-        },
+        }
+        ,
         async getWallet() {
             this.wallet = await WalletHelper.connect()
-        },
+        }
+        ,
         async getAllValidators() {
             const data = await this.wallet.getValidators("BOND_STATUS_BONDED")
 
             data.validators.splice(10, data.validators.length - 10)
             this.allValidators = data
-        },
+        }
+        ,
         async getProposals() {
             const res = await this.wallet.getListProposal(3, '', '')
             this.proposals = res.proposals
             console.log(this.proposals, 'proposals')
         },
-        async detailProposal() {
-            const proposal = await this.wallet.getDetailProposal(4)
-            console.log(proposal)
-        },
-        async detailValidator() {
-            const validator = await this.wallet.getDetailValidator('junovaloper196ax4vc0lwpxndu9dyhvca7jhxp70rmcqcnylw')
-            console.log(validator)
-        },
+        // async detailValidator() {
+        //     const validator = await this.wallet.getDetailValidator('junovaloper196ax4vc0lwpxndu9dyhvca7jhxp70rmcqcnylw')
+        //     console.log(validator)
+        // }
+        // ,
         async getRewards() {
-            const response = await this.wallet.getRewards('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+            const response = await this.wallet.getRewards(this.address_user)
             response.total.forEach(item => {
                 if (item.denom === DENOM) {
                     this.reward = item.amount / 10 ** 24
                 }
             })
             console.log(response, 'rewards')
-        },
+        }
+        ,
         async getBalances() {
-            const balances = await this.wallet.getBalances('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+            const balances = await this.wallet.getBalances(this.address_user)
             balances.forEach(item => {
                 if (item.denom === DENOM) {
                     this.availableTokens = item.amount / 10 ** 6
                 }
             })
             console.log(balances, 'bal')
-        },
+        }
+        ,
         async unbonding() {
-            const unbonding = await this.wallet.getUnbonding('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+            const unbonding = await this.wallet.getUnbonding(this.address_user)
             console.log(unbonding, 'unbon')
-        },
+        }
+        ,
         async delegation() {
-            const delegation = await this.wallet.getDelegation('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+            const delegation = await this.wallet.getDelegation(this.address_user)
             delegation.delegationResponses.forEach(item => {
                 if (item.balance.denom === DENOM) {
                     this.stakedTokens = item.balance.amount / 10 ** 8
                 }
             })
             console.log(delegation.delegationResponses, 'delegation')
-        }, async stakeds() {
-            this.stakedValidators = await this.wallet.getStakedValidators('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+        }
+        ,
+        async stakeds() {
+            this.stakedValidators = await this.wallet.getStakedValidators(this.address_user)
             console.log(this.stakedValidators, 'staked')
-        },
-    },
+        }
+        ,
+    }
+    ,
 }
 </script>
 

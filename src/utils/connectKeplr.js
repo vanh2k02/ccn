@@ -17,8 +17,8 @@ export class KelprWallet {
                 try {
                     await window.keplr.experimentalSuggestChain({
                         chainId: chainId,
-                        chainName: 'Secret Testnet',
-                        rpc: process.env.VUE_APP_RPC,
+                        chainName: 'Nibiru Testnet',
+                        rpc: process.env.VUE_APP_END_POINT,
                         rest: process.env.VUE_APP_REST,
                         bip44: {
                             coinType: 529,
@@ -63,7 +63,7 @@ export class KelprWallet {
                     // @ts-ignore
                     const keplrOfflineSigner = window.getOfflineSigner(chainId);
                     const accounts = await keplrOfflineSigner.getAccounts();
-                    
+
                     const address = accounts[0].address;
                     KelprWallet.setAddress(address);
                 } catch (error) {

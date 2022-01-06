@@ -7,7 +7,7 @@
             </ul>
             <div class="content-logout">
                 <ul>
-                    <li><a href="#"> <span>ログアウト</span></a></li>
+                    <li><a href="javascript:void (0)" @click="logout"> <span>ログアウト</span></a></li>
                 </ul>
             </div>
         </div>
@@ -24,7 +24,20 @@ export default {
     components: {
         TabSideBar,
         Logo,
+    }, data: function () {
+        return {
+            address: ''
+        }
     },
+    methods: {
+        logout() {
+            localStorage.removeItem('address')
+            this.emitAddress()
+        },
+        emitAddress() {
+            this.$emit('setAddress', this.address)
+        }
+    }
 }
 </script>
 
