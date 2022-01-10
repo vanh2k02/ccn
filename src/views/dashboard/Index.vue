@@ -16,7 +16,7 @@
                             <div class="number">{{ stakedTokens.toFixed(1) }}</div>
                             <div class="list-link"><a class="active" href="javascript:void (0)"
                                                       @click="showModalUnDelegate()">UNDELEGATE</a><a
-                                href="javascript:void (0)" @click="showModalDelegate()">REDELEGATE</a>
+                                href="javascript:void (0)" @click="showModalReDelegate()">REDELEGATE</a>
                             </div>
                         </div>
                         <div class="status-items">
@@ -85,7 +85,9 @@
                                                         <td>{{ validator|getTokens }}</td>
                                                         <td>{{ validator|getRate }}</td>
                                                         <td>no tokens</td>
-                                                        <td><a href="#">DELEGATE</a></td>
+                                                        <td><a href="#"
+                                                               @click="showModalDelegate(validator.description.moniker)">DELEGATE</a>
+                                                        </td>
                                                     </tr>
 
                                                     </tbody>
@@ -188,12 +190,26 @@
                                 @click="closeModalUnDelegate">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalUndelegate :stakedValidators="stakedValidators.validators"/>
+                    <ModalUndelegate :stakedValidators="stakedValidators.validators" :delegate="delegate"/>
                 </div>
             </div>
         </div>
         <div class="modal modal-dialog-centered fade popup_customer" tabindex="-1" role="dialog"
-             aria-labelledby="exampleModalLabel" aria-hidden="true" ref="modalDelegate" id="popupRedelega">
+             aria-labelledby="exampleModalLabel" aria-hidden="true" ref="modalReDelegate" id="popupRedelega">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
+                                @click="closeModalReDelegate">
+                            <span aria-hidden="true"></span></button>
+                    </div>
+                    <ModalRelegate :stakedValidators="stakedValidators.validators" :validators="validators"
+                                   :delegate="delegate"/>
+                </div>
+            </div>
+        </div>
+        <div class="modal modal-dialog-centered fade popup_customer" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel" aria-hidden="true" ref="modalDelegate" id="popupStakeTokens">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -201,7 +217,7 @@
                                 @click="closeModalDelegate">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalRelegate/>
+                    <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate"/>
                 </div>
             </div>
         </div>
@@ -216,12 +232,13 @@ import {KelprWallet} from "../../utils/connectKeplr";
 import ModalStake from "../../components/ModalStake";
 import ModalRelegate from "../../components/ModalRelegate";
 import ModalUndelegate from "../../components/ModalUndelegate";
+import ModalDelegate from "../../components/ModalDelegate";
 
 
 const DENOM = process.env.VUE_APP_DENOM
 export default {
     name: "Dashboard",
-    components: {ModalUndelegate, ModalRelegate, ModalStake, ItemProposals, Login},
+    components: {ModalDelegate, ModalUndelegate, ModalRelegate, ModalStake, ItemProposals, Login},
     filters: {
         getMoniker(validator) {
             if (validator.description) {
@@ -243,7 +260,6 @@ export default {
     },
     props: {
         address: String
-
     },
     data: function () {
         return {
@@ -257,7 +273,9 @@ export default {
             proposals: [],
             address_user: KelprWallet.getAddress(),
             validators: [],
-            coin: {}
+            coin: '0',
+            delegate: [],
+            titleDelegate: ''
         }
     },
     async mounted() {
@@ -286,11 +304,10 @@ export default {
         },
         async getAllValidators() {
             const data = await this.wallet.getValidators("BOND_STATUS_BONDED")
-            const props = await this.wallet.getValidators("BOND_STATUS_BONDED")
-            this.validators = props.validators
+            this.validators = [...data.validators]
             data.validators.splice(10, data.validators.length - 10)
             this.allValidators = data
-            console.log(this.allValidators.validators)
+            console.log(this.allValidators.validators, 'vali')
         },
         async getProposals() {
             const res = await this.wallet.getListProposal(3, '', '')
@@ -313,10 +330,10 @@ export default {
         }
         ,
         async getBalances() {
-            const balances = await this.wallet.getBalances(this.address_user)
+            const balances = await this.wallet.getBalances('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
             balances.forEach(item => {
                 if (item.denom === DENOM) {
-                    this.coin = item
+                    this.coin = item.amount
                     this.availableTokens = item.amount / 10 ** 6
                 }
             })
@@ -329,16 +346,17 @@ export default {
         }
         ,
         async delegation() {
-            const delegation = await this.wallet.getDelegation(this.address_user)
+            const delegation = await this.wallet.getDelegation('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
             delegation.delegationResponses.forEach(item => {
                 if (item.balance.denom === DENOM) {
-                    this.stakedTokens = item.balance.amount / 10 ** 8
+                    this.delegate.push(item)
+                    this.stakedTokens += item.balance.amount / 10 ** 8
                 }
             })
             console.log(delegation, 'delegation')
         },
         async stakeds() {
-            this.stakedValidators = await this.wallet.getStakedValidators(this.address_user)
+            this.stakedValidators = await this.wallet.getStakedValidators("juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh")
             console.log(this.stakedValidators, 'staked')
         },
         showModalStake() {
@@ -349,7 +367,12 @@ export default {
             this.$refs.modalUnDelegate.classList.toggle("in")
             document.body.classList.toggle("modal-open");
             this.$refs.modalUnDelegate.style.display = "block"
-        }, showModalDelegate() {
+        }, showModalReDelegate() {
+            this.$refs.modalReDelegate.classList.toggle("in")
+            document.body.classList.toggle("modal-open");
+            this.$refs.modalReDelegate.style.display = "block"
+        }, showModalDelegate(title) {
+            this.titleDelegate = title
             this.$refs.modalDelegate.classList.toggle("in")
             document.body.classList.toggle("modal-open");
             this.$refs.modalDelegate.style.display = "block"
@@ -362,6 +385,10 @@ export default {
             this.$refs.modalUnDelegate.classList.toggle("in")
             document.body.classList.toggle("modal-open");
             this.$refs.modalUnDelegate.style.display = "none"
+        }, closeModalReDelegate() {
+            this.$refs.modalReDelegate.classList.toggle("in")
+            document.body.classList.toggle("modal-open");
+            this.$refs.modalReDelegate.style.display = "none"
         }, closeModalDelegate() {
             this.$refs.modalDelegate.classList.toggle("in")
             document.body.classList.toggle("modal-open");

@@ -118,7 +118,6 @@ export default {
         async getDescription() {
             const wallet = await WalletHelper.connect()
             this.des = wallet.convertContent(this.title)
-            console.log(this.des)
         },
         eventModal() {
             this.$emit('showModal')

@@ -5,7 +5,7 @@
             <div class="form-token">
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}"
-                                             href="#" @click="clickDropdown()">{{ title }}<i
+                                             href="#" @click="clickDropdown()">{{ titleDelegate }}<i
                         class="fa fa-angle-down"></i></a>
                         <ul class="js-dropdown-list" :style="{display: style}">
                             <li v-for="(validator,index) in validators" :key="index">
@@ -33,13 +33,12 @@
         </div>
     </div>
 </template>
-
 <script>
 const DENOM = process.env.VUE_APP_DENOM
 import {KelprWallet} from "@/utils/connectKeplr";
 
 export default {
-    name: "ModalStake",
+    name: "ModalDelegate",
     data: function () {
         return {
             dropdown: false,
@@ -51,12 +50,12 @@ export default {
                 denom: DENOM,
                 amount: this.token
             },
-            title: 'Select validator'
         }
     },
     props: {
         validators: Array,
-        coin: String
+        coin: String,
+        titleDelegate: String
     },
 
     methods: {
@@ -73,7 +72,7 @@ export default {
             this.addressDelegator = address
             this.dropdown = false
             this.style = 'none'
-            this.title = title
+            this.titleDelegate = title
         },
         async sendRequest() {
             const a = await KelprWallet.getKeplrWallet()
@@ -86,6 +85,7 @@ export default {
     }
 }
 </script>
+
 
 <style scoped>
 

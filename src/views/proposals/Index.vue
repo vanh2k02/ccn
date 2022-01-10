@@ -219,6 +219,7 @@ export default {
     methods: {
         checkClick(key, status) {
             this.class = key
+            this.proposals = []
             this.getProposals(status)
         },
         activeClass(key) {
@@ -233,8 +234,6 @@ export default {
         async getProposals(status) {
             const res = await this.wallet.getListProposal(status, "", "")
             this.proposals = res.proposals
-            this.wallet.convertContent(this.proposals[0].content)
-            console.log(this.proposals[0].content, 'proposals')
         },
         showModal(val, index) {
             this.$refs.modal.classList.toggle("in")
@@ -255,8 +254,7 @@ export default {
 
             this.proposalDetail = proposal.proposal
             let vote = this.proposalDetail.finalTallyResult
-            let a = [vote.yes, vote.no, vote.noWithVeto, vote.abstain]
-            this.chartData.data=a
+            this.chartData.data = [vote.yes, vote.no, vote.noWithVeto, vote.abstain]
 
             await this.getDescription()
             this.getProposal()

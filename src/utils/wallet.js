@@ -59,6 +59,10 @@ export class WalletHelper {
         return await this.getStakingExtension().staking.validators(status)
     }
 
+    async reDelegations(addressStaked, address_user, addressDelegate) {
+        return await this.getStakingExtension().staking.redelegations(addressStaked, address_user, addressDelegate)
+    }
+
     async getDetailValidator(status) {
         return await this.getStakingExtension().staking.validator(status)
     }
@@ -108,13 +112,13 @@ export class WalletHelper {
         }
         const result = await stargateclient.searchTx(query)
         const rawLog = JSON.parse(result[0].rawLog)[0]
-        const { events } = rawLog
+        const {events} = rawLog
         let proposer = ""
         events.forEach(element => {
-            if(element.type === "coin_spent") {
+            if (element.type === "coin_spent") {
                 const {attributes} = element
                 attributes.forEach(attr => {
-                    if(attr.key === "spender") {
+                    if (attr.key === "spender") {
                         proposer = attr.value
                         return
                     }
