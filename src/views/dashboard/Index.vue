@@ -8,15 +8,15 @@
                         <div class="status-items">
                             <div class="title">Available Tokens</div>
                             <div class="number">{{ availableTokens.toFixed(2) }}</div>
-                            <div class="list-link"><a href="javascript:void (0)" @click="showModalStake()">Stake</a>
+                            <div class="list-link"><a href="javascript:void (0)" @click="showModal('modalStake')">Stake</a>
                             </div>
                         </div>
                         <div class="status-items">
                             <div class="title">Staked Tokens</div>
                             <div class="number">{{ stakedTokens.toFixed(1) }}</div>
                             <div class="list-link"><a class="active" href="javascript:void (0)"
-                                                      @click="showModalUnDelegate()">UNDELEGATE</a><a
-                                href="javascript:void (0)" @click="showModalDelegate()">REDELEGATE</a>
+                                                      @click="showModal('modalUnDelegate')">UNDELEGATE</a><a
+                                href="javascript:void (0)" @click="showModal('modalDelegate')">REDELEGATE</a>
                             </div>
                         </div>
                         <div class="status-items">
@@ -172,7 +172,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModalStake">
+                                @click="closeModal('modalStake')">
                             <span aria-hidden="true"></span></button>
                     </div>
                     <ModalStake :validators="validators" :coin="coin"/>
@@ -185,7 +185,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModalUnDelegate">
+                                @click="closeModal('modalUnDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
                     <ModalUndelegate :stakedValidators="stakedValidators.validators"/>
@@ -198,7 +198,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModalDelegate">
+                                @click="closeModal('modalDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
                     <ModalRelegate/>
@@ -341,32 +341,16 @@ export default {
             this.stakedValidators = await this.wallet.getStakedValidators(this.address_user)
             console.log(this.stakedValidators, 'staked')
         },
-        showModalStake() {
-            this.$refs.modalStake.classList.toggle("in")
+        showModal(refName) {
+            this.$refs[refName].classList.toggle("in")
             document.body.classList.toggle("modal-open");
-            this.$refs.modalStake.style.display = "block"
-        }, showModalUnDelegate() {
-            this.$refs.modalUnDelegate.classList.toggle("in")
-            document.body.classList.toggle("modal-open");
-            this.$refs.modalUnDelegate.style.display = "block"
-        }, showModalDelegate() {
-            this.$refs.modalDelegate.classList.toggle("in")
-            document.body.classList.toggle("modal-open");
-            this.$refs.modalDelegate.style.display = "block"
+            this.$refs[refName].style.display = "block"
         },
-        closeModalStake() {
-            this.$refs.modalStake.classList.toggle("in")
+        closeModal(refName) {
+            this.$refs[refName].classList.toggle("in")
             document.body.classList.toggle("modal-open");
-            this.$refs.modalStake.style.display = "none"
-        }, closeModalUnDelegate() {
-            this.$refs.modalUnDelegate.classList.toggle("in")
-            document.body.classList.toggle("modal-open");
-            this.$refs.modalUnDelegate.style.display = "none"
-        }, closeModalDelegate() {
-            this.$refs.modalDelegate.classList.toggle("in")
-            document.body.classList.toggle("modal-open");
-            this.$refs.modalDelegate.style.display = "none"
-        },
+            this.$refs[refName].style.display = "none"
+        }
     },
 }
 </script>
