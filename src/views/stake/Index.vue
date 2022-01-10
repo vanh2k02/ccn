@@ -113,6 +113,7 @@
 <script>
 import Login from "@/components/login/Login";
 import {WalletHelper} from "@/utils/wallet";
+import {KelprWallet} from "../../utils/connectKeplr";
 
 export default {
     name: "stake",
@@ -122,7 +123,8 @@ export default {
             allValidators: [],
             activeTab: "allValidators",
             stakedValidators: [],
-            wallet: ''
+            wallet: '',
+            address_user: KelprWallet.getAddress(),
         }
     },
     async mounted() {

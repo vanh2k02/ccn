@@ -175,7 +175,7 @@
                                 @click="closeModalStake">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalStake/>
+                    <ModalStake :validators="validators" :coin="coin"/>
                 </div>
             </div>
         </div>
@@ -188,7 +188,7 @@
                                 @click="closeModalUnDelegate">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalUndelegate/>
+                    <ModalUndelegate :stakedValidators="stakedValidators.validators"/>
                 </div>
             </div>
         </div>
@@ -256,7 +256,8 @@ export default {
             stakedTokens: 0,
             proposals: [],
             address_user: KelprWallet.getAddress(),
-
+            validators: [],
+            coin: {}
         }
     },
     async mounted() {
@@ -269,31 +270,28 @@ export default {
         this.delegation()
         this.unbonding()
         this.stakeds()
-    }
-    ,
+    },
     methods: {
         setActiveTab(tabId) {
             this.activeTab = tabId
-        }
-        ,
+        },
         activeClass(tabId) {
             if (tabId === this.activeTab) {
                 return 'active'
             }
             return ''
-        }
-        ,
+        },
         async getWallet() {
             this.wallet = await WalletHelper.connect()
-        }
-        ,
+        },
         async getAllValidators() {
             const data = await this.wallet.getValidators("BOND_STATUS_BONDED")
-
+            const props = await this.wallet.getValidators("BOND_STATUS_BONDED")
+            this.validators = props.validators
             data.validators.splice(10, data.validators.length - 10)
             this.allValidators = data
-        }
-        ,
+            console.log(this.allValidators.validators)
+        },
         async getProposals() {
             const res = await this.wallet.getListProposal(3, '', '')
             this.proposals = res.proposals
@@ -318,6 +316,7 @@ export default {
             const balances = await this.wallet.getBalances(this.address_user)
             balances.forEach(item => {
                 if (item.denom === DENOM) {
+                    this.coin = item
                     this.availableTokens = item.amount / 10 ** 6
                 }
             })
@@ -336,7 +335,7 @@ export default {
                     this.stakedTokens = item.balance.amount / 10 ** 8
                 }
             })
-            console.log(delegation.delegationResponses, 'delegation')
+            console.log(delegation, 'delegation')
         },
         async stakeds() {
             this.stakedValidators = await this.wallet.getStakedValidators(this.address_user)
