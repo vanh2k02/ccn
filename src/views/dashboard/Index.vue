@@ -286,8 +286,7 @@ export default {
         },
         async getAllValidators() {
             const data = await this.wallet.getValidators("BOND_STATUS_BONDED")
-            const props = await this.wallet.getValidators("BOND_STATUS_BONDED")
-            this.validators = props.validators
+            this.validators = [...data.validators]
             data.validators.splice(10, data.validators.length - 10)
             this.allValidators = data
             console.log(this.allValidators.validators)
