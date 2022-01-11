@@ -76,7 +76,9 @@ export default {
         }
     }, filters: {
         formatDateTime(dateTime) {
-            return moment(dateTime, "dddd, MMMM Do YYYY, h:mm:ss a")
+            const a = moment(dateTime, "dddd, MMMM Do YYYY, h:mm:ss").toString()
+
+            return a.split(' ').slice(0, 5).join(' ');
         }
 
     },

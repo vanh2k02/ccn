@@ -145,13 +145,13 @@
                                         <li><span class="title">Proposer:</span><span
                                             class="info"> {{ proposal }}</span></li>
                                         <li><span class="title">Submitted on:</span><span class="info"> {{
-                                                proposalDetail.submitTime| moment("dddd, MMMM Do YYYY, h:mm:ss a")
+                                                proposalDetail.submitTime|formatDateTime
                                             }}</span>
                                         </li>
                                         <li><span class="title">Voting Period:</span><span class="info"> {{
-                                                proposalDetail.votingStartTime| moment("dddd, MMMM Do YYYY, h:mm:ss a")
+                                                proposalDetail.votingStartTime| formatDateTime
                                             }} to {{
-                                                proposalDetail.votingEndTime| moment("dddd, MMMM Do YYYY, h:mm:ss a")
+                                                proposalDetail.votingEndTime| formatDateTime
                                             }}</span>
                                         </li>
                                     </ul>
@@ -193,6 +193,7 @@ import ItemProposalsTab from "@/components/ItemProposalsTab";
 import {ProposalStatus} from "@/utils/constant";
 import {proposalStatus} from "../../utils/constant";
 import PieChart from "@/utils/doughnutChart";
+import moment from "moment";
 
 export default {
     name: "proposals",
@@ -218,12 +219,20 @@ export default {
                     {
                         label: "Data One",
                         backgroundColor: ["#89C777", "#FF9300", "#DE3232", "#0A198E"],
-                        data: []
+                        data: [1, 1, 1, 1]
                     }
                 ]
             },
             proposalsForStatus: []
         }
+    },
+    filters: {
+        formatDateTime(dateTime) {
+            const a = moment(dateTime, "dddd, MMMM Do YYYY, h:mm:ss").toString()
+
+            return a.split(' ').slice(0, 5).join(' ');
+        }
+
     },
     async created() {
         await this.getWallet()
@@ -255,7 +264,11 @@ export default {
             document.body.classList.toggle("modal-open");
             this.$refs.modal.style.display = "block"
             this.i = index
-            this.detailProposal(val)
+            this.proposals.forEach(item => {
+                if (item.proposalId.low === val) {
+                    this.proposalDetail = item
+                }
+            })
             this.checkStatus()
 
         },
@@ -263,16 +276,6 @@ export default {
             this.$refs.modal.classList.toggle("in")
             document.body.classList.toggle("modal-open");
             this.$refs.modal.style.display = "none"
-        },
-        async detailProposal(val) {
-            const proposal = await this.wallet.getDetailProposal(val)
-
-            this.proposalDetail = proposal.proposal
-            // var vote = this.proposalDetail.finalTallyResult
-            this.chartData.datasets.data = [1,1,1,1]
-
-            await this.getDescription()
-            this.getProposal()
         },
         checkStatus() {
             proposalStatus.forEach(item => {
