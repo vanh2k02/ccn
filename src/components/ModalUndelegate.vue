@@ -85,9 +85,12 @@ export default {
             this.style = 'none'
         },
         async sendRequest() {
-            const a = await KelprWallet.getKeplrWallet()
-            const b = await a.unDelegateTokens(this.address_user, this.addressDelegator, this.amount, '')
-            console.log(b)
+            try {
+                const KelprWallet = await KelprWallet.getKeplrWallet()
+                await KelprWallet.unDelegateTokens(this.address_user, this.addressDelegator, this.amount)
+            } catch (err) {
+                console.log(err.message)
+            }
         }
     }
 }

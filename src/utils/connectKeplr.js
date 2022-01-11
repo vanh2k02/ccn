@@ -1,7 +1,6 @@
 import {
-    SigningStargateClient, assertIsBroadcastTxSuccess
+    SigningStargateClient, assertIsBroadcastTxSuccess, coins
 } from "@cosmjs/stargate";
-import { MsgBeginRedelegate } from "@cosmjs/stargate/build/";
 const chainId = process.env.VUE_APP_CHAIN_ID;
 const coinDenom = process.env.VUE_APP_DENOM;
 const coinMinimalDenom = process.env.VUE_APP_COIN_MINIMAL_DENOM;
@@ -91,6 +90,13 @@ export class KelprWallet {
         return this.client
     }
 
+    getFee() {
+        return {
+            amount: coins(0, coinMinimalDenom),
+            gas: "100000",
+        };
+    }
+
     static setAddress(address) {
         return localStorage.setItem("address", address);
     }
@@ -99,26 +105,31 @@ export class KelprWallet {
         return localStorage.getItem("address", "");
     }
 
-    async delegateTokens(delegatorAddress, validatorAddress, amount, fee, memo = "") {
-        return await this.getClient().delegateTokens(delegatorAddress, validatorAddress, amount, fee, memo)
+    async delegateTokens(delegatorAddress, validatorAddress, amount, memo = "") {
+        const fee = this.getFee()
+        const result =  this.getClient().delegateTokens(delegatorAddress, validatorAddress, amount, fee, memo)
+        assertIsBroadcastTxSuccess(result);
     }
 
-    async unDelegateTokens(delegatorAddress, validatorAddress, amount, fee, memo = "") {
-        return await this.getClient().undelegateTokens(delegatorAddress, validatorAddress, amount, fee, memo)
+    async unDelegateTokens(delegatorAddress, validatorAddress, amount, memo = "") {
+        const fee = this.getFee()
+        const result =  await this.getClient().undelegateTokens(delegatorAddress, validatorAddress, amount, fee, memo)
+        assertIsBroadcastTxSuccess(result);
     }
 
-    async redelegateTokens(delegatorAddress, srcValidatorAddress, dstValidatorAddress, amount, fee){
-        const msg = MsgBeginRedelegate.fromPartial({
+    async redelegateTokens(delegatorAddress, srcValidatorAddress, dstValidatorAddress, amount){
+        const msg = {
             delegatorAddress: delegatorAddress,
             validatorSrcAddress: srcValidatorAddress,
             validatorDstAddress: dstValidatorAddress,
             amount: amount
-        });
+        };
         const msgAny = {
             typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
             value: msg,
         };
 
+        const fee = this.getFee()
         const memo = "Redelegate";
         const result = await this.getClient().signAndBroadcast(delegatorAddress, [msgAny], fee, memo);
         assertIsBroadcastTxSuccess(result);
