@@ -20,11 +20,11 @@
                             <li><span class="title">Proposer:</span><span
                                 class="info"> {{ proposal }}</span></li>
                             <li><span class="title">Submitted on:</span><span
-                                class="info"> {{ submitTime| moment("dddd, MMMM Do YYYY, h:mm:ss a") }}</span></li>
+                                class="info"> {{ submitTime| formatDateTime }} </span></li>
                             <li><span class="title">Voting Period:</span><span
-                                class="info"> {{
-                                    votingStartTime| moment("dddd, MMMM Do YYYY, h:mm:ss a")
-                                }} to {{ votingEndTime| moment("dddd, MMMM Do YYYY, h:mm:ss a") }}</span>
+                                class="info"> {{ votingStartTime| formatDateTime }} to {{
+                                    votingEndTime| formatDateTime
+                                }}</span>
                             </li>
                         </ul>
                     </div>
@@ -55,6 +55,7 @@
 import {proposalStatus} from "../utils/constant";
 import {WalletHelper} from "../utils/wallet";
 import PieChart from "@/utils/doughnutChart";
+import moment from "moment";
 
 export default {
     name: "ItemProposalsTab",
@@ -70,6 +71,11 @@ export default {
         votingEndTime: {type: Date, default: ''},
         vote: Object,
         proposalId: Number
+    }, filters: {
+        formatDateTime(dateTime) {
+            return moment(dateTime, "dddd, MMMM Do YYYY, h:mm:ss a")
+        }
+
     },
     data: function () {
         return {

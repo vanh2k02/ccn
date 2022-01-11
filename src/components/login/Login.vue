@@ -9,7 +9,7 @@
                     <div class="name-acount">
                         <div class="name"></div>
                         <div class="cnt-link-copy">
-                            <div class="link">{{address}}</div>
+                            <div class="link">{{ address }}</div>
                             <button class="btn btn-copy" @click="doCopy">Copy</button>
                         </div>
                     </div>
@@ -24,21 +24,23 @@
 <script>
 import {WalletHelper} from "@/utils/wallet";
 import {KelprWallet} from "@/utils/connectKeplr";
+import {EventBus} from "@/main";
 
 export default {
     name: "Login",
     data: function () {
-        return {}
-    },
-    props: {
-        address: {
-            type: String,
-            default: ''
+        return {
+            address: ''
         }
+    },
+    created() {
+        EventBus.$on('setAddress', (address) => {
+            this.address = address
+        })
+
     },
     mounted: function () {
         this.getAddress()
-
     },
     methods: {
         async connectWallet() {
