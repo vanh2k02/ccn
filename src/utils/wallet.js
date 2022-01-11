@@ -1,9 +1,17 @@
-import {QueryClient, setupDistributionExtension, setupGovExtension} from "@cosmjs/stargate";
+import {
+    QueryClient,
+    setupDistributionExtension,
+    setupGovExtension,
+    setupStakingExtension,
+    setupBankExtension
+} from "@cosmjs/stargate";
 import {Tendermint34Client} from "@cosmjs/tendermint-rpc";
-import {setupStakingExtension} from "@cosmjs/stargate/build/queries/staking";
-import {setupBankExtension} from "@cosmjs/stargate/build/queries/bank";
+import {Any} from "cosmjs-types/google/protobuf/any";
+import {StargateClient} from "@cosmjs/stargate/build/stargateclient";
+
 
 const endpoint = process.env.VUE_APP_END_POINT
+
 export class WalletHelper {
     constructor(queryClient = null) {
         this.queryClient = queryClient
@@ -27,6 +35,10 @@ export class WalletHelper {
         return setupStakingExtension(this.getQueryClient())
     }
 
+    static async getStargateClient() {
+        return await StargateClient.connect(endpoint)
+    }
+
     getDistributionExtension() {
         return setupDistributionExtension(this.getQueryClient())
     }
@@ -35,8 +47,8 @@ export class WalletHelper {
         return setupBankExtension(this.getQueryClient())
     }
 
-    async getListProposal() {
-        return await this.getGovExtension().gov.proposals(0, "", "")
+    async getListProposal(status, depositor, voter) {
+        return await this.getGovExtension().gov.proposals(status, depositor, voter)
     }
 
     async getDetailProposal(proposalId) {
@@ -45,6 +57,10 @@ export class WalletHelper {
 
     async getValidators(status) {
         return await this.getStakingExtension().staking.validators(status)
+    }
+
+    async reDelegations(addressStaked, address_user, addressDelegate) {
+        return await this.getStakingExtension().staking.redelegations(addressStaked, address_user, addressDelegate)
     }
 
     async getDetailValidator(status) {
@@ -66,8 +82,51 @@ export class WalletHelper {
     async getDelegation(addressValidations) {
         return await this.getStakingExtension().staking.delegatorDelegations(addressValidations)
     }
-    async getStakedValidators(addressValidations){
+
+    async getStakedValidators(addressValidations) {
         return await this.getStakingExtension().staking.delegatorValidators(addressValidations)
+    }
+
+
+    convertContent(content) {
+        const {typeUrl, value} = Any.decode(content)
+        return {
+            typeUrl,
+            content: Buffer.from(value).toString()
+        }
+    }
+
+    static async getSumitProposer(proposalId) {
+        const stargateclient = await WalletHelper.getStargateClient()
+        const query = {
+            tags: [
+                {
+                    key: "message.module",
+                    value: "governance"
+                },
+                {
+                    key: "submit_proposal.proposal_id",
+                    value: proposalId
+                },
+            ]
+        }
+        const result = await stargateclient.searchTx(query)
+        const rawLog = JSON.parse(result[0].rawLog)[0]
+        const {events} = rawLog
+        let proposer = ""
+        events.forEach(element => {
+            if (element.type === "coin_spent") {
+                const {attributes} = element
+                attributes.forEach(attr => {
+                    if (attr.key === "spender") {
+                        proposer = attr.value
+                        return
+                    }
+                })
+                return
+            }
+        })
+        return proposer
     }
 }
 

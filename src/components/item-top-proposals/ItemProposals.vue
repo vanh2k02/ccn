@@ -4,22 +4,25 @@
             <div class="title-item-vali">
                 <div class="number">{{ index + 1 }}</div>
                 <div class="cnt-text"><a href="#">Status</a><a
-                    :class="{active:status===3,unActive:status===4}" href="#">Voting
-                    Perlod</a>
+                    :style="{backgroundColor:style}" href="#">{{ name }}</a>
                 </div>
             </div>
             <div class="box-item-detail">
-                <h3>Fixing Centralization From Gamed Stakedrop</h3>
-                <div class="sub-title-item">This is the account that gamed
-                    the fair stakedrop.
+                <h3>{{ des.typeUrl }}</h3>
+                <div class="sub-title-item"
+                     style="height: 100px!important;,width: 350px;overflow: hidden;display:
+                      -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
+                    {{ des.content }}
                 </div>
                 <ul class="info-item">
                     <li><span class="title">Proposer:</span><span
-                        class="info"> juno1r…jhwwccx</span></li>
+                        class="info"> {{ proposal }}</span></li>
                     <li><span class="title">Submitted on:</span><span
-                        class="info"> {{ submitTime }}</span></li>
+                        class="info"> {{ submitTime| moment("dddd, MMMM Do YYYY, h:mm:ss a") }}</span></li>
                     <li><span class="title">Voting Period:</span><span
-                        class="info"> {{ votingStartTime }} to {{ votingEndTime }}</span>
+                        class="info"> {{
+                            votingStartTime| moment("dddd, MMMM Do YYYY, h:mm:ss a")
+                        }} to {{ votingEndTime| moment("dddd, MMMM Do YYYY, h:mm:ss a") }}</span>
                     </li>
                 </ul>
             </div>
@@ -42,15 +45,22 @@
 </template>
 
 <script>
+
+import {proposalStatus} from "../../utils/constant";
+import {WalletHelper} from "../../utils/wallet";
+
 export default {
     name: "ItemProposals",
     props: {
         index: Number,
         status: Number,
+        title: Uint8Array,
         submitTime: {type: Date, default: ''},
         votingStartTime: {type: Date, default: ''},
         votingEndTime: {type: Date, default: ''},
-        vote: Object
+        vote: Object,
+        proposalId: Number
+
     },
     data: function () {
         return {
@@ -59,21 +69,46 @@ export default {
             noWithVeto: this.vote.noWithVeto,
             abstain: this.vote.abstain,
             totalVote: 0,
+            name: '',
+            style: '',
+            des: '',
+            proposal: ''
         }
     },
     mounted() {
         this.getTotal()
+        this.checkStatus()
+        this.getDescription()
+        this.getProposal()
     },
     methods: {
         getTotal() {
             this.totalVote = Number(this.no) + Number(this.yes) + Number(this.noWithVeto) + Number(this.abstain)
+        },
+        checkStatus() {
+            proposalStatus.forEach(item => {
+                if (item.status === this.status) {
+                    this.name = item.name
+                    this.style = item.style
+                }
+            })
+        },
+        async getDescription() {
+            const wallet = await WalletHelper.connect()
+            this.des = wallet.convertContent(this.title)
+        },
+        getProposal() {
+            console.log(this.proposalId)
+            const result = WalletHelper.getSumitProposer(this.proposalId)
+            Promise.resolve(result).then(res => {
+                this.proposal = res
+            })
+
         }
     }
 }
 </script>
 
 <style scoped>
-.unActive {
-    background-color: rgba(255, 0, 68, 0.85);
-}
+
 </style>

@@ -8,18 +8,21 @@ import "@frontend/css/font-awesome.min.css"
 import "@frontend/css/bootstrap.min.css"
 import "@frontend/css/custom.css"
 import "@frontend/css/admin.css"
+import VueClipboard from 'vue-clipboard2'
 
+Vue.use(VueClipboard)
 
+Vue.use(require('vue-moment'));
 Vue.use(VueRouter);
 
 Vue.config.productionTip = false
 
 const router = new VueRouter({
-  mode: 'history',
-  routes: routers,
+    mode: 'history',
+    routes: routers,
 })
 
 new Vue({
-  router,
-  render: h => h(App)
+    router,
+    render: h => h(App)
 }).$mount('#app')
