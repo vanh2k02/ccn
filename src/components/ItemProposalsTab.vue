@@ -2,14 +2,11 @@
     <a href="javascript:void (0)" @click="eventModal">
         <li>
             <div class="item-proposal-detail">
-                <div class="title-item-proposal">
-                    <div class="number-title">
-                        <div class="number">{{ index + 1 }}</div>
-                        <h3>{{ des.typeUrl }}</h3>
-                    </div>
-                    <div class="cnt-text"><a href="#">Status</a><a
-                        :style="{backgroundColor:style}" href="#">{{ name }}</a></div>
-                </div>
+                <ProposalHeader 
+                    :id="index + 1"
+                    :status="status"
+                    :title="des.typeUrl"
+                />
                 <div class="box-item-detail-proposal">
                     <div class="left-item-detail">
                         <div class="sub-title-item"
@@ -52,15 +49,16 @@
 </template>
 
 <script>
-import {proposalStatus} from "../utils/constant";
-import {WalletHelper} from "../utils/wallet";
+import { WalletHelper } from "../utils/wallet";
 import PieChart from "@/utils/doughnutChart";
 import moment from "moment";
+import ProposalHeader from "@/components/proposal/ProposalHeader.vue"
 
 export default {
     name: "ItemProposalsTab",
     components: {
-        PieChart
+        PieChart,
+        ProposalHeader
     },
     props: {
         index: Number,
@@ -75,10 +73,8 @@ export default {
     filters: {
         formatDateTime(dateTime) {
             const a = moment(dateTime, "dddd, MMMM Do YYYY, h:mm:ss").toString()
-
             return a.split(' ').slice(0, 5).join(' ');
-        }
-
+        }, 
     },
     data: function () {
         return {
@@ -86,9 +82,6 @@ export default {
             no: this.vote.no,
             noWithVeto: this.vote.noWithVeto,
             abstain: this.vote.abstain,
-            totalVote: 0,
-            name: '',
-            style: '',
             des: '',
             chartData: {
                 hoverBackgroundColor: "red",
@@ -107,26 +100,17 @@ export default {
         }
     },
     mounted() {
-        this.getTotal()
-        this.checkStatus()
         this.getDescription()
         this.getProposal()
     },
+    computed: {
+        totalVote() {
+            return Number(this.no) + Number(this.yes) + Number(this.noWithVeto) + Number(this.abstain)
+        },
+    },
     methods: {
-        getTotal() {
-            this.totalVote = Number(this.no) + Number(this.yes) + Number(this.noWithVeto) + Number(this.abstain)
-        },
-        checkStatus() {
-            proposalStatus.forEach(item => {
-                if (item.status === this.status) {
-                    this.name = item.name
-                    this.style = item.style
-                }
-            })
-        },
         async getDescription() {
-            const wallet = await WalletHelper.connect()
-            this.des = wallet.convertContent(this.title)
+            this.des = WalletHelper.convertContent(this.title)
         },
         eventModal() {
             this.$emit('showModal')

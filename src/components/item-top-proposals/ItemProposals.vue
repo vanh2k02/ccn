@@ -45,7 +45,7 @@
 
 <script>
 
-import {proposalStatus} from "../../utils/constant";
+import {proposalStatusObject} from "../../utils/constant";
 import {WalletHelper} from "../../utils/wallet";
 import moment from "moment";
 
@@ -74,17 +74,16 @@ export default {
             des: '',
             proposal: ''
         }
-    }, filters: {
+    }, 
+    filters: {
         formatDateTime(dateTime) {
             const a = moment(dateTime, "dddd, MMMM Do YYYY, h:mm:ss").toString()
 
             return a.split(' ').slice(0, 5).join(' ');
         }
-
     },
     mounted() {
         this.getTotal()
-        this.checkStatus()
         this.getDescription()
         this.getProposal()
     },
@@ -93,7 +92,7 @@ export default {
             this.totalVote = Number(this.no) + Number(this.yes) + Number(this.noWithVeto) + Number(this.abstain)
         },
         checkStatus() {
-            proposalStatus.forEach(item => {
+            proposalStatusObject.forEach(item => {
                 if (item.status === this.status) {
                     this.name = item.name
                     this.style = item.style
@@ -101,8 +100,7 @@ export default {
             })
         },
         async getDescription() {
-            const wallet = await WalletHelper.connect()
-            this.des = wallet.convertContent(this.title)
+            this.des = WalletHelper.convertContent(this.title)
         },
         getProposal() {
             console.log(this.proposalId)

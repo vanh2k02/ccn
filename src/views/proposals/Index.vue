@@ -128,31 +128,32 @@
                     </div>
                     <div class="modal-body">
                         <div class="item-proposal-detail">
-                            <div class="title-item-proposal">
-                                <div class="number-title">
-                                    <div class="number">{{ i }}</div>
-                                    <h3>{{ des.typeUrl }}</h3>
-                                </div>
-                                <div class="cnt-text"><a href="#">Status</a><a :style="{backgroundColor:style}"
-                                                                               href="#">{{ name }}</a>
-                                </div>
-                            </div>
+                            <ProposalHeader 
+                                :id="i"
+                                :status="proposalDetail.status"
+                            />
                         </div>
                         <div class="box-item-detail-proposal">
                             <div class="left-item-detail">
                                 <div class="box-left-detail">
                                     <ul class="info-item">
-                                        <li><span class="title">Proposer:</span><span
-                                            class="info"> {{ proposal }}</span></li>
-                                        <li><span class="title">Submitted on:</span><span class="info"> {{
-                                                proposalDetail.submitTime|formatDateTime
-                                            }}</span>
+                                        <li>
+                                            <span class="title">Proposer:</span>
+                                            <span class="info"> {{ proposal }}</span>
                                         </li>
-                                        <li><span class="title">Voting Period:</span><span class="info"> {{
-                                                proposalDetail.votingStartTime| formatDateTime
-                                            }} to {{
-                                                proposalDetail.votingEndTime| formatDateTime
-                                            }}</span>
+                                        <li>
+                                            <span class="title">Submitted on:</span>
+                                            <span class="info"> 
+                                                {{ proposalDetail.submitTime|formatDateTime }}
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <span class="title">Voting Period:</span>
+                                            <span class="info"> 
+                                                {{
+                                                proposalDetail.votingStartTime| formatDateTime }} to 
+                                                {{ proposalDetail.votingEndTime| formatDateTime }}
+                                            </span>
                                         </li>
                                     </ul>
                                     <p>{{ des.content }}</p>
@@ -188,24 +189,30 @@
 <script>
 
 import Login from "@/components/login/Login";
-import {WalletHelper} from "@/utils/wallet";
+import { WalletHelper } from "@/utils/wallet";
 import ItemProposalsTab from "@/components/ItemProposalsTab";
-import {ProposalStatus} from "@/utils/constant";
-import {proposalStatus} from "../../utils/constant";
+import { ProposalStatus } from "@/utils/constant";
 import PieChart from "@/utils/doughnutChart";
 import moment from "moment";
+import ProposalHeader from "@/components/proposal/ProposalHeader.vue"
 
 export default {
     name: "proposals",
-    components: {ItemProposalsTab, Login, PieChart},
+    components: {
+        ItemProposalsTab, 
+        Login, 
+        PieChart,
+        ProposalHeader
+    },
     data: function () {
         return {
             class: 'all',
             wallet: '',
+            stargateClient: null,
             statusProposal: ProposalStatus,
             proposals: [],
             proposalDetail: {},
-            i: 0,
+            i: 0, // remove
             name: '',
             style: '',
             des: '',
@@ -229,21 +236,20 @@ export default {
     filters: {
         formatDateTime(dateTime) {
             const a = moment(dateTime, "dddd, MMMM Do YYYY, h:mm:ss").toString()
-
             return a.split(' ').slice(0, 5).join(' ');
         }
 
     },
     async created() {
         await this.getWallet()
-        this.checkClick('all', this.statusProposal.UNRECOGNIZED)
         await this.getProposals()
+        await this.getStargetClient()
     },
     methods: {
         checkClick(key, status) {
             this.class = key
             this.proposalsForStatus = []
-            this.checkShowProposals(status)
+            this.getProposalByStatus(status)
         },
         activeClass(key) {
             if (key === this.class) {
@@ -254,53 +260,46 @@ export default {
         async getWallet() {
             this.wallet = await WalletHelper.connect()
         },
+        async getStargetClient() {
+            this.stargateClient = await WalletHelper.getStargateClient()
+            console.log(this.stargateClient)
+        },
         async getProposals() {
             const res = await this.wallet.getListProposal(this.statusProposal.UNRECOGNIZED, "", "")
             this.proposals = res.proposals
-            console.log(this.proposals)
         },
         showModal(val, index) {
             this.$refs.modal.classList.toggle("in")
             document.body.classList.toggle("modal-open");
             this.$refs.modal.style.display = "block"
-            this.i = index
+            this.i = index // remove i
             this.proposals.forEach(item => {
                 if (item.proposalId.low === val) {
                     this.proposalDetail = item
+                    console.log(this.proposalDetail)
+                    return
                 }
             })
-            this.checkStatus()
-
         },
         closeModal() {
             this.$refs.modal.classList.toggle("in")
             document.body.classList.toggle("modal-open");
             this.$refs.modal.style.display = "none"
         },
-        checkStatus() {
-            proposalStatus.forEach(item => {
-                if (item.status === this.proposalDetail.status) {
-                    this.name = item.name
-                    this.style = item.style
-                }
-            })
-        },
         async getDescription() {
-            const value = this.proposalDetail
-            console.log(value)
-            const wallet = await WalletHelper.connect()
-            this.des = wallet.convertContent(this.proposalDetail.content.value)
-
+            this.des = WalletHelper.convertContent(this.proposalDetail.content.value)
         },
         getProposal() {
-            const proposal_id = this.proposalDetail.proposalId.low
-            const result = WalletHelper.getSumitProposer(proposal_id)
-            Promise.resolve(result).then(res => {
-                this.proposal = res
-            })
-
+            console.log(1)
+            // const proposal_id = this.proposalDetail.proposalId.low
+            // // chuyen sang dung await va filter theo proposal_id
+            // // proposal_id --> proposalId
+            // const result = WalletHelper.getSumitProposer(this.stargateClient, proposal_id)
+            // Promise.resolve(result).then(res => {
+            //     this.proposal = res
+            // })
         },
-        checkShowProposals(status) {
+        getProposalByStatus(status) {
             console.log(status)
             this.proposals.forEach(item => {
                 if (item.status === status) {
