@@ -45,7 +45,7 @@ export default {
             dropdown: false,
             style: 'none',
             addressDelegator: '',
-            address_user: 'KelprWallet.getAddress()',
+            address_user: KelprWallet.getAddress(),
             token: 0,
             amount: {
                 denom: DENOM,
@@ -76,9 +76,12 @@ export default {
             this.title = title
         },
         async sendRequest() {
-            const a = await KelprWallet.getKeplrWallet()
-            const b = await a.delegateTokens(this.address_user, this.addressDelegator, this.amount, '')
-            console.log(b)
+            try {
+                const keplrWallet = await KelprWallet.getKeplrWallet()
+                await keplrWallet.delegateTokens(this.address_user, this.addressDelegator, this.amount)
+            } catch (err) {
+                console.log(err.message)
+            }
         },
         maxAvailable() {
             this.token = this.coin

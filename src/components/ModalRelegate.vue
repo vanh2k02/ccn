@@ -4,13 +4,13 @@
             <div class="title-popup-stake">Redelegate</div>
             <div class="form-token">
                 <div class="form-group">
-                    <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}" href="#"
-                                             @click="clickDropdown()">{{ titleStakedValidator }}<i
+                    <div class="dropdown"><a :class="{'js-link active':srcRef.dropdown,'js-link':!srcRef.dropdown}" href="#"
+                                             @click="clickDropdown('srcRef')">{{ titleStakedValidator }}<i
                         class="fa fa-angle-down"></i></a>
-                        <ul class="js-dropdown-list" :style="{display: style}">
+                        <ul class="js-dropdown-list" ref="srcRef" :style="{display: srcRef.style}">
                             <li v-for="(stakedValidator,index) in stakedValidators" :key="index">
                                 <div class="item-stake"
-                                     @click="chooseStaked(stakedValidator.operatorAddress,stakedValidator.description.moniker)">
+                                     @click="chooseStaked(stakedValidator.operatorAddress,stakedValidator.description.moniker, 'srcRef')">
                                     <div class="icon"></div>
                                     <div class="name">{{ stakedValidator.description.moniker }}</div>
                                 </div>
@@ -19,13 +19,13 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}" href="#"
-                                             @click="clickDropdown2">{{ titleValidator }}<i
+                    <div class="dropdown"><a :class="{'js-link active':dstRef.dropdown,'js-link':!dstRef.dropdown}" href="#"
+                                             @click="clickDropdown('dstRef')">{{ titleValidator }}<i
                         class="fa fa-angle-down"></i></a>
-                        <ul class="js-dropdown-lists" :style="{display: style2}">
+                        <ul class="js-dropdown-lists" :style="{display: dstRef.style}">
                             <li v-for="(validator,index) in validators" :key="index">
                                 <div class="item-stake"
-                                     @click="chooseValidator(validator.operatorAddress,validator.description.moniker)">
+                                     @click="chooseValidator(validator.operatorAddress,validator.description.moniker, 'dstRef')">
                                     <div class="icon"></div>
                                     <div class="name">{{ validator.description.moniker }}</div>
                                 </div>
@@ -40,7 +40,7 @@
                 </div>
                 <div class="form-group">
                     <div class="text-form"><span class="text">Max Available tokens:</span><span
-                        class="number">{{ Number(tokenStaked) / 10 ** 8 }}</span>
+                        class="number">{{ Number(tokenStaked) }}</span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -64,15 +64,23 @@ export default {
             style2: 'none',
             tokenStaked: 0,
             token: 0,
-            addressDelegator: '',
-            addressStaked: '',
+            dstValidatorAddress: '',
+            srcValidatorAddress: '',
             address_user: KelprWallet.getAddress(),
             amount: {
                 denom: process.env.VUE_APP_DENOM,
                 amount: this.token
             },
             titleStakedValidator: 'Select validator from',
-            titleValidator: 'Select validator to'
+            titleValidator: 'Select validator to',
+            dstRef: {
+                style: 'none',
+                dropdown: false
+            },
+            srcRef: {
+                style: 'none',
+                dropdown: false
+            },
         }
     },
     props: {
@@ -81,49 +89,47 @@ export default {
         delegate: Array
     },
     methods: {
-        clickDropdown() {
-            if (this.dropdown === true) {
-                this.style = 'none'
-                this.dropdown = false
+        clickDropdown(ref) {
+            if (this[ref].dropdown === true) {
+                this.hideDropDown(ref)
             } else {
-                this.style = 'block'
-                this.dropdown = true
+                this.showDropDown(ref)
             }
         },
-        clickDropdown2() {
-            if (this.dropdown2 === true) {
-                this.style2 = 'none'
-                this.dropdown2 = false
-            } else {
-                this.style2 = 'block'
-                this.dropdown2 = true
-            }
-        },
-        chooseStaked(address, title) {
+        chooseStaked(address, title, ref) {
             this.titleStakedValidator = title
-            this.addressStaked = address
+            this.srcValidatorAddress = address
             this.delegate.forEach(item => {
                 if (item.delegation.validatorAddress === address) {
-                    this.tokenStaked = Number(item.balance.amount)
+                    this.tokenStaked = Number(item.balance.amount) / 10**8
                 }
             })
-            this.dropdown = false
-            this.style = 'none'
+            this.hideDropDown(ref)
         },
         maxToken() {
             this.token = this.tokenStaked
         },
-        chooseValidator(address, title) {
+        chooseValidator(address, title, ref) {
             this.titleValidator = title
-            this.addressDelegator = address
-            this.dropdown2 = false
-            this.style2 = 'none'
-
+            this.dstValidatorAddress = address
+            this.hideDropDown(ref)
+        },
+        hideDropDown(ref) {
+            this[ref].dropdown = false
+            this[ref].style = 'none'
+        },
+        showDropDown(ref) {
+            this[ref].style = 'block'
+            this[ref].dropdown = true
         },
         async sendData() {
-            const a = await KelprWallet.getKeplrWallet()
-            await a.redelegateTokens(this.address_user, this.addressStaked, this.amount, '')
-            await a.delegateTokens(this.address_user, this.addressDelegator, this.amount, '')
+            try {
+                const keplrWallet = await KelprWallet.getKeplrWallet()
+                await keplrWallet.redelegateTokens(this.address_user, this.srcValidatorAddress, this.dstValidatorAddress, this.amount)
+            } catch(err){
+                console.log(err.message)
+            }
+            
         }
     }
 }
