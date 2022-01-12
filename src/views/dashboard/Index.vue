@@ -8,15 +8,15 @@
                         <div class="status-items">
                             <div class="title">Available Tokens</div>
                             <div class="number">{{ availableTokens.toFixed(2) }}</div>
-                            <div class="list-link"><a href="javascript:void (0)" @click="showModalStake()">Stake</a>
+                            <div class="list-link"><a href="javascript:void (0)" @click="showModal('', 'modalStake')">Stake</a>
                             </div>
                         </div>
                         <div class="status-items">
                             <div class="title">Staked Tokens</div>
                             <div class="number">{{ stakedTokens.toFixed(1) }}</div>
                             <div class="list-link"><a class="active" href="javascript:void (0)"
-                                                      @click="showModalUnDelegate()">UNDELEGATE</a><a
-                                href="javascript:void (0)" @click="showModalReDelegate()">REDELEGATE</a>
+                                                      @click="showModal('', 'modalUnDelegate')">UNDELEGATE</a><a
+                                href="javascript:void (0)" @click="showModal('', 'modalReDelegate')">REDELEGATE</a>
                             </div>
                         </div>
                         <div class="status-items">
@@ -58,40 +58,7 @@
                                     <div class="content-detail">
                                         <div class="cos-table-list">
                                             <div class="table-responsive">
-                                                <table
-                                                    class="table table-striped table-bordered table-hover text-center">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>Validator</th>
-                                                        <th>Status</th>
-                                                        <th>Voting Power</th>
-                                                        <th>Commission</th>
-                                                        <th>Tokens Staked</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr v-for="(validator,index) in allValidators.validators"
-                                                        :key="index">
-                                                        <td>
-                                                            <div class="td-acount">
-                                                                <div class="icon"></div>
-                                                                <span>{{ validator | getMoniker }}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td><span class="status"
-                                                                  v-if="validator.status===3">Active</span>
-                                                        </td>
-                                                        <td>{{ validator|getTokens }}</td>
-                                                        <td>{{ validator|getRate }}</td>
-                                                        <td>no tokens</td>
-                                                        <td><a href="#"
-                                                               @click="showModalDelegate(validator.description.moniker)">DELEGATE</a>
-                                                        </td>
-                                                    </tr>
-
-                                                    </tbody>
-                                                </table>
+                                                <ValidatorTable :validators="allValidators.validators" @showModal="showModal"/>
                                             </div>
                                         </div>
                                     </div>
@@ -101,40 +68,7 @@
                                     <div class="content-detail">
                                         <div class="cos-table-list">
                                             <div class="table-responsive">
-                                                <table
-                                                    class="table table-striped table-bordered table-hover text-center">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>Validator</th>
-                                                        <th>Status</th>
-                                                        <th>Voting Power</th>
-                                                        <th>Commission</th>
-                                                        <th>Tokens Staked</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr v-for="(validator,index) in stakedValidators.validators"
-                                                        :key="index">
-                                                        <td>
-                                                            <div class="td-acount">
-                                                                <div class="icon"></div>
-                                                                <span>{{ validator | getMoniker }}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td><span class="status"
-                                                                  v-if="validator.status===3">Active</span>
-                                                        </td>
-                                                        <td>{{ validator|getTokens }}</td>
-                                                        <td>{{ validator|getRate }}</td>
-                                                        <td>no tokens</td>
-                                                        <td><a href="#"
-                                                               @click="showModalDelegate(validator.description.moniker)">DELEGATE</a>
-                                                        </td>
-                                                    </tr>
-
-                                                    </tbody>
-                                                </table>
+                                                <ValidatorTable :validators="stakedValidators.validators" @showModal="handelShowModal"/>
                                             </div>
                                         </div>
                                     </div>
@@ -176,7 +110,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModalStake">
+                                @click="closeModal('modalStake')">
                             <span aria-hidden="true"></span></button>
                     </div>
                     <ModalStake :validators="validators" :coin="coin"/>
@@ -189,7 +123,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModalUnDelegate">
+                                @click="closeModal('modalUnDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
                     <ModalUndelegate :stakedValidators="stakedValidators.validators" :delegate="delegate"/>
@@ -202,7 +136,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModalReDelegate">
+                                @click="closeModal('modalReDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
                     <ModalRelegate :stakedValidators="stakedValidators.validators" :validators="validators"
@@ -216,7 +150,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModalDelegate">
+                                @click="closeModal('modalDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
                     <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate"/>
@@ -230,35 +164,24 @@
 import Login from "@/components/login/Login";
 import {WalletHelper} from "@/utils/wallet";
 import ItemProposals from "@/components/item-top-proposals/ItemProposals";
-import {KelprWallet} from "../../utils/connectKeplr";
-import ModalStake from "../../components/ModalStake";
-import ModalRelegate from "../../components/ModalRelegate";
-import ModalUndelegate from "../../components/ModalUndelegate";
-import ModalDelegate from "../../components/ModalDelegate";
+import {KelprWallet} from "@/utils/connectKeplr";
+import ModalStake from "@/components/ModalStake";
+import ModalRelegate from "@/components/ModalRelegate";
+import ModalUndelegate from "@/components/ModalUndelegate";
+import ModalDelegate from "@/components/ModalDelegate";
+import ValidatorTable from "@/components/validator/ValidatorTable.vue"
 
 const DENOM = process.env.VUE_APP_DENOM
 export default {
     name: "Dashboard",
-    components: {ModalDelegate, ModalUndelegate, ModalRelegate, ModalStake, ItemProposals, Login},
-    filters: {
-        getMoniker(validator) {
-            if (validator.description) {
-                return validator.description.moniker
-            }
-            return ''
-        },
-        getTokens(validator) {
-            if (validator.tokens) {
-                let a = (validator.tokens / 10 ** 6).toFixed(1)
-                return new Intl.NumberFormat().format(a) + '0'
-            }
-        },
-        getRate(validator) {
-            if (validator.commission.commissionRates.rate) {
-                return (validator.commission.commissionRates.rate) / 10 ** 12
-            }
-        },
-
+    components: {
+        ModalDelegate, 
+        ModalUndelegate, 
+        ModalRelegate, 
+        ModalStake, 
+        ItemProposals, 
+        Login,
+        ValidatorTable
     },
     data: function () {
         return {
@@ -279,14 +202,14 @@ export default {
     },
     async mounted() {
         await this.getWallet()
-        this.getAllValidators()
-        this.getProposals()
+        await this.getAllValidators()
+        await this.getProposals()
         // this.detailValidator()
-        this.getRewards()
-        this.getBalances()
-        this.delegation()
-        this.unbonding()
-        this.stakeds()
+        await this.getRewards()
+        await this.getBalances()
+        await this.delegation()
+        await this.unbonding()
+        await this.stakeds()
     },
     methods: {
         setActiveTab(tabId) {
@@ -298,6 +221,19 @@ export default {
             }
             return ''
         },
+        showModal(title, refName) {
+            if(refName == 'modalDelegate') {
+                this.titleDelegate = title
+            }
+            this.$refs[refName].classList.toggle("in")
+            document.body.classList.toggle("modal-open");
+            this.$refs[refName].style.display = "block"
+        },
+        closeModal(refName) {
+            this.$refs[refName].classList.toggle("in")
+            document.body.classList.toggle("modal-open");
+            this.$refs[refName].style.display = "none"
+        },
         async getWallet() {
             this.wallet = await WalletHelper.connect()
         },
@@ -306,18 +242,12 @@ export default {
             this.validators = [...data.validators]
             data.validators.splice(10, data.validators.length - 10)
             this.allValidators = data
-            console.log(this.allValidators.validators, 'vali')
         },
         async getProposals() {
             const res = await this.wallet.getListProposal(3, '', '')
             this.proposals = res.proposals
             console.log(this.proposals, 'proposals')
         },
-        // async detailValidator() {
-        //     const validator = await this.wallet.getDetailValidator('junovaloper196ax4vc0lwpxndu9dyhvca7jhxp70rmcqcnylw')
-        //     console.log(validator)
-        // }
-        // ,
         async getRewards() {
             const response = await this.wallet.getRewards(this.address_user)
             response.total.forEach(item => {
@@ -326,8 +256,7 @@ export default {
                 }
             })
             console.log(response, 'rewards')
-        }
-        ,
+        },
         async getBalances() {
             const balances = await this.wallet.getBalances('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
             balances.forEach(item => {
@@ -337,13 +266,10 @@ export default {
                 }
             })
             console.log(balances, 'bal')
-        }
-        ,
+        },
         async unbonding() {
-            const unbonding = await this.wallet.getUnbonding(this.address_user)
-            console.log(unbonding, 'unbon')
-        }
-        ,
+            await this.wallet.getUnbonding(this.address_user)
+        },
         async delegation() {
             const delegation = await this.wallet.getDelegation('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
             delegation.delegationResponses.forEach(item => {
@@ -352,46 +278,9 @@ export default {
                     this.stakedTokens += item.balance.amount / 10 ** 8
                 }
             })
-            console.log(delegation, 'delegation')
         },
         async stakeds() {
             this.stakedValidators = await this.wallet.getStakedValidators("juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh")
-            console.log(this.stakedValidators, 'staked')
-        },
-        showModalStake() {
-            this.$refs.modalStake.classList.toggle("in")
-            document.body.classList.toggle("modal-open");
-            this.$refs.modalStake.style.display = "block"
-        }, showModalUnDelegate() {
-            this.$refs.modalUnDelegate.classList.toggle("in")
-            document.body.classList.toggle("modal-open");
-            this.$refs.modalUnDelegate.style.display = "block"
-        }, showModalReDelegate() {
-            this.$refs.modalReDelegate.classList.toggle("in")
-            document.body.classList.toggle("modal-open");
-            this.$refs.modalReDelegate.style.display = "block"
-        }, showModalDelegate(title) {
-            this.titleDelegate = title
-            this.$refs.modalDelegate.classList.toggle("in")
-            document.body.classList.toggle("modal-open");
-            this.$refs.modalDelegate.style.display = "block"
-        },
-        closeModalStake() {
-            this.$refs.modalStake.classList.toggle("in")
-            document.body.classList.toggle("modal-open");
-            this.$refs.modalStake.style.display = "none"
-        }, closeModalUnDelegate() {
-            this.$refs.modalUnDelegate.classList.toggle("in")
-            document.body.classList.toggle("modal-open");
-            this.$refs.modalUnDelegate.style.display = "none"
-        }, closeModalReDelegate() {
-            this.$refs.modalReDelegate.classList.toggle("in")
-            document.body.classList.toggle("modal-open");
-            this.$refs.modalReDelegate.style.display = "none"
-        }, closeModalDelegate() {
-            this.$refs.modalDelegate.classList.toggle("in")
-            document.body.classList.toggle("modal-open");
-            this.$refs.modalDelegate.style.display = "none"
         },
     },
 }

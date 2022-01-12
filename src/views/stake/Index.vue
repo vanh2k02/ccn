@@ -17,7 +17,6 @@
                                             Validators</a></li>
                                     </ul>
                                 </div>
-                                <div class="link-see-all">See all ></div>
                             </div>
                             <div class="content-tab-vali">
                                 <div class="content-tab" id="allvali"
@@ -25,37 +24,7 @@
                                     <div class="content-detail">
                                         <div class="cos-table-list">
                                             <div class="table-responsive">
-                                                <table
-                                                    class="table table-striped table-bordered table-hover text-center">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>Validator</th>
-                                                        <th>Status</th>
-                                                        <th>Voting Power</th>
-                                                        <th>Commission</th>
-                                                        <th>Tokens Staked</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr v-for="(validator,index) in allValidators.validators"
-                                                        :key="index">
-                                                        <td>
-                                                            <div class="td-acount">
-                                                                <div class="icon"></div>
-                                                                <span>{{ validator | getMoniker }}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td><span class="status"
-                                                                  v-if="validator.status===3">Active</span>
-                                                        </td>
-                                                        <td>{{ validator|getTokens }}</td>
-                                                        <td>{{ validator|getRate }}</td>
-                                                        <td>no tokens</td>
-                                                        <td><a href="#">DELEGATE</a></td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
+                                                <ValidatorTable :validators="allValidators.validators" @showModal="showModal"/>
                                             </div>
                                         </div>
                                     </div>
@@ -65,38 +34,7 @@
                                     <div class="content-detail">
                                         <div class="cos-table-list">
                                             <div class="table-responsive">
-                                                <table
-                                                    class="table table-striped table-bordered table-hover text-center">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>Validator</th>
-                                                        <th>Status</th>
-                                                        <th>Voting Power</th>
-                                                        <th>Commission</th>
-                                                        <th>Tokens Staked</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr v-for="(validator,index) in stakedValidators.validators"
-                                                        :key="index">
-                                                        <td>
-                                                            <div class="td-acount">
-                                                                <div class="icon"></div>
-                                                                <span>{{ validator | getMoniker }}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td><span class="status"
-                                                                  v-if="validator.status===3">Active</span>
-                                                        </td>
-                                                        <td>{{ validator|getTokens }}</td>
-                                                        <td>{{ validator|getRate }}</td>
-                                                        <td>no tokens</td>
-                                                        <td><a href="#">DELEGATE</a></td>
-                                                    </tr>
-
-                                                    </tbody>
-                                                </table>
+                                                <ValidatorTable :validators="stakedValidators.validators" @showModal="showModal"/>
                                             </div>
                                         </div>
                                     </div>
@@ -107,17 +45,37 @@
                 </div>
             </div>
         </div>
+        <div class="modal modal-dialog-centered fade popup_customer" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel" aria-hidden="true" ref="modalDelegate" id="popupStakeTokens">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
+                                @click="closeModal('modalDelegate')">
+                            <span aria-hidden="true"></span></button>
+                    </div>
+                    <ModalDelegate :validators="allValidators.validators" :coin="coin" :titleDelegate="titleDelegate"/>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
 import Login from "@/components/login/Login";
 import {WalletHelper} from "@/utils/wallet";
-import {KelprWallet} from "../../utils/connectKeplr";
+import {KelprWallet} from "@/utils/connectKeplr";
+import ValidatorTable from "@/components/validator/ValidatorTable.vue"
+import ModalDelegate from "@/components/ModalDelegate.vue";
 
+const DENOM = process.env.VUE_APP_DENOM
 export default {
     name: "stake",
-    components: {Login},
+    components: {
+        Login,
+        ValidatorTable,
+        ModalDelegate
+    },
     data: function () {
         return {
             allValidators: [],
@@ -125,31 +83,15 @@ export default {
             stakedValidators: [],
             wallet: '',
             address_user: KelprWallet.getAddress(),
+            titleDelegate: '',
+            coin: '0',
         }
     },
     async mounted() {
         await this.getWallet()
-        this.getAllValidators()
-        this.stakeds()
-    },
-    filters: {
-        getMoniker(validator) {
-            if (validator.description) {
-                return validator.description.moniker
-            }
-            return ''
-        },
-        getTokens(validator) {
-            if (validator.tokens) {
-                let a = (validator.tokens / 10 ** 6).toFixed(1)
-                return new Intl.NumberFormat().format(a) + '0'
-            }
-        },
-        getRate(validator) {
-            if (validator.commission.commissionRates.rate) {
-                return (validator.commission.commissionRates.rate) / 10 ** 12
-            }
-        }
+        await this.getAllValidators()
+        await this.stakeds()
+        await this.getBalances()
     },
     methods: {
         setActiveTab(tabId) {
@@ -166,9 +108,31 @@ export default {
         },
         async getAllValidators() {
             this.allValidators = await this.wallet.getValidators("BOND_STATUS_BONDED")
-        }, async stakeds() {
+        }, 
+        async stakeds() {
             this.stakedValidators = await this.wallet.getStakedValidators('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
-            console.log(this.stakedValidators, 'staked')
+        },
+        showModal(title, refName) {
+            if(refName == 'modalDelegate') {
+                this.titleDelegate = title
+            }
+            this.$refs[refName].classList.toggle("in")
+            document.body.classList.toggle("modal-open");
+            this.$refs[refName].style.display = "block"
+        },
+        closeModal(refName) {
+            this.$refs[refName].classList.toggle("in")
+            document.body.classList.toggle("modal-open");
+            this.$refs[refName].style.display = "none"
+        },
+        async getBalances() {
+            const balances = await this.wallet.getBalances('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+            balances.forEach(item => {
+                if (item.denom === DENOM) {
+                    this.coin = item.amount
+                }
+            })
+            console.log(balances, 'bal')
         },
     }
 }
