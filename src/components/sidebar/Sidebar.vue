@@ -25,7 +25,8 @@ export default {
     components: {
         TabSideBar,
         Logo,
-    }, data: function () {
+    }, 
+    data: function () {
         return {
             address: ''
         }

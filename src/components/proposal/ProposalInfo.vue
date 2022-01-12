@@ -24,9 +24,9 @@ import moment from "moment";
 export default {
     props: {
         proposer: String,
-        submitTime: String,
-        votingStartTime: String,
-        votingEndTime: String
+        submitTime: Date,
+        votingStartTime: Date,
+        votingEndTime: Date
     },
     filters: {
         formatDateTime(dateTime) {

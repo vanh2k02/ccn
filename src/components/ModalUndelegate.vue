@@ -37,7 +37,7 @@
 
 <script>
 const DEMON = process.env.VUE_APP_DENOM
-import {KelprWallet} from "../utils/connectKeplr";
+import {KelprWallet} from "@/utils/connectKeplr";
 
 export default {
     name: "ModalUndelegate",
@@ -47,7 +47,6 @@ export default {
             style: 'none',
             token: 0,
             tokenStaked: 0,
-            address_user: KelprWallet.getAddress(),
             addressDelegator: '',
             amount: {
                 demon: DEMON,
@@ -86,8 +85,9 @@ export default {
         },
         async sendRequest() {
             try {
-                const KelprWallet = await KelprWallet.getKeplrWallet()
-                await KelprWallet.unDelegateTokens(this.address_user, this.addressDelegator, this.amount)
+                const delegatorAddress = await KelprWallet.getAddress()
+                const kelprWallet = await KelprWallet.getKeplrWallet()
+                await kelprWallet.unDelegateTokens(delegatorAddress, this.addressDelegator, this.amount)
             } catch (err) {
                 console.log(err.message)
             }

@@ -41,7 +41,8 @@
                                                             :vote="proposal.finalTallyResult"
                                                             :title="proposal.content.value"
                                                             :proposalId="proposal.proposalId.low"
-                                                            @showModal="showModal(proposal.proposalId.low,index+1)"/>
+                                                            @showModal="showModal(proposal.proposalId.low,index+1)"
+                                                            @voteProposal="handelVote"/>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -62,7 +63,8 @@
                                                             :vote="proposal.finalTallyResult"
                                                             :title="proposal.content.value"
                                                             :proposalId="proposal.proposalId.low"
-                                                            @showModal="showModal(proposal.proposalId.low,index+1)"/>
+                                                            @showModal="showModal(proposal.proposalId.low,index+1)"
+                                                            @voteProposal="handelVote"/>
                                                     </li>
 
                                                 </ul>
@@ -84,7 +86,8 @@
                                                             :vote="proposal.finalTallyResult"
                                                             :title="proposal.content.value"
                                                             :proposalId="proposal.proposalId.low"
-                                                            @showModal="showModal(proposal.proposalId.low,index+1)"/>
+                                                            @showModal="showModal(proposal.proposalId.low,index+1)"
+                                                            @voteProposal="handelVote"/>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -105,7 +108,8 @@
                                                             :vote="proposal.finalTallyResult"
                                                             :title="proposal.content.value"
                                                             :proposalId="proposal.proposalId.low"
-                                                            @showModal="showModal(proposal.proposalId.low,index+1)"/>
+                                                            @showModal="showModal(proposal.proposalId.low,index+1)"
+                                                            @voteProposal="handelVote"/>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -162,7 +166,7 @@
                                         :abstain="proposalDetail.finalTallyResult.abstain"
                                     />
                                     <div class="cnt-vote">
-                                        <button class="btn btn-vote">Vote</button>
+                                        <button class="btn btn-vote" @click="handelVote(proposalDetail.proposalId.long)">Vote</button>
                                     </div>
                                 </div>
                             </div>
@@ -179,12 +183,14 @@
 
 import Login from "@/components/login/Login";
 import { WalletHelper } from "@/utils/wallet";
+import { KelprWallet } from "@/utils/connectKeplr";
 import ItemProposalsTab from "@/components/ItemProposalsTab";
 import { ProposalStatus } from "@/utils/constant";
 import ProposalHeader from "@/components/proposal/ProposalHeader.vue"
 import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
 import ProposalChart from "@/components/proposal/ProposalChart.vue"
 import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
+import { VoteOption } from "@/utils/constant"
 
 export default {
     name: "proposals",
@@ -209,7 +215,7 @@ export default {
             style: '',
             des: '',
             proposal: '',
-            proposalsForStatus: []
+            proposalsForStatus: [],
         }
     },
     async created() {
@@ -274,6 +280,15 @@ export default {
         },
         isEmpty(obj) {
             return Object.keys(obj).length === 0;
+        },
+        async handelVote(proposalId) {
+             try {
+                const voter = await KelprWallet.getAddress()
+                const keplrWallet = await KelprWallet.getKeplrWallet()
+                await keplrWallet.vote(voter, proposalId, VoteOption.VOTE_OPTION_YES)
+            } catch (err) {
+                console.log(err.message)
+            }
         }
     }
 }

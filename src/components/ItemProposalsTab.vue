@@ -1,5 +1,5 @@
 <template>
-    <a href="javascript:void (0)" @click="eventModal">
+    <a href="javascript:void(0)">
         <li>
             <div class="item-proposal-detail">
                 <ProposalHeader 
@@ -8,7 +8,7 @@
                     :title="des.typeUrl"
                 />
                 <div class="box-item-detail-proposal">
-                    <div class="left-item-detail">
+                    <div class="left-item-detail" @click="eventModal">
                         <div class="sub-title-item"
                              style="height: 100px!important;,width: 350px;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
                             {{ des.content }}
@@ -34,7 +34,7 @@
                             :noWithVeto="vote.noWithVeto"
                         />
                         <div class="cnt-vote">
-                            <button class="btn btn-vote">Vote</button>
+                            <button class="btn btn-vote" @click="handelVote(proposalId)">Vote</button>
                         </div>
                     </div>
                 </div>
@@ -83,23 +83,6 @@ export default {
             default: ''
         }
     },
-    data: function () {
-        return {
-            chartData: {
-                hoverBackgroundColor: "red",
-                hoverBorderWidth: 50,
-                borderWidth: 1,
-                labels: [],
-                datasets: [
-                    {
-                        label: "Data One",
-                        backgroundColor: ["#89C777", "#FF9300", "#DE3232", "#0A198E"],
-                        data: [this.vote.yes, this.vote.no, this.vote.noWithVeto, this.vote.abstain]
-                    }
-                ]
-            },
-        }
-    },
     computed: {
         des() {
             return  WalletHelper.convertContent(this.title)
@@ -112,6 +95,9 @@ export default {
         eventModal() {
             this.$emit('showModal')
         },
+        handelVote(proposalId) {
+            this.$emit('voteProposal', proposalId)
+        }
     }
 }
 </script>

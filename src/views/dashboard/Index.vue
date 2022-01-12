@@ -68,7 +68,7 @@
                                     <div class="content-detail">
                                         <div class="cos-table-list">
                                             <div class="table-responsive">
-                                                <ValidatorTable :validators="stakedValidators.validators" @showModal="handelShowModal"/>
+                                                <ValidatorTable :validators="stakedValidators.validators" @showModal="showModal"/>
                                             </div>
                                         </div>
                                     </div>
@@ -164,7 +164,6 @@
 import Login from "@/components/login/Login";
 import {WalletHelper} from "@/utils/wallet";
 import ItemProposals from "@/components/item-top-proposals/ItemProposals";
-import {KelprWallet} from "@/utils/connectKeplr";
 import ModalStake from "@/components/ModalStake";
 import ModalRelegate from "@/components/ModalRelegate";
 import ModalUndelegate from "@/components/ModalUndelegate";
@@ -193,7 +192,6 @@ export default {
             reward: 0,
             stakedTokens: 0,
             proposals: [],
-            address_user: KelprWallet.getAddress(),
             validators: [],
             coin: '0',
             delegate: [],

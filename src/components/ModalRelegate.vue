@@ -66,7 +66,6 @@ export default {
             token: 0,
             dstValidatorAddress: '',
             srcValidatorAddress: '',
-            address_user: KelprWallet.getAddress(),
             amount: {
                 denom: process.env.VUE_APP_DENOM,
                 amount: this.token
@@ -125,7 +124,8 @@ export default {
         async sendData() {
             try {
                 const keplrWallet = await KelprWallet.getKeplrWallet()
-                await keplrWallet.redelegateTokens(this.address_user, this.srcValidatorAddress, this.dstValidatorAddress, this.amount)
+                const delegatorAddress = await KelprWallet.getAddress()
+                await keplrWallet.redelegateTokens(delegatorAddress, this.srcValidatorAddress, this.dstValidatorAddress, this.amount)
             } catch(err){
                 console.log(err.message)
             }
