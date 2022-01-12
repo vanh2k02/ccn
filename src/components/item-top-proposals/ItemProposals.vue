@@ -4,7 +4,7 @@
         <div class="title-item-vali">
             <div class="number">{{ index + 1 }}</div>
             <div class="cnt-text"><a href="#">Status</a><a
-                :style="{backgroundColor:style}" href="#">{{ name }}</a>
+                :style="{backgroundColor:style, color: textColor}" href="#">{{ name }}</a>
             </div>
         </div>
         <div class="box-item-detail">
@@ -38,11 +38,12 @@
 
 <script>
 
-import {proposalStatusObject} from "../../utils/constant";
-import {WalletHelper} from "../../utils/wallet";
+import { proposalStatusObject } from "@/utils/constant";
+import { WalletHelper } from "@/utils/wallet";
 import moment from "moment";
 import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
 import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
+
 
 export default {
     name: "ItemProposals",
@@ -59,16 +60,9 @@ export default {
         votingEndTime: {type: Date, default: ''},
         vote: Object,
         proposalId: Number
-
     },
     data: function () {
         return {
-            yes: this.vote.yes,
-            no: this.vote.no,
-            noWithVeto: this.vote.noWithVeto,
-            abstain: this.vote.abstain,
-            name: '',
-            style: '',
             proposer: ''
         }
     }, 
@@ -83,22 +77,23 @@ export default {
         des() {
             return WalletHelper.convertContent(this.title)
         },
+        name() {
+            return proposalStatusObject[this.status].name
+        },
+        style() {
+            return proposalStatusObject[this.status].style
+        },
+        textColor() {
+             return proposalStatusObject[this.status].color
+        }
     }, 
     mounted() {
         this.getProposal()
     },
     methods: {
-        checkStatus() {
-            proposalStatusObject.forEach(item => {
-                if (item.status === this.status) {
-                    this.name = item.name
-                    this.style = item.style
-                }
-            })
-        },
         async getProposal() {
-            this.proposer = await WalletHelper.getSumitProposer(this.proposalId)
-            console.log(this.proposer)
+            // this.proposer = await WalletHelper.getSumitProposer(this.proposalId)
+            // console.log(this.proposer)
         }
     }
 }

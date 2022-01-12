@@ -23,6 +23,9 @@ export default {
     }, 
     filters: {
         getPercent(value, totalVote) {
+            if(totalVote == 0) {
+                return 0
+            }
             return ((value / totalVote) * 100).toFixed(2)
         }
     },

@@ -67,7 +67,7 @@ import {WalletHelper} from "@/utils/wallet";
 import ValidatorTable from "@/components/validator/ValidatorTable.vue"
 import ModalDelegate from "@/components/ModalDelegate.vue";
 
-const DENOM = process.env.VUE_APP_DENOM
+const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 export default {
     name: "stake",
     components: {
