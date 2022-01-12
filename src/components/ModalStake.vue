@@ -45,7 +45,7 @@ export default {
             dropdown: false,
             style: 'none',
             addressDelegator: '',
-            address_user: 'KelprWallet.getAddress()',
+            address_user: KelprWallet.getAddress(),
             token: 0,
             amount: {
                 denom: DENOM,

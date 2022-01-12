@@ -18,6 +18,7 @@
 
 import Logo from "@/components/sidebar/Logo";
 import TabSideBar from "./TabSideBar";
+import {EventBus} from '@/main';
 
 export default {
     name: "SideBar",
@@ -32,10 +33,11 @@ export default {
     methods: {
         logout() {
             localStorage.removeItem('address')
+            console.log('abc')
             this.emitAddress()
         },
         emitAddress() {
-            this.$emit('setAddress', this.address)
+            EventBus.$emit('setAddress', this.address)
         }
     }
 }

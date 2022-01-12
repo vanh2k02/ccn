@@ -1,38 +1,39 @@
-export const proposalStatus = [
-    {
-        status: 0,
+export const proposalStatusObject = {
+    0 : {
         name: 'UNSPECIFIED',
-        style: '#0000FFF9'
+        style: '#0000FFF9',
+        color: 'black'
     },
-    {
-        status: 1,
+    1: {
         name: 'DEPOSIT PERIOD',
-        style: '#0000FFF9'
+        style: '#0000FFF9',
+        color: 'black'
     },
-    {
-        status: 2,
+    2: {
         name: 'VOTING PERIOD',
-        style: '#0000FFF9'
+        style: '#0000FFF9',
+        color: 'white'
     },
-    {
-        status: 3,
+    3: {
         name: 'PASSED',
-        style: '#8DFF2FFF'
+        style: '#8DFF2FFF',
+        color: 'black'
     },
-    {
-        status: 4,
+    4: {
         name: 'REJECTED',
-        style: '#FF0044D8'
+        style: '#FF0044D8',
+        color: 'white'
     },
-    {
-        status: 5,
+    5: {
         name: 'FAILED',
-        style: '#0000FFF9'
+        style: '#0000FFF9',
+        color: 'black'
     },
-    {
-        UNRECOGNIZED: -1
+    "-1": {
+        name: '',
+        style: ''
     }
-]
+}
 export const ProposalStatus = {
     /** PROPOSAL_STATUS_UNSPECIFIED - PROPOSAL_STATUS_UNSPECIFIED defines the default propopsal status. */
     PROPOSAL_STATUS_UNSPECIFIED: 0,

@@ -88,7 +88,7 @@ export class WalletHelper {
     }
 
 
-    convertContent(content) {
+    static convertContent(content) {
         const {typeUrl, value} = Any.decode(content)
         return {
             typeUrl,
@@ -96,8 +96,7 @@ export class WalletHelper {
         }
     }
 
-    static async getSumitProposer(proposalId) {
-        const stargateclient = await WalletHelper.getStargateClient()
+    static async getSumitProposer(stargateClient, proposalId) {
         const query = {
             tags: [
                 {
@@ -110,7 +109,7 @@ export class WalletHelper {
                 },
             ]
         }
-        const result = await stargateclient.searchTx(query)
+        const result = await stargateClient.searchTx(query)
         const rawLog = JSON.parse(result[0].rawLog)[0]
         const {events} = rawLog
         let proposer = ""

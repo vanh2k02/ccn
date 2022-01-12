@@ -1,7 +1,7 @@
 <template>
     <div class="content-wallet">
         <div class="row">
-            <Login :address="address"/>
+            <Login/>
             <div class="col-md-7 float-left">
                 <div class="content-wall-left">
                     <div class="blocks-status">
@@ -128,7 +128,9 @@
                                                         <td>{{ validator|getTokens }}</td>
                                                         <td>{{ validator|getRate }}</td>
                                                         <td>no tokens</td>
-                                                        <td><a href="#">DELEGATE</a></td>
+                                                        <td><a href="#"
+                                                               @click="showModalDelegate(validator.description.moniker)">DELEGATE</a>
+                                                        </td>
                                                     </tr>
 
                                                     </tbody>
@@ -234,7 +236,6 @@ import ModalRelegate from "../../components/ModalRelegate";
 import ModalUndelegate from "../../components/ModalUndelegate";
 import ModalDelegate from "../../components/ModalDelegate";
 
-
 const DENOM = process.env.VUE_APP_DENOM
 export default {
     name: "Dashboard",
@@ -256,10 +257,8 @@ export default {
             if (validator.commission.commissionRates.rate) {
                 return (validator.commission.commissionRates.rate) / 10 ** 12
             }
-        }
-    },
-    props: {
-        address: String
+        },
+
     },
     data: function () {
         return {
