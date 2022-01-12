@@ -1,33 +1,35 @@
 export const proposalStatusObject = {
     0 : {
         name: 'UNSPECIFIED',
-        style: '#0000FFF9'
+        style: '#0000FFF9',
+        color: 'black'
     },
     1: {
         name: 'DEPOSIT PERIOD',
-        style: '#0000FFF9'
+        style: '#0000FFF9',
+        color: 'black'
     },
     2: {
         name: 'VOTING PERIOD',
-        style: '#0000FFF9'
+        style: '#0000FFF9',
+        color: 'white'
     },
     3: {
-        status: 3,
         name: 'PASSED',
-        style: '#8DFF2FFF'
+        style: '#8DFF2FFF',
+        color: 'black'
     },
     4: {
-        status: 4,
         name: 'REJECTED',
-        style: '#FF0044D8'
+        style: '#FF0044D8',
+        color: 'white'
     },
     5: {
-        status: 5,
         name: 'FAILED',
-        style: '#0000FFF9'
+        style: '#0000FFF9',
+        color: 'black'
     },
     "-1": {
-        UNRECOGNIZED: -1,
         name: '',
         style: ''
     }

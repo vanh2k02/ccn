@@ -14,30 +14,23 @@
                       -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
                 {{ des.content }}
             </div>
-            <ul class="info-item">
-                <li><span class="title">Proposer:</span><span
-                    class="info"> {{ proposer }}</span></li>
-                <li><span class="title">Submitted on:</span><span
-                    class="info"> {{ submitTime| formatDateTime }}</span></li>
-                <li><span class="title">Voting Period:</span><span
-                    class="info"> {{
-                        votingStartTime| formatDateTime
-                    }} to {{ votingEndTime| formatDateTime }}</span>
-                </li>
-            </ul>
+            <ProposalInfo 
+                :proposer="proposer"
+                :submitTime="submitTime"
+                :votingStartTime="votingStartTime"
+                :votingEndTime="votingEndTime"
+            />
         </div>
         <div class="bottom-item-vali">
             <div class="cnt-vote">
                 <button class="btn btn-vote">Vote</button>
             </div>
-            <div class="cnt-vote">
-                <div class="vote">Yes: {{ ((yes / totalVote) * 100).toFixed(2) }} %</div>
-                <div class="notvote">NoWithVeto: {{ ((noWithVeto / totalVote) * 100).toFixed(2) }} %</div>
-            </div>
-            <div class="cnt-vote cnt-absta">
-                <div class="no-ab">No: {{ ((no / totalVote) * 100).toFixed(2) }} %</div>
-                <div class="abstain">Abstain: {{ ((abstain / totalVote) * 100).toFixed(2) }} %</div>
-            </div>
+            <ProposalVoteInfo
+                :yes="vote.yes"
+                :no="vote.no"
+                :abstain="vote.abstain"
+                :noWithVeto="vote.noWithVeto"
+            />
         </div>
     </div>
 
@@ -48,9 +41,15 @@
 import {proposalStatusObject} from "../../utils/constant";
 import {WalletHelper} from "../../utils/wallet";
 import moment from "moment";
+import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
+import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
 
 export default {
     name: "ItemProposals",
+    components: {
+        ProposalInfo,
+        ProposalVoteInfo
+    },
     props: {
         index: Number,
         status: Number,
@@ -81,9 +80,6 @@ export default {
         }
     },
     computed: {
-        totalVote() {
-            return Number(this.no) + Number(this.yes) + Number(this.noWithVeto) + Number(this.abstain)
-        },
         des() {
             return WalletHelper.convertContent(this.title)
         },

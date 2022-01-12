@@ -5,7 +5,7 @@
             <h3>{{ title }}</h3>
         </div>
         <div class="cnt-text"><a href="#">Status</a><a
-            :style="{backgroundColor:style}" href="#">{{ name  }}</a></div>
+            :style="{backgroundColor:style, color: textColor}" href="#">{{ name  }}</a></div>
     </div>
 </template>
 <script>
@@ -26,6 +26,9 @@ export default {
         },
         style() {
             return proposalStatusObject[this.status].style
+        },
+        textColor() {
+             return proposalStatusObject[this.status].color
         }
     }
 }

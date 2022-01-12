@@ -32,6 +32,7 @@
                                                 <ul>
                                                     <li v-for="(proposal,index) in proposals" :key="index">
                                                         <ItemProposalsTab
+                                                            :proposer="proposal.proposer"
                                                             :index="index"
                                                             :status="proposal.status"
                                                             :submitTime="proposal.submitTime"
@@ -52,6 +53,7 @@
                                                 <ul>
                                                     <li v-for="(proposal,index) in proposalsForStatus" :key="index">
                                                         <ItemProposalsTab
+                                                            :proposer="proposal.proposer"
                                                             :index="index"
                                                             :status="proposal.status"
                                                             :submitTime="proposal.submitTime"
@@ -73,6 +75,7 @@
                                                 <ul>
                                                     <li v-for="(proposal,index) in proposalsForStatus" :key="index">
                                                         <ItemProposalsTab
+                                                            :proposer="proposal.proposer"
                                                             :index="index"
                                                             :status="proposal.status"
                                                             :submitTime="proposal.submitTime"
@@ -93,6 +96,7 @@
                                                 <ul>
                                                     <li v-for="(proposal,index) in proposalsForStatus" :key="index">
                                                         <ItemProposalsTab
+                                                            :proposer="proposal.proposer"
                                                             :index="index"
                                                             :status="proposal.status"
                                                             :submitTime="proposal.submitTime"
@@ -123,52 +127,40 @@
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true"
                                 @click="closeModal"><span aria-hidden="true"></span></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" v-if="!isEmpty(proposalDetail)">
                         <div class="item-proposal-detail">
                             <ProposalHeader 
                                 :id="i"
                                 :status="proposalDetail.status"
+                                :title="proposalDetail.des.typeUrl"
                             />
                         </div>
                         <div class="box-item-detail-proposal">
                             <div class="left-item-detail">
                                 <div class="box-left-detail">
-                                    <ul class="info-item">
-                                        <li>
-                                            <span class="title">Proposer:</span>
-                                            <span class="info"> {{ proposal }}</span>
-                                        </li>
-                                        <li>
-                                            <span class="title">Submitted on:</span>
-                                            <span class="info"> 
-                                                {{ proposalDetail.submitTime|formatDateTime }}
-                                            </span>
-                                        </li>
-                                        <li>
-                                            <span class="title">Voting Period:</span>
-                                            <span class="info"> 
-                                                {{
-                                                proposalDetail.votingStartTime| formatDateTime }} to 
-                                                {{ proposalDetail.votingEndTime| formatDateTime }}
-                                            </span>
-                                        </li>
-                                    </ul>
-                                    <p>{{ des.content }}</p>
+                                    <ProposalInfo 
+                                        :proposer="proposalDetail.proposer"
+                                        :submitTime="proposalDetail.submitTime"
+                                        :votingStartTime="proposalDetail.votingStartTime"
+                                        :votingEndTime="proposalDetail.votingEndTime"
+                                    />
+                                    <p>{{ proposalDetail.des.content }}</p>
                                 </div>
                             </div>
                             <div class="right-item-proposal">
                                 <div class="cnt-proposal">
-                                    <div class="chart">
-                                        <pie-chart :data="chartData" style="width: 100px"></pie-chart>
-                                    </div>
-                                    <div class="cnt-vote">
-                                        <div class="vote">Yes: 82%</div>
-                                        <div class="notvote">NoWithVeto: 0.72%</div>
-                                    </div>
-                                    <div class="cnt-vote cnt-absta">
-                                        <div class="no-ab">No: 12%</div>
-                                        <div class="abstain">Abstain: 5.28%</div>
-                                    </div>
+                                    <ProposalChart 
+                                        :yes="proposalDetail.finalTallyResult.yes"
+                                        :no="proposalDetail.finalTallyResult.no"
+                                        :noWithVeto="proposalDetail.finalTallyResult.noWithVeto"
+                                        :abstain="proposalDetail.finalTallyResult.abstain"
+                                    />
+                                    <ProposalVoteInfo 
+                                        :yes="proposalDetail.finalTallyResult.yes"
+                                        :no="proposalDetail.finalTallyResult.no"
+                                        :noWithVeto="proposalDetail.finalTallyResult.noWithVeto"
+                                        :abstain="proposalDetail.finalTallyResult.abstain"
+                                    />
                                     <div class="cnt-vote">
                                         <button class="btn btn-vote">Vote</button>
                                     </div>
@@ -189,17 +181,20 @@ import Login from "@/components/login/Login";
 import { WalletHelper } from "@/utils/wallet";
 import ItemProposalsTab from "@/components/ItemProposalsTab";
 import { ProposalStatus } from "@/utils/constant";
-import PieChart from "@/utils/doughnutChart";
-import moment from "moment";
 import ProposalHeader from "@/components/proposal/ProposalHeader.vue"
+import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
+import ProposalChart from "@/components/proposal/ProposalChart.vue"
+import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
 
 export default {
     name: "proposals",
     components: {
         ItemProposalsTab, 
         Login, 
-        PieChart,
-        ProposalHeader
+        ProposalHeader,
+        ProposalVoteInfo,
+        ProposalChart,
+        ProposalInfo
     },
     data: function () {
         return {
@@ -214,33 +209,14 @@ export default {
             style: '',
             des: '',
             proposal: '',
-            chartData: {
-                hoverBackgroundColor: "red",
-                hoverBorderWidth: 50,
-                borderWidth: 1,
-                labels: [],
-                datasets: [
-                    {
-                        label: "Data One",
-                        backgroundColor: ["#89C777", "#FF9300", "#DE3232", "#0A198E"],
-                        data: [1, 1, 1, 1]
-                    }
-                ]
-            },
             proposalsForStatus: []
         }
-    },
-    filters: {
-        formatDateTime(dateTime) {
-            const a = moment(dateTime, "dddd, MMMM Do YYYY, h:mm:ss").toString()
-            return a.split(' ').slice(0, 5).join(' ');
-        }
-
     },
     async created() {
         await this.getWallet()
         await this.getProposals()
         await this.getStargetClient()
+        await this.formatProposals()
     },
     methods: {
         checkClick(key, status) {
@@ -259,7 +235,6 @@ export default {
         },
         async getStargetClient() {
             this.stargateClient = await WalletHelper.getStargateClient()
-            console.log(this.stargateClient)
         },
         async getProposals() {
             const res = await this.wallet.getListProposal(this.statusProposal.UNRECOGNIZED, "", "")
@@ -284,11 +259,21 @@ export default {
             this.$refs.modal.style.display = "none"
         },
         getProposalByStatus(status) {
-            this.proposals.forEach(item => {
-                if (item.status === status) {
-                    this.proposalsForStatus.push(item)
-                }
-            })
+            this.proposalsForStatus = this.proposals.filter(x => x.status === status)
+        },
+        async getProposal(proposalId) {
+            return await WalletHelper.getSumitProposer(this.stargateClient, proposalId)
+        },
+        async formatProposals() {
+            const proposals = [...this.proposals]
+            for await (const data of proposals) { 
+                data.proposer = await this.getProposal(data.proposalId)
+                data.des = WalletHelper.convertContent(data.content.value)
+            }
+            this.proposals = [...proposals]
+        },
+        isEmpty(obj) {
+            return Object.keys(obj).length === 0;
         }
     }
 }
