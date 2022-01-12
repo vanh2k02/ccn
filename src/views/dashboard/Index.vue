@@ -169,6 +169,7 @@ import ModalRelegate from "@/components/ModalRelegate";
 import ModalUndelegate from "@/components/ModalUndelegate";
 import ModalDelegate from "@/components/ModalDelegate";
 import ValidatorTable from "@/components/validator/ValidatorTable.vue"
+import { ProposalStatus } from "@/utils/constant"
 
 const DENOM = process.env.VUE_APP_DENOM
 export default {
@@ -206,7 +207,7 @@ export default {
         await this.getRewards()
         await this.getBalances()
         await this.delegation()
-        await this.unbonding()
+        // this.unbonding()
         await this.stakeds()
     },
     methods: {
@@ -242,9 +243,8 @@ export default {
             this.allValidators = data
         },
         async getProposals() {
-            const res = await this.wallet.getListProposal(3, '', '')
+            const res = await this.wallet.getListProposal(ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD, '', '')
             this.proposals = res.proposals
-            console.log(this.proposals, 'proposals')
         },
         async getRewards() {
             const response = await this.wallet.getRewards(this.address_user)
@@ -253,7 +253,6 @@ export default {
                     this.reward = item.amount / 10 ** 24
                 }
             })
-            console.log(response, 'rewards')
         },
         async getBalances() {
             const balances = await this.wallet.getBalances('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')

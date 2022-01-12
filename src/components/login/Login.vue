@@ -43,8 +43,12 @@ export default {
     },
     methods: {
         async connectWallet() {
-            await KelprWallet.connectWallet()
-            this.getAddress()
+            try {
+                await KelprWallet.connectWallet()
+                this.getAddress()
+            } catch (err) {
+                console.log(err.message)
+            }
         },
         getAddress() {
             this.address = localStorage.getItem("address")
