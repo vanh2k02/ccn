@@ -83,7 +83,6 @@
                                                             :proposalId="proposal.proposalId.low"
                                                             @showModal="showModal(proposal.proposalId.low,index+1)"/>
                                                     </li>
-
                                                 </ul>
                                             </div>
                                         </div>
@@ -104,8 +103,6 @@
                                                             :proposalId="proposal.proposalId.low"
                                                             @showModal="showModal(proposal.proposalId.low,index+1)"/>
                                                     </li>
-
-
                                                 </ul>
                                             </div>
                                         </div>
@@ -286,27 +283,12 @@ export default {
             document.body.classList.toggle("modal-open");
             this.$refs.modal.style.display = "none"
         },
-        async getDescription() {
-            this.des = WalletHelper.convertContent(this.proposalDetail.content.value)
-        },
-        getProposal() {
-            console.log(1)
-            // const proposal_id = this.proposalDetail.proposalId.low
-            // // chuyen sang dung await va filter theo proposal_id
-            // // proposal_id --> proposalId
-            // const result = WalletHelper.getSumitProposer(this.stargateClient, proposal_id)
-            // Promise.resolve(result).then(res => {
-            //     this.proposal = res
-            // })
-        },
         getProposalByStatus(status) {
-            console.log(status)
             this.proposals.forEach(item => {
                 if (item.status === status) {
                     this.proposalsForStatus.push(item)
                 }
             })
-            console.log(this.proposalsForStatus)
         }
     }
 }

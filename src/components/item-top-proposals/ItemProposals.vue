@@ -16,7 +16,7 @@
             </div>
             <ul class="info-item">
                 <li><span class="title">Proposer:</span><span
-                    class="info"> {{ proposal }}</span></li>
+                    class="info"> {{ proposer }}</span></li>
                 <li><span class="title">Submitted on:</span><span
                     class="info"> {{ submitTime| formatDateTime }}</span></li>
                 <li><span class="title">Voting Period:</span><span
@@ -68,11 +68,9 @@ export default {
             no: this.vote.no,
             noWithVeto: this.vote.noWithVeto,
             abstain: this.vote.abstain,
-            totalVote: 0,
             name: '',
             style: '',
-            des: '',
-            proposal: ''
+            proposer: ''
         }
     }, 
     filters: {
@@ -82,15 +80,18 @@ export default {
             return a.split(' ').slice(0, 5).join(' ');
         }
     },
+    computed: {
+        totalVote() {
+            return Number(this.no) + Number(this.yes) + Number(this.noWithVeto) + Number(this.abstain)
+        },
+        des() {
+            return WalletHelper.convertContent(this.title)
+        },
+    }, 
     mounted() {
-        this.getTotal()
-        this.getDescription()
         this.getProposal()
     },
     methods: {
-        getTotal() {
-            this.totalVote = Number(this.no) + Number(this.yes) + Number(this.noWithVeto) + Number(this.abstain)
-        },
         checkStatus() {
             proposalStatusObject.forEach(item => {
                 if (item.status === this.status) {
@@ -99,16 +100,9 @@ export default {
                 }
             })
         },
-        async getDescription() {
-            this.des = WalletHelper.convertContent(this.title)
-        },
-        getProposal() {
-            console.log(this.proposalId)
-            const result = WalletHelper.getSumitProposer(this.proposalId)
-            Promise.resolve(result).then(res => {
-                this.proposal = res
-            })
-
+        async getProposal() {
+            this.proposer = await WalletHelper.getSumitProposer(this.proposalId)
+            console.log(this.proposer)
         }
     }
 }
