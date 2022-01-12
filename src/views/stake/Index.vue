@@ -64,7 +64,6 @@
 <script>
 import Login from "@/components/login/Login";
 import {WalletHelper} from "@/utils/wallet";
-import {KelprWallet} from "@/utils/connectKeplr";
 import ValidatorTable from "@/components/validator/ValidatorTable.vue"
 import ModalDelegate from "@/components/ModalDelegate.vue";
 
@@ -82,7 +81,6 @@ export default {
             activeTab: "allValidators",
             stakedValidators: [],
             wallet: '',
-            address_user: KelprWallet.getAddress(),
             titleDelegate: '',
             coin: '0',
         }

@@ -101,7 +101,11 @@ export class KelprWallet {
         return localStorage.setItem("address", address);
     }
 
-    static getAddress() {
+    static async getAddress() {
+        const address = localStorage.getItem("address", "");
+        if(!address) {
+            await KelprWallet.connectWallet()
+        }
         return localStorage.getItem("address", "");
     }
 
@@ -132,6 +136,23 @@ export class KelprWallet {
         const fee = this.getFee()
         const memo = "Redelegate";
         const result = await this.getClient().signAndBroadcast(delegatorAddress, [msgAny], fee, memo);
+        assertIsBroadcastTxSuccess(result);
+    }
+
+    async vote(voter, proposalId, option){
+        const msg = {
+            proposalId,
+            voter,
+            option
+        };
+        const msgAny = {
+            typeUrl: "/cosmos.gov.v1beta1.MsgVote",
+            value: msg,
+        };
+
+        const fee = this.getFee()
+        const memo = "Voting";
+        const result = await this.getClient().signAndBroadcast(voter, [msgAny], fee, memo);
         assertIsBroadcastTxSuccess(result);
     }
 }

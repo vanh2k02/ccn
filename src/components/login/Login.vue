@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import {WalletHelper} from "@/utils/wallet";
 import {KelprWallet} from "@/utils/connectKeplr";
 import {EventBus} from "@/main";
 
@@ -45,12 +44,12 @@ export default {
     methods: {
         async connectWallet() {
             await KelprWallet.connectWallet()
-            await WalletHelper.connect()
             this.getAddress()
         },
         getAddress() {
-            this.address = KelprWallet.getAddress();
-        }, doCopy: function () {
+            this.address = localStorage.getItem("address")
+        }, 
+        doCopy: function () {
             this.$copyText(this.address).then(function (e) {
                 alert('Copied')
                 console.log(e)

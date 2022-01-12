@@ -64,3 +64,17 @@ export const ProposalStatus = {
     PROPOSAL_STATUS_FAILED: 5,
     UNRECOGNIZED: -1
 }
+
+export const VoteOption = {
+    /** VOTE_OPTION_UNSPECIFIED - VOTE_OPTION_UNSPECIFIED defines a no-op vote option. */
+    VOTE_OPTION_UNSPECIFIED: 0,
+    /** VOTE_OPTION_YES - VOTE_OPTION_YES defines a yes vote option. */
+    VOTE_OPTION_YES: 1,
+    /** VOTE_OPTION_ABSTAIN - VOTE_OPTION_ABSTAIN defines an abstain vote option. */
+    VOTE_OPTION_ABSTAIN: 2,
+    /** VOTE_OPTION_NO - VOTE_OPTION_NO defines a no vote option. */
+    VOTE_OPTION_NO: 3,
+    /** VOTE_OPTION_NO_WITH_VETO - VOTE_OPTION_NO_WITH_VETO defines a no with veto vote option. */
+    VOTE_OPTION_NO_WITH_VETO: 4,
+    UNRECOGNIZED: -1
+}
