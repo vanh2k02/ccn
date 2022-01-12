@@ -22,7 +22,7 @@
                         <div class="status-items">
                             <div class="title">Rewards</div>
                             <div class="number">{{ reward.toFixed(1) }}</div>
-                            <div class="list-link"><a class="disable" href="#">CLAIM</a></div>
+                            <div class="list-link"><a class="disable" href="javascript:void(0)" @click="claim">CLAIM</a></div>
                         </div>
                         <div class="status-items">
                             <div class="title">Unstaked Tokens</div>
@@ -162,7 +162,8 @@
 
 <script>
 import Login from "@/components/login/Login";
-import {WalletHelper} from "@/utils/wallet";
+import { WalletHelper } from "@/utils/wallet";
+import { KelprWallet } from "@/utils/connectKeplr";
 import ItemProposals from "@/components/item-top-proposals/ItemProposals";
 import ModalStake from "@/components/ModalStake";
 import ModalRelegate from "@/components/ModalRelegate";
@@ -197,7 +198,8 @@ export default {
             coin: '0',
             delegate: [],
             titleDelegate: '',
-            address: ''
+            address: '',
+            listReward: []
         }
     },
     async mounted() {
@@ -254,20 +256,18 @@ export default {
         },
         async getRewards() {
             if(this.address){
-                const response = await this.wallet.getRewards(this.address)
-                if(response){
-                    response.total.forEach(item => {
-                        if (item.denom === DENOM) {
-                            this.reward = item.amount / 10 ** 24
-                        }
-                    })
-                }
+                const response = await this.wallet.getRewards("juno1rzlnl0yjuztvm7ctkmhc3aj9pyash66nuuvstg")
+                response.total.forEach(item => {
+                    if (item.denom === DENOM) {
+                        this.reward = item.amount / 10 ** 24
+                    }
+                })
+                this.listReward = response.rewards
             }
         },
         async getBalances() {
             if(this.address){
                 const balances = await this.wallet.getBalances('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
-                console.log(balances)
                 balances.forEach(item => {
                     if (item.denom === DENOM) {
                         this.coin = item.amount
@@ -297,6 +297,13 @@ export default {
                 this.stakedValidators = await this.wallet.getStakedValidators("juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh")
             }
         },
+        async claim() {
+            const kelprWallet = await KelprWallet.getKeplrWallet()
+            const address = await KelprWallet.getAddress()
+            for await (const data of this.listReward) { 
+                await kelprWallet.claimRewards(address, data.validatorAddress)
+            }
+        }
     },
 }
 </script>
