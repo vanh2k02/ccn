@@ -1106,6 +1106,9 @@ ul {
 #contentDetailProposal .modal-dialog .box-item-detail-proposal .right-item-proposal .cnt-vote > div:hover::after {
   background-color: #004469;
 }
+#contentDetailProposal .modal-dialog .box-item-detail-proposal .right-item-proposal .active::after {
+  background-color: #004469;
+}
 #contentDetailProposal .modal-dialog .box-item-detail-proposal .right-item-proposal .cnt-vote .vote {
   color: #89C777;
 }

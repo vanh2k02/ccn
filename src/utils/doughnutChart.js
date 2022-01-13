@@ -1,7 +1,7 @@
 import { Doughnut, mixins } from "vue-chartjs";
 export default {
     extends: Doughnut,
-    props: ["data"],
+    props: ["data", "chartData"],
     mixins: [mixins.reactiveProp],
     watch: {
         data () {

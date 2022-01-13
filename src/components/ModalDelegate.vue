@@ -79,7 +79,7 @@ export default {
                 const delegatorAddress = await KelprWallet.getAddress()
                 await keplrWallet.delegateTokens(delegatorAddress, this.addressDelegator, this.amount)
             } catch (err) {
-                console.log(err.message)
+                this.$toast.error(err.message);
             }
         },
         maxAvailable() {

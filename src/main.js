@@ -13,10 +13,12 @@ import "@frontend/css/custom.css"
 import "@frontend/css/admin.css"
 import VueClipboard from 'vue-clipboard2'
 
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+
 Vue.use(VueClipboard)
-
+Vue.use(Toast, {});
 Vue.use(require('vue-moment'));
-
 Vue.use(VueRouter);
 
 Vue.config.productionTip = false

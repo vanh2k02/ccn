@@ -69,7 +69,6 @@ export default {
     filters: {
         formatDateTime(dateTime) {
             const a = moment(dateTime, "dddd, MMMM Do YYYY, h:mm:ss").toString()
-
             return a.split(' ').slice(0, 5).join(' ');
         }
     },
@@ -87,15 +86,6 @@ export default {
              return proposalStatusObject[this.status].color
         }
     }, 
-    mounted() {
-        this.getProposal()
-    },
-    methods: {
-        async getProposal() {
-            // this.proposer = await WalletHelper.getSumitProposer(this.proposalId)
-            // console.log(this.proposer)
-        }
-    }
 }
 </script>
 

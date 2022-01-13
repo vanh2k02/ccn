@@ -102,7 +102,11 @@ export default {
             return ''
         },
         async getWallet() {
-            this.wallet = await WalletHelper.connect()
+            try {
+                this.wallet = await WalletHelper.connect()
+            } catch (err) {
+                this.$toast.error(err.message);
+            }
         },
         async getAllValidators() {
             this.allValidators = await this.wallet.getValidators("BOND_STATUS_BONDED")
@@ -130,7 +134,6 @@ export default {
                     this.coin = item.amount
                 }
             })
-            console.log(balances, 'bal')
         },
     }
 }

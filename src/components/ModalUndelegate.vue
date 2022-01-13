@@ -89,7 +89,7 @@ export default {
                 const kelprWallet = await KelprWallet.getKeplrWallet()
                 await kelprWallet.unDelegateTokens(delegatorAddress, this.addressDelegator, this.amount)
             } catch (err) {
-                console.log(err.message)
+                this.$toast.error(err.message);
             }
         }
     }

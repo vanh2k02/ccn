@@ -89,14 +89,16 @@
                             <div class="content-detail-vali">
                                 <ul>
                                     <ItemProposals v-for="(proposal,index) in proposals" :key="index"
-                                                   :index="index"
-                                                   :proposalId="proposal.proposalId.low"
-                                                   :status="proposal.status"
-                                                   :submitTime="proposal.submitTime"
-                                                   :votingStartTime="proposal.votingStartTime"
-                                                   :votingEndTime="proposal.votingEndTime"
-                                                   :vote="proposal.finalTallyResult"
-                                                   :title="proposal.content.value"/>
+                                        :proposer="proposal.proposer"
+                                        :index="index"
+                                        :proposalId="proposal.proposalId.low"
+                                        :status="proposal.status"
+                                        :submitTime="proposal.submitTime"
+                                        :votingStartTime="proposal.votingStartTime"
+                                        :votingEndTime="proposal.votingEndTime"
+                                        :vote="proposal.finalTallyResult"
+                                        :title="proposal.content.value"
+                                    />
                                 </ul>
                             </div>
                         </div>
@@ -241,7 +243,12 @@ export default {
             this.$refs[refName].style.display = "none"
         },
         async getWallet() {
-            this.wallet = await WalletHelper.connect()
+            try {   
+                this.wallet = await WalletHelper.connect()
+            } catch (err) {
+                this.$toast.error(err.message);
+            }
+            
         },
         async getAllValidators() {
             const data = await this.wallet.getValidators("BOND_STATUS_BONDED")
@@ -252,7 +259,18 @@ export default {
         async getProposals() {
             const res = await this.wallet.getListProposal(ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD, '', '')
             this.proposals = res.proposals
-            console.log(this.proposals)
+            await this.formatProposals()
+        },
+        async getProposal(proposalId) {
+            return await WalletHelper.getSumitProposer(this.stargateClient, proposalId)
+        },
+        async formatProposals() {
+            const proposals = [...this.proposals]
+            for await (const data of proposals) { 
+                data.des = WalletHelper.convertContent(data.content.value)
+                data.proposer = await this.getProposal(data.proposalId)
+            }
+            this.proposals = [...proposals]
         },
         async getRewards() {
             if(this.address){
@@ -298,10 +316,14 @@ export default {
             }
         },
         async claim() {
-            const kelprWallet = await KelprWallet.getKeplrWallet()
-            const address = await KelprWallet.getAddress()
-            for await (const data of this.listReward) { 
-                await kelprWallet.claimRewards(address, data.validatorAddress)
+            try {
+                const kelprWallet = await KelprWallet.getKeplrWallet()
+                const address = await KelprWallet.getAddress()
+                for await (const data of this.listReward) { 
+                    await kelprWallet.claimRewards(address, data.validatorAddress)
+                }
+            } catch (err) {
+                this.$toast.error(err.message);
             }
         }
     },
