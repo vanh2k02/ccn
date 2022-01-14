@@ -387,7 +387,6 @@ export default {
                 data.proposer = await this.getProposal(stargateClient, data.proposalId)
             }
             this.proposals = [...proposals]
-            console.log(this.proposals)
         },
         async getRewards() {
             if (this.address) {

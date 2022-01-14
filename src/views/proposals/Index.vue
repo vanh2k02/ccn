@@ -291,7 +291,6 @@ export default {
                 if (item.proposalId.low === val) {
                     this.proposalDetail = item
                     if (item.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD) {
-                        console.log(item.status)
                         this.check = true
                     }
                     return
@@ -327,7 +326,6 @@ export default {
             loader.hide()
         },
         showVote() {
-            console.log(this.status, 'dd')
             if (this.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD) {
                 this.check = true
             } else {

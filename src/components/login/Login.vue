@@ -44,14 +44,14 @@ export default {
         },
         getAddress() {
             return localStorage.getItem("address")
-        }, 
+        },
         doCopy: function () {
             this.$copyText(this.address).then(function (e) {
                 alert('Copied')
-                console.log(e)
+
             }, function (e) {
                 alert('Can not copy')
-                console.log(e)
+
             })
         },
         getData() {
