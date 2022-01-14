@@ -38,7 +38,7 @@ export default {
                 const address = this.getAddress()
                 this.setAddress(address)
             } catch (err) {
-                console.log(err.message)
+                this.$toast.error(err.message)
             }
         },
         getAddress() {
