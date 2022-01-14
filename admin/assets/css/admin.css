@@ -385,6 +385,7 @@ ul {
 }
 .page-content .content-wallet .float-right {
   float: right;
+  margin-bottom: 20px;
 }
 .page-content .content-wallet .float-left {
   float: left;

@@ -315,7 +315,7 @@ export default {
             return ''
         },
         showModal(title, refName, proposalId, index) {
-            if (this.address == '' && proposalId ==='' ) {
+            if (this.address == '' && proposalId === '') {
                 this.$toast.error('Account not connected. Please connect to wallet')
                 return
             }
