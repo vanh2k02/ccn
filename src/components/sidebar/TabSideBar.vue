@@ -1,7 +1,7 @@
 <template>
     <div>
         <li v-for="(tab,index) in tabs" :key="index" :class="showClass(tab.url)" @click="checkClass(tab.url)">
-            <router-link :to="tab.url">
+            <router-link :to="{ name: tab.url}">
                 <div class="icon"><img class="default" :src="tab.image_default" alt="index"/><img
                     class="active" :src="tab.image_action" alt="index"/></div>
                 <span class="title">{{ tab.name }}</span></router-link>
@@ -18,15 +18,20 @@ export default {
     data: function () {
         return {
             tabs: defaultData,
-            check:this.$route.path,
+            activePathName: this.$route.name,
+        }
+    },
+    watch: {
+        '$route'(to) {
+            this.checkClass(to.name)
         }
     },
     methods: {
-        checkClass(path) {
-            this.check = path
+        checkClass(pathName) {
+            this.activePathName = pathName
         },
-        showClass(path) {
-            if (this.check === path) {
+        showClass(pathName) {
+            if (this.activePathName === pathName) {
                 return 'menu-active'
             }
             return ''
