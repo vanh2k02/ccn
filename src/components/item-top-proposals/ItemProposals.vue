@@ -39,7 +39,6 @@
 <script>
 
 import { proposalStatusObject } from "@/utils/constant";
-import { WalletHelper } from "@/utils/wallet";
 import moment from "moment";
 import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
 import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
@@ -59,13 +58,18 @@ export default {
         votingStartTime: {type: Date, default: ''},
         votingEndTime: {type: Date, default: ''},
         vote: Object,
-        proposalId: Number
-    },
-    data: function () {
-        return {
-            proposer: ''
+        proposalId: Number,
+        proposer: String,
+        des: {
+            type: Object,
+            default () {
+                return {
+                    typeUrl: '',
+                    content: ''
+                }
+            }
         }
-    }, 
+    },
     filters: {
         formatDateTime(dateTime) {
             const a = moment(dateTime, "dddd, MMMM Do YYYY, h:mm:ss").toString()
@@ -73,9 +77,6 @@ export default {
         }
     },
     computed: {
-        des() {
-            return WalletHelper.convertContent(this.title)
-        },
         name() {
             return proposalStatusObject[this.status].name
         },

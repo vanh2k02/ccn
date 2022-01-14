@@ -57,8 +57,12 @@
                                      v-show="activeClass('allValidators') === 'active'">
                                     <div class="content-detail">
                                         <div class="cos-table-list">
-                                            <div class="table-responsive">
-                                                <ValidatorTable :validators="allValidators.validators" @showModal="showModal"/>
+                                            <div class="table-responsive" ref="validatorTable">
+                                                <ValidatorTable 
+                                                    :validators="allValidators.validators" 
+                                                    :isStake="false" 
+                                                    @showModal="showModal" 
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -68,7 +72,11 @@
                                     <div class="content-detail">
                                         <div class="cos-table-list">
                                             <div class="table-responsive">
-                                                <ValidatorTable :validators="stakedValidators.validators" @showModal="showModal"/>
+                                                <ValidatorTable 
+                                                    :validators="stakedValidators.validators" 
+                                                    :isStake="true" 
+                                                    @showModal="showModal"
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -86,7 +94,7 @@
                                     <router-link to="/proposals"> See all</router-link>
                                 </div>
                             </div>
-                            <div class="content-detail-vali">
+                            <div class="content-detail-vali" ref="proposalTable">
                                 <ul>
                                     <ItemProposals v-for="(proposal,index) in proposals" :key="index"
                                         :proposer="proposal.proposer"
@@ -98,6 +106,7 @@
                                         :votingEndTime="proposal.votingEndTime"
                                         :vote="proposal.finalTallyResult"
                                         :title="proposal.content.value"
+                                        :des="proposal.des"
                                     />
                                 </ul>
                             </div>
@@ -201,25 +210,29 @@ export default {
             delegate: [],
             titleDelegate: '',
             address: '',
-            listReward: []
+            listReward: [],
         }
     },
     async mounted() {
-        this.getAddressFromLocalStorage()
         await this.getWallet()
         await this.getAllValidators()
         await this.stakeds()
         // this.detailValidator()
         await this.getRewards()
         await this.getBalances()
-        await this.delegation()
+        await this.getDelegation()
         // this.unbonding()
         await this.getProposals()
+        this.$store.subscribe(mutation => {
+            if (mutation.type === 'auth/setAddress') {
+                this.address = mutation.payload
+                this.getRewards()
+                this.getBalances()
+                this.getDelegation()
+            }
+        })
     },
     methods: {
-        getAddressFromLocalStorage() {
-            this.address = localStorage.getItem('address', "")
-        },
         setActiveTab(tabId) {
             this.activeTab = tabId
         },
@@ -248,33 +261,49 @@ export default {
             } catch (err) {
                 this.$toast.error(err.message);
             }
-            
+        },
+        async getStargetClient() {
+            return await WalletHelper.getStargateClient()
         },
         async getAllValidators() {
-            const data = await this.wallet.getValidators("BOND_STATUS_BONDED")
-            this.validators = [...data.validators]
-            data.validators.splice(10, data.validators.length - 10)
-            this.allValidators = data
+            const loader = this.showLoadling("validatorTable")
+            try {
+                const data = await this.wallet.getValidators("BOND_STATUS_BONDED")
+                this.validators = [...data.validators]
+                data.validators.splice(10, data.validators.length - 10)
+                this.allValidators = data
+            } catch (err) {
+                this.$toast.error(err.message);
+            }
+            this.hideLoading(loader)
         },
         async getProposals() {
-            const res = await this.wallet.getListProposal(ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD, '', '')
-            this.proposals = res.proposals
-            await this.formatProposals()
+            const loader = this.showLoadling("proposalTable")
+            try {
+                const res = await this.wallet.getListProposal(ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD, '', '')
+                this.proposals = res.proposals
+                await this.formatProposals()
+            } catch (err) {
+                this.$toast.error(err.message)
+            }
+            this.hideLoading(loader)
         },
-        async getProposal(proposalId) {
-            return await WalletHelper.getSumitProposer(this.stargateClient, proposalId)
+        async getProposal(stargateClient, proposalId) {
+            return await WalletHelper.getSumitProposer(stargateClient, proposalId)
         },
         async formatProposals() {
             const proposals = [...this.proposals]
-            for await (const data of proposals) { 
+            const stargateClient = await this.getStargetClient()
+            for await (const data of this.proposals) { 
                 data.des = WalletHelper.convertContent(data.content.value)
-                data.proposer = await this.getProposal(data.proposalId)
+                data.proposer = await this.getProposal(stargateClient, data.proposalId)
             }
             this.proposals = [...proposals]
+            console.log(this.proposals)
         },
         async getRewards() {
             if(this.address){
-                const response = await this.wallet.getRewards("juno1rzlnl0yjuztvm7ctkmhc3aj9pyash66nuuvstg")
+                const response = await this.wallet.getRewards(this.address)
                 response.total.forEach(item => {
                     if (item.denom === DENOM) {
                         this.reward = item.amount / 10 ** 24
@@ -285,7 +314,7 @@ export default {
         },
         async getBalances() {
             if(this.address){
-                const balances = await this.wallet.getBalances('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+                const balances = await this.wallet.getBalances(this.address)
                 balances.forEach(item => {
                     if (item.denom === DENOM) {
                         this.coin = item.amount
@@ -299,9 +328,9 @@ export default {
                 await this.wallet.getUnbonding(this.address)
             }
         },
-        async delegation() {
+        async getDelegation() {
             if(this.address){
-                const delegation = await this.wallet.getDelegation('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+                const delegation = await this.wallet.getDelegation(this.address)
                 delegation.delegationResponses.forEach(item => {
                     if (item.balance.denom === DENOM) {
                         this.delegate.push(item)
@@ -312,7 +341,7 @@ export default {
         },
         async stakeds() {
             if(this.address){
-                this.stakedValidators = await this.wallet.getStakedValidators("juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh")
+                this.stakedValidators = await this.wallet.getStakedValidators(this.address)
             }
         },
         async claim() {
@@ -325,7 +354,18 @@ export default {
             } catch (err) {
                 this.$toast.error(err.message);
             }
-        }
+        },
+        showLoadling(refName) {
+            const loader = this.$loading.show({
+                container: this.$refs[refName],
+                canCancel: true,
+                onCancel: this.onCancel,
+            });
+            return loader
+        },
+        hideLoading(loader) {
+            loader.hide()
+        },
     },
 }
 </script>

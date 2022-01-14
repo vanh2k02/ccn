@@ -23,35 +23,26 @@
 
 <script>
 import {KelprWallet} from "@/utils/connectKeplr";
-import {EventBus} from "@/main";
+import { mapState, mapMutations } from "vuex";
 
 export default {
     name: "Login",
-    data: function () {
-        return {
-            address: ''
-        }
-    },
-    created() {
-        EventBus.$on('setAddress', (address) => {
-            this.address = address
-        })
-
-    },
-    mounted: function () {
-        this.getAddress()
-    },
+    computed: { ...mapState("auth", ["address"]) },
     methods: {
+        ...mapMutations("auth", [
+            'setAddress'
+        ]),
         async connectWallet() {
             try {
                 await KelprWallet.connectWallet()
-                this.getAddress()
+                const address = this.getAddress()
+                this.setAddress(address)
             } catch (err) {
                 console.log(err.message)
             }
         },
         getAddress() {
-            this.address = localStorage.getItem("address")
+            return localStorage.getItem("address")
         }, 
         doCopy: function () {
             this.$copyText(this.address).then(function (e) {

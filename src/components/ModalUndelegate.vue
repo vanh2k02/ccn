@@ -88,6 +88,7 @@ export default {
                 const delegatorAddress = await KelprWallet.getAddress()
                 const kelprWallet = await KelprWallet.getKeplrWallet()
                 await kelprWallet.unDelegateTokens(delegatorAddress, this.addressDelegator, this.amount)
+                this.$toast.success("Undelegate success");
             } catch (err) {
                 this.$toast.error(err.message);
             }
