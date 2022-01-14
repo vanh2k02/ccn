@@ -28,6 +28,9 @@ import { mapState, mapMutations } from "vuex";
 export default {
     name: "Login",
     computed: { ...mapState("auth", ["address"]) },
+    mounted() {
+        this.getData()
+    },
     methods: {
         ...mapMutations("auth", [
             'setAddress'
@@ -52,6 +55,12 @@ export default {
                 alert('Can not copy')
                 console.log(e)
             })
+        },
+        getData() {
+            const address = localStorage.getItem("address")
+            if(address) {
+                this.setAddress(address)
+            }
         }
     }
 }

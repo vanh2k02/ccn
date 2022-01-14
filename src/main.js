@@ -18,6 +18,9 @@ import "vue-toastification/dist/index.css";
 import VueLoading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+
 import store from './store/store'
 
 Vue.use(VueClipboard)
@@ -25,6 +28,7 @@ Vue.use(VueLoading)
 Vue.use(Toast, {});
 Vue.use(require('vue-moment'));
 Vue.use(VueRouter);
+Vue.use(VueAxios, axios)
 
 Vue.config.productionTip = false
 

@@ -240,11 +240,11 @@ import ModalUndelegate from "@/components/ModalUndelegate";
 import ModalDelegate from "@/components/ModalDelegate";
 import ValidatorTable from "@/components/validator/ValidatorTable.vue"
 import {ProposalStatus} from "@/utils/constant"
-import {mapMutations} from "vuex";
-import ProposalInfo from "../../components/proposal/ProposalInfo";
-import ProposalChart from "../../components/proposal/ProposalChart";
-import ProposalVoteInfo from "../../components/proposal/ProposalVoteInfo";
-import ProposalHeader from "../../components/proposal/ProposalHeader";
+import {mapMutations, mapState} from "vuex";
+import ProposalInfo from "@/components/proposal/ProposalInfo";
+import ProposalChart from "@/components/proposal/ProposalChart";
+import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo";
+import ProposalHeader from "@/components/proposal/ProposalHeader";
 
 const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 export default {
@@ -276,12 +276,14 @@ export default {
             coin: '0',
             delegate: [],
             titleDelegate: '',
-            address: '',
             listReward: [],
             proposalDetail: [],
             i: 0,
             option: -1,
         }
+    },
+    computed: {
+        ...mapState('auth', ["address"])
     },
     async mounted() {
         await this.getWallet()
@@ -295,7 +297,6 @@ export default {
         await this.getProposals()
         this.$store.subscribe(mutation => {
             if (mutation.type === 'auth/setAddress') {
-                this.address = mutation.payload
                 this.getRewards()
                 this.getBalances()
                 this.getDelegation()
@@ -314,26 +315,26 @@ export default {
             return ''
         },
         showModal(title, refName, proposalId, index) {
-            if (this.address === '') {
+            if (this.address == '') {
                 this.$toast.error('Account not connected. Please connect to wallet')
-            } else {
-                if (refName == 'modalDelegate') {
-                    this.titleDelegate = title
-                }
-                if (proposalId) {
-                    this.i = index
-                    this.proposals.forEach(item => {
-                        if (item.proposalId.low === proposalId) {
-                            this.proposalDetail = item
-                            return
-                        }
-                    })
-                }
-                this.$refs[refName].classList.toggle("in")
-                document.body.classList.toggle("modal-open")
-                this.$refs[refName].style.display = "block"
-                this.setIsOpen(true)
+                return 
             }
+            if (refName == 'modalDelegate') {
+                this.titleDelegate = title
+            }
+            if (proposalId) {
+                this.i = index
+                this.proposals.forEach(item => {
+                    if (item.proposalId.low === proposalId) {
+                        this.proposalDetail = item
+                        return
+                    }
+                })
+            }
+            this.$refs[refName].classList.toggle("in")
+            document.body.classList.toggle("modal-open")
+            this.$refs[refName].style.display = "block"
+            this.setIsOpen(true)
 
         },
         closeModal(refName) {

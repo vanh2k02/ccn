@@ -650,6 +650,10 @@ ul {
   background-color: #F0F0F3;
 
 }
+.page-content .content-wallet .cnt-validator .table-bordered > tbody > tr > td .td-acount .icon img{
+  max-width: 100%;
+  height: auto
+}
 .page-content .content-wallet .cnt-validator .table-bordered > tbody > tr > td .td-acount span {
     width:calc(100% - 32px);
     margin-left: 10px;
