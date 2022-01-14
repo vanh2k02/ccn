@@ -12,6 +12,14 @@ body .login {
 .login_content a:hover {
   text-decoration: none;
 }
+.error {
+    color: red;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 30px;
+    position: absolute;
+    bottom: -20px;
+}
 .login {
   padding-top: 100px;
 }

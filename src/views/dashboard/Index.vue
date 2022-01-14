@@ -22,7 +22,8 @@
                         <div class="status-items">
                             <div class="title">Rewards</div>
                             <div class="number">{{ reward.toFixed(1) }}</div>
-                            <div class="list-link"><a class="disable" href="javascript:void(0)" @click="claim">CLAIM</a></div>
+                            <div class="list-link"><a class="disable" href="javascript:void(0)" @click="claim">CLAIM</a>
+                            </div>
                         </div>
                         <div class="status-items">
                             <div class="title">Unstaked Tokens</div>
@@ -97,16 +98,16 @@
                             <div class="content-detail-vali" ref="proposalTable">
                                 <ul>
                                     <ItemProposals v-for="(proposal,index) in proposals" :key="index"
-                                        :proposer="proposal.proposer"
-                                        :index="index"
-                                        :proposalId="proposal.proposalId.low"
-                                        :status="proposal.status"
-                                        :submitTime="proposal.submitTime"
-                                        :votingStartTime="proposal.votingStartTime"
-                                        :votingEndTime="proposal.votingEndTime"
-                                        :vote="proposal.finalTallyResult"
-                                        :title="proposal.content.value"
-                                        :des="proposal.des"
+                                                   :proposer="proposal.proposer"
+                                                   :index="index"
+                                                   :proposalId="proposal.proposalId.low"
+                                                   :status="proposal.status"
+                                                   :submitTime="proposal.submitTime"
+                                                   :votingStartTime="proposal.votingStartTime"
+                                                   :votingEndTime="proposal.votingEndTime"
+                                                   :vote="proposal.finalTallyResult"
+                                                   :title="proposal.content.value"
+                                                   :des="proposal.des"
                                     />
                                 </ul>
                             </div>
@@ -173,16 +174,16 @@
 
 <script>
 import Login from "@/components/login/Login";
-import { WalletHelper } from "@/utils/wallet";
-import { KelprWallet } from "@/utils/connectKeplr";
+import {WalletHelper} from "@/utils/wallet";
+import {KelprWallet} from "@/utils/connectKeplr";
 import ItemProposals from "@/components/item-top-proposals/ItemProposals";
 import ModalStake from "@/components/ModalStake";
 import ModalRelegate from "@/components/ModalRelegate";
 import ModalUndelegate from "@/components/ModalUndelegate";
 import ModalDelegate from "@/components/ModalDelegate";
 import ValidatorTable from "@/components/validator/ValidatorTable.vue"
-import { ProposalStatus } from "@/utils/constant"
-import { mapMutations } from "vuex";
+import {ProposalStatus} from "@/utils/constant"
+import {mapMutations} from "vuex";
 
 const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 export default {
@@ -247,8 +248,8 @@ export default {
         showModal(title, refName) {
             if (this.address === '') {
                 this.$toast.error('Account not connected. Please connect to wallet')
-            }else {
-                if(refName == 'modalDelegate') {
+            } else {
+                if (refName == 'modalDelegate') {
                     this.titleDelegate = title
                 }
                 this.$refs[refName].classList.toggle("in")
@@ -311,7 +312,7 @@ export default {
             console.log(this.proposals)
         },
         async getRewards() {
-            if(this.address){
+            if (this.address) {
                 const response = await this.wallet.getRewards(this.address)
                 response.total.forEach(item => {
                     if (item.denom === DENOM) {
@@ -322,7 +323,7 @@ export default {
             }
         },
         async getBalances() {
-            if(this.address){
+            if (this.address) {
                 const balances = await this.wallet.getBalances(this.address)
                 balances.forEach(item => {
                     if (item.denom === DENOM) {
@@ -333,12 +334,12 @@ export default {
             }
         },
         async unbonding() {
-            if(this.address){
+            if (this.address) {
                 await this.wallet.getUnbonding(this.address)
             }
         },
         async getDelegation() {
-            if(this.address){
+            if (this.address) {
                 const delegation = await this.wallet.getDelegation(this.address)
                 delegation.delegationResponses.forEach(item => {
                     if (item.balance.denom === DENOM) {
@@ -349,7 +350,7 @@ export default {
             }
         },
         async stakeds() {
-            if(this.address){
+            if (this.address) {
                 this.stakedValidators = await this.wallet.getStakedValidators(this.address)
             }
         },

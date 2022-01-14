@@ -105,12 +105,5 @@ export default {
 
 
 <style scoped>
-.error {
-    color: red;
-    font-size: 12px;
-    font-weight: 300;
-    line-height: 30px;
-    position: absolute;
-    bottom: -20px;
-}
+
 </style>
