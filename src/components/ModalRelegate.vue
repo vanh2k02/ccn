@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-vote" @click="sendData()"  :disabled="error||title=='Select validator'||token==''?'':disabled">STAKE</button>
+                    <button class="btn btn-vote" @click="sendData()" ::disabled="clickSubmit">STAKE</button>
                 </div>
             </div>
         </div>
@@ -146,6 +146,12 @@ export default {
                 this.error = ''
                 this.formInvalid.borderColor = ''
             }
+        },
+        clickSubmit() {
+            if (this.error || this.title == 'Select validator' || this.token == '') {
+                return ''
+            }
+            return 'disabled'
         }
     }
 }
