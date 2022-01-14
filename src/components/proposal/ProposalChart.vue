@@ -1,6 +1,6 @@
 <template>
     <div class="chart">
-        <pie-chart :data="chartData" style="width: 100px"></pie-chart>
+        <pie-chart :data="chartData" :options="{responsive: true, maintainAspectRatio: false, legend: {display: false}}" style="width: 100px; height: 200px"></pie-chart>
     </div>
 </template>
 <script>
@@ -22,12 +22,19 @@ export default {
                     hoverBackgroundColor: "red",
                     hoverBorderWidth: 50,
                     borderWidth: 1,
-                    labels: [],
+                    labels: [
+                        'Yes',
+                        'No with veto',
+                        'No',
+                        'Abstain'
+                    ],
                     datasets: [
                         {
                             label: "Data One",
                             backgroundColor: ["#89C777", "#FF9300", "#DE3232", "#0A198E"],
-                            data: [yes, no, noWithVeto, abstain]
+                            data: [yes, noWithVeto, no, abstain],
+                            hoverOffset: 4
+
                         }
                     ]
                 }
