@@ -46,12 +46,11 @@ export default {
             return localStorage.getItem("address")
         },
         doCopy: function () {
-            this.$copyText(this.address).then(function (e) {
+            this.$copyText(this.address).then(function () {
                 alert('Copied')
 
-            }, function (e) {
+            }, function () {
                 alert('Can not copy')
-
             })
         },
         getData() {
