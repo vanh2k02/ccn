@@ -182,6 +182,7 @@ import ModalUndelegate from "@/components/ModalUndelegate";
 import ModalDelegate from "@/components/ModalDelegate";
 import ValidatorTable from "@/components/validator/ValidatorTable.vue"
 import { ProposalStatus } from "@/utils/constant"
+import { mapMutations } from "vuex";
 
 const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 export default {
@@ -233,6 +234,7 @@ export default {
         })
     },
     methods: {
+        ...mapMutations("modal", ["setIsOpen"]),
         setActiveTab(tabId) {
             this.activeTab = tabId
         },
@@ -247,13 +249,15 @@ export default {
                 this.titleDelegate = title
             }
             this.$refs[refName].classList.toggle("in")
-            document.body.classList.toggle("modal-open");
+            document.body.classList.toggle("modal-open")
             this.$refs[refName].style.display = "block"
+            this.setIsOpen(true)
         },
         closeModal(refName) {
             this.$refs[refName].classList.toggle("in")
-            document.body.classList.toggle("modal-open");
+            document.body.classList.toggle("modal-open")
             this.$refs[refName].style.display = "none"
+            this.setIsOpen(false)
         },
         async getWallet() {
             try {   
