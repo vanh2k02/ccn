@@ -23,8 +23,8 @@
                                      v-show="activeClass('allValidators') === 'active'">
                                     <div class="content-detail">
                                         <div class="cos-table-list">
-                                            <div class="table-responsive">
-                                                <ValidatorTable :validators="allValidators.validators" @showModal="showModal"/>
+                                            <div class="table-responsive" ref="validatorTable">
+                                                <ValidatorTable :validators="allValidators.validators" @showModal="showModal" :isStake="false"/>
                                             </div>
                                         </div>
                                     </div>
@@ -34,7 +34,7 @@
                                     <div class="content-detail">
                                         <div class="cos-table-list">
                                             <div class="table-responsive">
-                                                <ValidatorTable :validators="stakedValidators.validators" @showModal="showModal"/>
+                                                <ValidatorTable :validators="stakedValidators.validators" @showModal="showModal" :isStake="true"/>
                                             </div>
                                         </div>
                                     </div>
@@ -67,7 +67,7 @@ import {WalletHelper} from "@/utils/wallet";
 import ValidatorTable from "@/components/validator/ValidatorTable.vue"
 import ModalDelegate from "@/components/ModalDelegate.vue";
 
-const DENOM = process.env.VUE_APP_DENOM
+const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 export default {
     name: "stake",
     components: {
@@ -83,6 +83,7 @@ export default {
             wallet: '',
             titleDelegate: '',
             coin: '0',
+            address: ''
         }
     },
     async mounted() {
@@ -90,6 +91,12 @@ export default {
         await this.getAllValidators()
         await this.stakeds()
         await this.getBalances()
+        this.$store.subscribe(mutation => {
+            if (mutation.type === 'auth/setAddress') {
+                this.address = mutation.payload
+                this.stakeds()
+            }
+        })
     },
     methods: {
         setActiveTab(tabId) {
@@ -102,13 +109,25 @@ export default {
             return ''
         },
         async getWallet() {
-            this.wallet = await WalletHelper.connect()
+            try {
+                this.wallet = await WalletHelper.connect()
+            } catch (err) {
+                this.$toast.error(err.message);
+            }
         },
         async getAllValidators() {
-            this.allValidators = await this.wallet.getValidators("BOND_STATUS_BONDED")
+            const loader = this.showLoadling("validatorTable")
+            try {
+                this.allValidators = await this.wallet.getValidators("BOND_STATUS_BONDED")
+            } catch (err) {
+                this.$toast.error(err.message)
+            }
+            this.hideLoading(loader)
         }, 
         async stakeds() {
-            this.stakedValidators = await this.wallet.getStakedValidators('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+            if(this.address){
+                this.stakedValidators = await this.wallet.getStakedValidators(this.address)
+            }
         },
         showModal(title, refName) {
             if(refName == 'modalDelegate') {
@@ -124,14 +143,26 @@ export default {
             this.$refs[refName].style.display = "none"
         },
         async getBalances() {
-            const balances = await this.wallet.getBalances('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
-            balances.forEach(item => {
-                if (item.denom === DENOM) {
-                    this.coin = item.amount
-                }
-            })
-            console.log(balances, 'bal')
+            if(this.address) {
+                const balances = await this.wallet.getBalances(this.address)
+                balances.forEach(item => {
+                    if (item.denom === DENOM) {
+                        this.coin = item.amount
+                    }
+                })
+            }
         },
+        showLoadling(refName) {
+            const loader = this.$loading.show({
+                container: this.$refs[refName],
+                canCancel: true,
+                onCancel: this.onCancel,
+            });
+            return loader
+        },
+        hideLoading(loader) {
+            loader.hide()
+        }
     }
 }
 </script>

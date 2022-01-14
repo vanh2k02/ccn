@@ -27,13 +27,19 @@
                 <td>no tokens</td>
                 <td><a href="javascript:void(0)" @click="delegate(validator.description.moniker)">DELEGATE</a></td>
             </tr>
+            <ValidatorNoData :validators="validators" :isStake="isStake" @connectSuccess="connectSuccess"/>
         </tbody>
     </table>
 </template>
 <script>
+import ValidatorNoData from "@/components/validator/ValidatorNoData.vue"
 export default {
+    components: {
+        ValidatorNoData
+    },
     props: {
-        validators: Array
+        validators: Array,
+        isStake: Boolean
     },
     filters: {
         getMoniker(validator) {
@@ -57,6 +63,9 @@ export default {
     methods: {
         delegate(moniker) {
             this.$emit('showModal', moniker, "modalDelegate")
+        },
+        connectSuccess() {
+            this.$emit('connectSuccess', 1)
         }
     }
 }

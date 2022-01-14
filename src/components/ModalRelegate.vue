@@ -126,8 +126,9 @@ export default {
                 const keplrWallet = await KelprWallet.getKeplrWallet()
                 const delegatorAddress = await KelprWallet.getAddress()
                 await keplrWallet.redelegateTokens(delegatorAddress, this.srcValidatorAddress, this.dstValidatorAddress, this.amount)
+                this.$toast.success("Redelegate success");
             } catch(err){
-                console.log(err.message)
+                this.$toast.error(err.message);
             }
             
         }

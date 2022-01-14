@@ -155,5 +155,12 @@ export class KelprWallet {
         const result = await this.getClient().signAndBroadcast(voter, [msgAny], fee, memo);
         assertIsBroadcastTxSuccess(result);
     }
+
+    async claimRewards (delegatorAddress, validatorAddress) {
+        const fee = this.getFee()
+        const memo = "Claim Reward";
+        const result =  await this.getClient().withdrawRewards(delegatorAddress, validatorAddress, fee, memo)
+        assertIsBroadcastTxSuccess(result);
+    }
 }
 

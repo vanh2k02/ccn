@@ -3,7 +3,6 @@ import App from './App.vue'
 
 export const EventBus = new Vue();
 
-
 import VueRouter from 'vue-router'
 import routers from './routes'
 
@@ -13,10 +12,18 @@ import "@frontend/css/custom.css"
 import "@frontend/css/admin.css"
 import VueClipboard from 'vue-clipboard2'
 
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+
+import VueLoading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
+
+import store from './store/store'
+
 Vue.use(VueClipboard)
-
+Vue.use(VueLoading)
+Vue.use(Toast, {});
 Vue.use(require('vue-moment'));
-
 Vue.use(VueRouter);
 
 Vue.config.productionTip = false
@@ -28,5 +35,6 @@ const router = new VueRouter({
 
 new Vue({
     router,
+    store,
     render: h => h(App)
 }).$mount('#app')

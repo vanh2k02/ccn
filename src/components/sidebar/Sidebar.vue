@@ -18,7 +18,7 @@
 
 import Logo from "@/components/sidebar/Logo";
 import TabSideBar from "./TabSideBar";
-import {EventBus} from '@/main';
+import { mapMutations } from "vuex";
 
 export default {
     name: "SideBar",
@@ -32,14 +32,13 @@ export default {
         }
     },
     methods: {
+        ...mapMutations("auth", [
+            'setAddress'
+        ]),
         logout() {
             localStorage.removeItem('address')
-            console.log('abc')
-            this.emitAddress()
+            this.setAddress('')
         },
-        emitAddress() {
-            EventBus.$emit('setAddress', this.address)
-        }
     }
 }
 </script>

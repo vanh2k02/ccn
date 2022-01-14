@@ -4,7 +4,7 @@
         <div class="title-item-vali">
             <div class="number">{{ index + 1 }}</div>
             <div class="cnt-text"><a href="#">Status</a><a
-                :style="{backgroundColor:style}" href="#">{{ name }}</a>
+                :style="{backgroundColor:style, color: textColor}" href="#">{{ name }}</a>
             </div>
         </div>
         <div class="box-item-detail">
@@ -38,11 +38,11 @@
 
 <script>
 
-import {proposalStatusObject} from "../../utils/constant";
-import {WalletHelper} from "../../utils/wallet";
+import { proposalStatusObject } from "@/utils/constant";
 import moment from "moment";
 import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
 import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
+
 
 export default {
     name: "ItemProposals",
@@ -58,49 +58,35 @@ export default {
         votingStartTime: {type: Date, default: ''},
         votingEndTime: {type: Date, default: ''},
         vote: Object,
-        proposalId: Number
-
-    },
-    data: function () {
-        return {
-            yes: this.vote.yes,
-            no: this.vote.no,
-            noWithVeto: this.vote.noWithVeto,
-            abstain: this.vote.abstain,
-            name: '',
-            style: '',
-            proposer: ''
+        proposalId: Number,
+        proposer: String,
+        des: {
+            type: Object,
+            default () {
+                return {
+                    typeUrl: '',
+                    content: ''
+                }
+            }
         }
-    }, 
+    },
     filters: {
         formatDateTime(dateTime) {
             const a = moment(dateTime, "dddd, MMMM Do YYYY, h:mm:ss").toString()
-
             return a.split(' ').slice(0, 5).join(' ');
         }
     },
     computed: {
-        des() {
-            return WalletHelper.convertContent(this.title)
+        name() {
+            return proposalStatusObject[this.status].name
         },
-    }, 
-    mounted() {
-        this.getProposal()
-    },
-    methods: {
-        checkStatus() {
-            proposalStatusObject.forEach(item => {
-                if (item.status === this.status) {
-                    this.name = item.name
-                    this.style = item.style
-                }
-            })
+        style() {
+            return proposalStatusObject[this.status].style
         },
-        async getProposal() {
-            this.proposer = await WalletHelper.getSumitProposer(this.proposalId)
-            console.log(this.proposer)
+        textColor() {
+             return proposalStatusObject[this.status].color
         }
-    }
+    }, 
 }
 </script>
 

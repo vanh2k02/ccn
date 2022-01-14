@@ -1,5 +1,5 @@
 <template>
-    <a href="javascript:void(0)">
+    <a href="javascript:void(0)" @click="eventModal">
         <li>
             <div class="item-proposal-detail">
                 <ProposalHeader 
@@ -8,7 +8,7 @@
                     :title="des.typeUrl"
                 />
                 <div class="box-item-detail-proposal">
-                    <div class="left-item-detail" @click="eventModal">
+                    <div class="left-item-detail">
                         <div class="sub-title-item"
                              style="height: 100px!important;,width: 350px;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
                             {{ des.content }}
@@ -95,9 +95,6 @@ export default {
         eventModal() {
             this.$emit('showModal')
         },
-        handelVote(proposalId) {
-            this.$emit('voteProposal', proposalId)
-        }
     }
 }
 </script>

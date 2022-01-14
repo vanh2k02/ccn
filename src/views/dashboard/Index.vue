@@ -22,7 +22,7 @@
                         <div class="status-items">
                             <div class="title">Rewards</div>
                             <div class="number">{{ reward.toFixed(1) }}</div>
-                            <div class="list-link"><a class="disable" href="#">CLAIM</a></div>
+                            <div class="list-link"><a class="disable" href="javascript:void(0)" @click="claim">CLAIM</a></div>
                         </div>
                         <div class="status-items">
                             <div class="title">Unstaked Tokens</div>
@@ -57,8 +57,12 @@
                                      v-show="activeClass('allValidators') === 'active'">
                                     <div class="content-detail">
                                         <div class="cos-table-list">
-                                            <div class="table-responsive">
-                                                <ValidatorTable :validators="allValidators.validators" @showModal="showModal"/>
+                                            <div class="table-responsive" ref="validatorTable">
+                                                <ValidatorTable 
+                                                    :validators="allValidators.validators" 
+                                                    :isStake="false" 
+                                                    @showModal="showModal" 
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -68,7 +72,11 @@
                                     <div class="content-detail">
                                         <div class="cos-table-list">
                                             <div class="table-responsive">
-                                                <ValidatorTable :validators="stakedValidators.validators" @showModal="showModal"/>
+                                                <ValidatorTable 
+                                                    :validators="stakedValidators.validators" 
+                                                    :isStake="true" 
+                                                    @showModal="showModal"
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -86,17 +94,20 @@
                                     <router-link to="/proposals"> See all</router-link>
                                 </div>
                             </div>
-                            <div class="content-detail-vali">
+                            <div class="content-detail-vali" ref="proposalTable">
                                 <ul>
                                     <ItemProposals v-for="(proposal,index) in proposals" :key="index"
-                                                   :index="index"
-                                                   :proposalId="proposal.proposalId.low"
-                                                   :status="proposal.status"
-                                                   :submitTime="proposal.submitTime"
-                                                   :votingStartTime="proposal.votingStartTime"
-                                                   :votingEndTime="proposal.votingEndTime"
-                                                   :vote="proposal.finalTallyResult"
-                                                   :title="proposal.content.value"/>
+                                        :proposer="proposal.proposer"
+                                        :index="index"
+                                        :proposalId="proposal.proposalId.low"
+                                        :status="proposal.status"
+                                        :submitTime="proposal.submitTime"
+                                        :votingStartTime="proposal.votingStartTime"
+                                        :votingEndTime="proposal.votingEndTime"
+                                        :vote="proposal.finalTallyResult"
+                                        :title="proposal.content.value"
+                                        :des="proposal.des"
+                                    />
                                 </ul>
                             </div>
                         </div>
@@ -162,15 +173,17 @@
 
 <script>
 import Login from "@/components/login/Login";
-import {WalletHelper} from "@/utils/wallet";
+import { WalletHelper } from "@/utils/wallet";
+import { KelprWallet } from "@/utils/connectKeplr";
 import ItemProposals from "@/components/item-top-proposals/ItemProposals";
 import ModalStake from "@/components/ModalStake";
 import ModalRelegate from "@/components/ModalRelegate";
 import ModalUndelegate from "@/components/ModalUndelegate";
 import ModalDelegate from "@/components/ModalDelegate";
 import ValidatorTable from "@/components/validator/ValidatorTable.vue"
+import { ProposalStatus } from "@/utils/constant"
 
-const DENOM = process.env.VUE_APP_DENOM
+const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 export default {
     name: "Dashboard",
     components: {
@@ -195,19 +208,29 @@ export default {
             validators: [],
             coin: '0',
             delegate: [],
-            titleDelegate: ''
+            titleDelegate: '',
+            address: '',
+            listReward: [],
         }
     },
     async mounted() {
         await this.getWallet()
         await this.getAllValidators()
-        await this.getProposals()
+        await this.stakeds()
         // this.detailValidator()
         await this.getRewards()
         await this.getBalances()
-        await this.delegation()
-        await this.unbonding()
-        await this.stakeds()
+        await this.getDelegation()
+        // this.unbonding()
+        await this.getProposals()
+        this.$store.subscribe(mutation => {
+            if (mutation.type === 'auth/setAddress') {
+                this.address = mutation.payload
+                this.getRewards()
+                this.getBalances()
+                this.getDelegation()
+            }
+        })
     },
     methods: {
         setActiveTab(tabId) {
@@ -233,52 +256,115 @@ export default {
             this.$refs[refName].style.display = "none"
         },
         async getWallet() {
-            this.wallet = await WalletHelper.connect()
+            try {   
+                this.wallet = await WalletHelper.connect()
+            } catch (err) {
+                this.$toast.error(err.message);
+            }
+        },
+        async getStargetClient() {
+            return await WalletHelper.getStargateClient()
         },
         async getAllValidators() {
-            const data = await this.wallet.getValidators("BOND_STATUS_BONDED")
-            this.validators = [...data.validators]
-            data.validators.splice(10, data.validators.length - 10)
-            this.allValidators = data
+            const loader = this.showLoadling("validatorTable")
+            try {
+                const data = await this.wallet.getValidators("BOND_STATUS_BONDED")
+                this.validators = [...data.validators]
+                data.validators.splice(10, data.validators.length - 10)
+                this.allValidators = data
+            } catch (err) {
+                this.$toast.error(err.message);
+            }
+            this.hideLoading(loader)
         },
         async getProposals() {
-            const res = await this.wallet.getListProposal(3, '', '')
-            this.proposals = res.proposals
-            console.log(this.proposals, 'proposals')
+            const loader = this.showLoadling("proposalTable")
+            try {
+                const res = await this.wallet.getListProposal(ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD, '', '')
+                this.proposals = res.proposals
+                await this.formatProposals()
+            } catch (err) {
+                this.$toast.error(err.message)
+            }
+            this.hideLoading(loader)
+        },
+        async getProposal(stargateClient, proposalId) {
+            return await WalletHelper.getSumitProposer(stargateClient, proposalId)
+        },
+        async formatProposals() {
+            const proposals = [...this.proposals]
+            const stargateClient = await this.getStargetClient()
+            for await (const data of this.proposals) { 
+                data.des = WalletHelper.convertContent(data.content.value)
+                data.proposer = await this.getProposal(stargateClient, data.proposalId)
+            }
+            this.proposals = [...proposals]
+            console.log(this.proposals)
         },
         async getRewards() {
-            const response = await this.wallet.getRewards(this.address_user)
-            response.total.forEach(item => {
-                if (item.denom === DENOM) {
-                    this.reward = item.amount / 10 ** 24
-                }
-            })
-            console.log(response, 'rewards')
+            if(this.address){
+                const response = await this.wallet.getRewards(this.address)
+                response.total.forEach(item => {
+                    if (item.denom === DENOM) {
+                        this.reward = item.amount / 10 ** 24
+                    }
+                })
+                this.listReward = response.rewards
+            }
         },
         async getBalances() {
-            const balances = await this.wallet.getBalances('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
-            balances.forEach(item => {
-                if (item.denom === DENOM) {
-                    this.coin = item.amount
-                    this.availableTokens = item.amount / 10 ** 6
-                }
-            })
-            console.log(balances, 'bal')
+            if(this.address){
+                const balances = await this.wallet.getBalances(this.address)
+                balances.forEach(item => {
+                    if (item.denom === DENOM) {
+                        this.coin = item.amount
+                        this.availableTokens = item.amount / 10 ** 6
+                    }
+                })
+            }
         },
         async unbonding() {
-            await this.wallet.getUnbonding(this.address_user)
+            if(this.address){
+                await this.wallet.getUnbonding(this.address)
+            }
         },
-        async delegation() {
-            const delegation = await this.wallet.getDelegation('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
-            delegation.delegationResponses.forEach(item => {
-                if (item.balance.denom === DENOM) {
-                    this.delegate.push(item)
-                    this.stakedTokens += item.balance.amount / 10 ** 8
-                }
-            })
+        async getDelegation() {
+            if(this.address){
+                const delegation = await this.wallet.getDelegation(this.address)
+                delegation.delegationResponses.forEach(item => {
+                    if (item.balance.denom === DENOM) {
+                        this.delegate.push(item)
+                        this.stakedTokens += item.balance.amount / 10 ** 8
+                    }
+                })
+            }
         },
         async stakeds() {
-            this.stakedValidators = await this.wallet.getStakedValidators("juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh")
+            if(this.address){
+                this.stakedValidators = await this.wallet.getStakedValidators(this.address)
+            }
+        },
+        async claim() {
+            try {
+                const kelprWallet = await KelprWallet.getKeplrWallet()
+                const address = await KelprWallet.getAddress()
+                for await (const data of this.listReward) { 
+                    await kelprWallet.claimRewards(address, data.validatorAddress)
+                }
+            } catch (err) {
+                this.$toast.error(err.message);
+            }
+        },
+        showLoadling(refName) {
+            const loader = this.$loading.show({
+                container: this.$refs[refName],
+                canCancel: true,
+                onCancel: this.onCancel,
+            });
+            return loader
+        },
+        hideLoading(loader) {
+            loader.hide()
         },
     },
 }

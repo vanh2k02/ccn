@@ -35,7 +35,7 @@
 </template>
 
 <script>
-const DENOM = process.env.VUE_APP_DENOM
+const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 import {KelprWallet} from "@/utils/connectKeplr";
 
 export default {
@@ -80,8 +80,9 @@ export default {
                 const keplrWallet = await KelprWallet.getKeplrWallet()
                 const delegatorAddress = await KelprWallet.getAddress()
                 await keplrWallet.delegateTokens(delegatorAddress, this.addressDelegator, this.amount)
+                this.$toast.success("Stake success");
             } catch (err) {
-                console.log(err.message)
+                this.$toast.error(err.message);
             }
         },
         maxAvailable() {

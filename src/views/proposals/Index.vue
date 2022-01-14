@@ -28,7 +28,7 @@
                                 <div class="content-tab-proposal">
                                     <div class="content-tab" id="all" v-show="activeClass('all')==='active'">
                                         <div class="content-detail">
-                                            <div class="content-detail-prop">
+                                            <div class="content-detail-prop" ref="proposalTable">
                                                 <ul>
                                                     <li v-for="(proposal,index) in proposals" :key="index">
                                                         <ItemProposalsTab
@@ -41,9 +41,9 @@
                                                             :vote="proposal.finalTallyResult"
                                                             :title="proposal.content.value"
                                                             :proposalId="proposal.proposalId.low"
-                                                            @showModal="showModal(proposal.proposalId.low,index+1)"
-                                                            @voteProposal="handelVote"/>
+                                                            @showModal="showModal(proposal.proposalId.low,index+1)"/>
                                                     </li>
+                                                    <ProposalNoData :proposals="proposals"/>
                                                 </ul>
                                             </div>
                                         </div>
@@ -63,10 +63,9 @@
                                                             :vote="proposal.finalTallyResult"
                                                             :title="proposal.content.value"
                                                             :proposalId="proposal.proposalId.low"
-                                                            @showModal="showModal(proposal.proposalId.low,index+1)"
-                                                            @voteProposal="handelVote"/>
+                                                            @showModal="showModal(proposal.proposalId.low,index+1)"/>
                                                     </li>
-
+                                                    <ProposalNoData :proposals="proposalsForStatus"/>
                                                 </ul>
                                             </div>
                                         </div>
@@ -86,9 +85,9 @@
                                                             :vote="proposal.finalTallyResult"
                                                             :title="proposal.content.value"
                                                             :proposalId="proposal.proposalId.low"
-                                                            @showModal="showModal(proposal.proposalId.low,index+1)"
-                                                            @voteProposal="handelVote"/>
+                                                            @showModal="showModal(proposal.proposalId.low,index+1)"/>
                                                     </li>
+                                                    <ProposalNoData :proposals="proposalsForStatus"/>
                                                 </ul>
                                             </div>
                                         </div>
@@ -108,9 +107,9 @@
                                                             :vote="proposal.finalTallyResult"
                                                             :title="proposal.content.value"
                                                             :proposalId="proposal.proposalId.low"
-                                                            @showModal="showModal(proposal.proposalId.low,index+1)"
-                                                            @voteProposal="handelVote"/>
+                                                            @showModal="showModal(proposal.proposalId.low,index+1)"/>
                                                     </li>
+                                                    <ProposalNoData :proposals="proposalsForStatus"/>
                                                 </ul>
                                             </div>
                                         </div>
@@ -164,9 +163,10 @@
                                         :no="proposalDetail.finalTallyResult.no"
                                         :noWithVeto="proposalDetail.finalTallyResult.noWithVeto"
                                         :abstain="proposalDetail.finalTallyResult.abstain"
+                                        @changeOption="handelChangeOption"
                                     />
                                     <div class="cnt-vote">
-                                        <button class="btn btn-vote" @click="handelVote(proposalDetail.proposalId.long)">Vote</button>
+                                        <button class="btn btn-vote" @click="handelVote">Vote</button>
                                     </div>
                                 </div>
                             </div>
@@ -190,7 +190,7 @@ import ProposalHeader from "@/components/proposal/ProposalHeader.vue"
 import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
 import ProposalChart from "@/components/proposal/ProposalChart.vue"
 import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
-import { VoteOption } from "@/utils/constant"
+import ProposalNoData from "@/components/proposal/ProposalNoData.vue"
 
 export default {
     name: "proposals",
@@ -200,7 +200,8 @@ export default {
         ProposalHeader,
         ProposalVoteInfo,
         ProposalChart,
-        ProposalInfo
+        ProposalInfo,
+        ProposalNoData
     },
     data: function () {
         return {
@@ -209,22 +210,23 @@ export default {
             stargateClient: null,
             statusProposal: ProposalStatus,
             proposals: [],
-            proposalDetail: {},
             i: 0, // remove
-            name: '',
-            style: '',
-            des: '',
-            proposal: '',
             proposalsForStatus: [],
+            option: -1,
+            proposalDetail: {},
         }
     },
     async created() {
+        this.getAddressFromLocalStorage()
         await this.getWallet()
         await this.getProposals()
         await this.getStargetClient()
         await this.formatProposals()
     },
     methods: {
+        getAddressFromLocalStorage() {
+            this.address = localStorage.getItem('address', "")
+        },
         checkClick(key, status) {
             this.class = key
             this.proposalsForStatus = []
@@ -243,8 +245,38 @@ export default {
             this.stargateClient = await WalletHelper.getStargateClient()
         },
         async getProposals() {
-            const res = await this.wallet.getListProposal(this.statusProposal.UNRECOGNIZED, "", "")
-            this.proposals = res.proposals
+            const loader = this.showLoadling("proposalTable")
+            try {
+                const res = await this.wallet.getListProposal(this.statusProposal.UNRECOGNIZED, "", "")
+                this.proposals = res.proposals
+            } catch (err) {
+                 this.$toast.error(err.message);
+            }
+            this.hideLoading(loader)
+        },
+        async vote(proposalId, option) {
+             try {
+                const voter = await KelprWallet.getAddress()
+                const keplrWallet = await KelprWallet.getKeplrWallet()
+                await keplrWallet.vote(voter, proposalId, option)
+                this.$toast.success("Vote success");
+            } catch (err) {
+                this.$toast.error(err.message);
+            }
+        },
+        async handelVote() {
+            await this.vote(this.proposalDetail.proposalId, this.option)
+        },
+        async getProposal(proposalId) {
+            return await WalletHelper.getSumitProposer(this.stargateClient, proposalId)
+        },
+        async formatProposals() {
+            const proposals = [...this.proposals]
+            for await (const data of proposals) { 
+                data.des = WalletHelper.convertContent(data.content.value)
+                data.proposer = await this.getProposal(data.proposalId)
+            }
+            this.proposals = [...proposals]
         },
         showModal(val, index) {
             this.$refs.modal.classList.toggle("in")
@@ -254,7 +286,6 @@ export default {
             this.proposals.forEach(item => {
                 if (item.proposalId.low === val) {
                     this.proposalDetail = item
-                    console.log(this.proposalDetail)
                     return
                 }
             })
@@ -267,33 +298,23 @@ export default {
         getProposalByStatus(status) {
             this.proposalsForStatus = this.proposals.filter(x => x.status === status)
         },
-        async getProposal(proposalId) {
-            return await WalletHelper.getSumitProposer(this.stargateClient, proposalId)
-        },
-        async formatProposals() {
-            const proposals = [...this.proposals]
-            for await (const data of proposals) { 
-                data.proposer = await this.getProposal(data.proposalId)
-                data.des = WalletHelper.convertContent(data.content.value)
-            }
-            this.proposals = [...proposals]
-        },
         isEmpty(obj) {
             return Object.keys(obj).length === 0;
         },
-        async handelVote(proposalId) {
-             try {
-                const voter = await KelprWallet.getAddress()
-                const keplrWallet = await KelprWallet.getKeplrWallet()
-                await keplrWallet.vote(voter, proposalId, VoteOption.VOTE_OPTION_YES)
-            } catch (err) {
-                console.log(err.message)
-            }
+        handelChangeOption(option) {
+            this.option = option
+        },
+        showLoadling(refName) {
+            const loader = this.$loading.show({
+                container: this.$refs[refName],
+                canCancel: true,
+                onCancel: this.onCancel,
+            });
+            return loader
+        },
+        hideLoading(loader) {
+            loader.hide()
         }
     }
 }
 </script>
-
-<style scoped>
-
-</style>
