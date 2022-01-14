@@ -1,44 +1,45 @@
 <template>
-
-    <div class="item-vali-detail">
-        <div class="title-item-vali">
-            <div class="number">{{ index + 1 }}</div>
-            <div class="cnt-text"><a href="#">Status</a><a
-                :style="{backgroundColor:style, color: textColor}" href="#">{{ name }}</a>
+    <a href="javascript:void(0)" @click="eventModal">
+        <div class="item-vali-detail">
+            <div class="title-item-vali">
+                <div class="number">{{ index + 1 }}</div>
+                <div class="cnt-text"><a href="#">Status</a><a
+                    :style="{backgroundColor:style, color: textColor}" href="#">{{ name }}</a>
+                </div>
             </div>
-        </div>
-        <div class="box-item-detail">
-            <h3>{{ des.typeUrl }}</h3>
-            <div class="sub-title-item"
-                 style="height: 100px!important;,width: 350px;overflow: hidden;display:
+            <div class="box-item-detail">
+                <h3>{{ des.typeUrl }}</h3>
+                <div class="sub-title-item"
+                     style="height: 100px!important;,width: 350px;overflow: hidden;display:
                       -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
-                {{ des.content }}
+                    {{ des.content }}
+                </div>
+                <ProposalInfo
+                    :proposer="proposer"
+                    :submitTime="submitTime"
+                    :votingStartTime="votingStartTime"
+                    :votingEndTime="votingEndTime"
+                />
             </div>
-            <ProposalInfo 
-                :proposer="proposer"
-                :submitTime="submitTime"
-                :votingStartTime="votingStartTime"
-                :votingEndTime="votingEndTime"
-            />
-        </div>
-        <div class="bottom-item-vali">
-            <div class="cnt-vote">
-                <button class="btn btn-vote">Vote</button>
+            <div class="bottom-item-vali">
+                <div class="cnt-vote">
+                    <button class="btn btn-vote">Vote</button>
+                </div>
+                <ProposalVoteInfo
+                    :yes="vote.yes"
+                    :no="vote.no"
+                    :abstain="vote.abstain"
+                    :noWithVeto="vote.noWithVeto"
+                />
             </div>
-            <ProposalVoteInfo
-                :yes="vote.yes"
-                :no="vote.no"
-                :abstain="vote.abstain"
-                :noWithVeto="vote.noWithVeto"
-            />
         </div>
-    </div>
+    </a>
 
 </template>
 
 <script>
 
-import { proposalStatusObject } from "@/utils/constant";
+import {proposalStatusObject} from "@/utils/constant";
 import moment from "moment";
 import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
 import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
@@ -62,7 +63,7 @@ export default {
         proposer: String,
         des: {
             type: Object,
-            default () {
+            default() {
                 return {
                     typeUrl: '',
                     content: ''
@@ -84,9 +85,13 @@ export default {
             return proposalStatusObject[this.status].style
         },
         textColor() {
-             return proposalStatusObject[this.status].color
+            return proposalStatusObject[this.status].color
         }
-    }, 
+    }, methods: {
+        eventModal() {
+            this.$emit('showModal')
+        },
+    }
 }
 </script>
 

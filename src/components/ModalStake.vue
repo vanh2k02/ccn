@@ -19,7 +19,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <input class="form-control" type="text" placeholder="Enter tokens to Stake" v-model="token"/>
+                    <input class="form-control" type="text" :style="formInvalid" placeholder="Enter tokens to Stake"
+                           v-model="token" @keyup="checkRequest"/>
+                    <span class="error">{{ error }}</span>
                     <div class="text-max" @click="maxAvailable">Max</div>
                 </div>
                 <div class="form-group">
@@ -27,7 +29,9 @@
                         class="number">{{ Number(coin) / 10 ** 6 }}</span></div>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-vote" @click="sendRequest">STAKE</button>
+                    <button class="btn btn-vote" @click="sendRequest"
+                            :disabled="error||title=='Select validator'||token==''?'':disabled">STAKE
+                    </button>
                 </div>
             </div>
         </div>
@@ -45,13 +49,16 @@ export default {
             dropdown: false,
             style: 'none',
             addressDelegator: '',
-            address_user: KelprWallet.getAddress(),
-            token: 0,
+            token: '',
             amount: {
                 denom: DENOM,
                 amount: this.token
             },
-            title: 'Select validator'
+            title: 'Select validator',
+            error: '',
+            formInvalid: {
+                borderColor: ''
+            }
         }
     },
     props: {
@@ -87,6 +94,15 @@ export default {
         },
         maxAvailable() {
             this.token = this.coin
+        },
+        checkRequest() {
+            if (Number(this.token) > Number(this.coin)) {
+                this.error = 'Invalid Amount'
+                this.formInvalid.borderColor = 'red'
+            } else {
+                this.error = ''
+                this.formInvalid.borderColor = ''
+            }
         }
     }
 }
