@@ -2,7 +2,7 @@
     <a href="javascript:void(0)" @click="eventModal">
         <li>
             <div class="item-proposal-detail">
-                <ProposalHeader 
+                <ProposalHeader
                     :id="index + 1"
                     :status="status"
                     :title="des.typeUrl"
@@ -13,7 +13,7 @@
                              style="height: 100px!important;,width: 350px;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
                             {{ des.content }}
                         </div>
-                        <ProposalInfo 
+                        <ProposalInfo
                             :proposer="proposer"
                             :submitTime="submitTime"
                             :votingStartTime="votingStartTime"
@@ -21,7 +21,7 @@
                         />
                     </div>
                     <div class="right-item-proposal">
-                        <ProposalChart 
+                        <ProposalChart
                             :yes="vote.yes"
                             :no="vote.no"
                             :abstain="vote.abstain"
@@ -34,7 +34,7 @@
                             :noWithVeto="vote.noWithVeto"
                         />
                         <div class="cnt-vote">
-                            <button class="btn btn-vote" @click="handelVote(proposalId)">Vote</button>
+                            <button class="btn btn-vote" >Vote</button>
                         </div>
                     </div>
                 </div>

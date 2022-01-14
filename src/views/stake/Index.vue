@@ -66,7 +66,7 @@ import Login from "@/components/login/Login";
 import {WalletHelper} from "@/utils/wallet";
 import ValidatorTable from "@/components/validator/ValidatorTable.vue"
 import ModalDelegate from "@/components/ModalDelegate.vue";
-import { mapMutations } from "vuex";
+import { mapMutations, mapState } from "vuex";
 
 const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 export default {
@@ -94,10 +94,12 @@ export default {
         await this.getBalances()
         this.$store.subscribe(mutation => {
             if (mutation.type === 'auth/setAddress') {
-                this.address = mutation.payload
                 this.stakeds()
             }
         })
+    },
+    computed: {
+        ...mapState('auth', ["address"])
     },
     methods: {
         ...mapMutations("modal", ["setIsOpen"]),

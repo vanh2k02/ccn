@@ -191,7 +191,7 @@ import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
 import ProposalChart from "@/components/proposal/ProposalChart.vue"
 import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
 import ProposalNoData from "@/components/proposal/ProposalNoData.vue"
-import { mapMutations } from "vuex";
+import { mapMutations, mapState } from "vuex";
 
 export default {
     name: "proposals",
@@ -222,11 +222,9 @@ export default {
         await this.getStargetClient()
         await this.getProposals()
         await this.formatProposals()
-        this.$store.subscribe(mutation => {
-            if (mutation.type === 'auth/setAddress') {
-                this.address = mutation.payload
-            }
-        })
+    },
+    computed: {
+        ...mapState('auth', ["address"])
     },
     methods: {
         ...mapMutations("modal", ["setIsOpen"]),

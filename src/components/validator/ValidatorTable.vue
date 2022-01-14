@@ -15,7 +15,7 @@
                 :key="index">
                 <td>
                     <div class="td-acount">
-                        <div class="icon"></div>
+                        <ValidatorImage :identity="validator.description.identity" />
                         <span>{{ validator | getMoniker }}</span>
                     </div>
                 </td>
@@ -33,9 +33,11 @@
 </template>
 <script>
 import ValidatorNoData from "@/components/validator/ValidatorNoData.vue"
+import ValidatorImage from "@/components/validator/ValidatorImage.vue"
 export default {
     components: {
-        ValidatorNoData
+        ValidatorNoData,
+        ValidatorImage
     },
     props: {
         validators: Array,
@@ -56,9 +58,9 @@ export default {
         },
         getRate(validator) {
             if (validator.commission.commissionRates.rate) {
-                return (validator.commission.commissionRates.rate) / 10 ** 12
+                return (validator.commission.commissionRates.rate) / 10 ** 18 * 100 +'%'
             }
-        }
+        },
     },
     methods: {
         delegate(moniker) {
@@ -66,7 +68,7 @@ export default {
         },
         connectSuccess() {
             this.$emit('connectSuccess', 1)
-        }
+        },
     }
 }
 </script>
