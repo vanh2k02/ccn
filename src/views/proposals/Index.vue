@@ -132,7 +132,7 @@
                     </div>
                     <div class="modal-body" v-if="!isEmpty(proposalDetail)">
                         <div class="item-proposal-detail">
-                            <ProposalHeader 
+                            <ProposalHeader
                                 :id="i"
                                 :status="proposalDetail.status"
                                 :title="proposalDetail.des.typeUrl"
@@ -141,7 +141,7 @@
                         <div class="box-item-detail-proposal">
                             <div class="left-item-detail">
                                 <div class="box-left-detail">
-                                    <ProposalInfo 
+                                    <ProposalInfo
                                         :proposer="proposalDetail.proposer"
                                         :submitTime="proposalDetail.submitTime"
                                         :votingStartTime="proposalDetail.votingStartTime"
@@ -152,21 +152,22 @@
                             </div>
                             <div class="right-item-proposal">
                                 <div class="cnt-proposal">
-                                    <ProposalChart 
+                                    <ProposalChart
                                         :yes="proposalDetail.finalTallyResult.yes"
                                         :no="proposalDetail.finalTallyResult.no"
                                         :noWithVeto="proposalDetail.finalTallyResult.noWithVeto"
                                         :abstain="proposalDetail.finalTallyResult.abstain"
                                     />
-                                    <ProposalVoteInfo 
+                                    <ProposalVoteInfo
                                         :yes="proposalDetail.finalTallyResult.yes"
                                         :no="proposalDetail.finalTallyResult.no"
                                         :noWithVeto="proposalDetail.finalTallyResult.noWithVeto"
                                         :abstain="proposalDetail.finalTallyResult.abstain"
+                                        :status="proposalDetail.status"
                                         @changeOption="handelChangeOption"
                                     />
                                     <div class="cnt-vote">
-                                        <button class="btn btn-vote" @click="handelVote">Vote</button>
+                                        <button class="btn btn-vote" @click="handelVote" v-if="check">Vote</button>
                                     </div>
                                 </div>
                             </div>
@@ -182,22 +183,22 @@
 <script>
 
 import Login from "@/components/login/Login";
-import { WalletHelper } from "@/utils/wallet";
-import { KelprWallet } from "@/utils/connectKeplr";
+import {WalletHelper} from "@/utils/wallet";
+import {KelprWallet} from "@/utils/connectKeplr";
 import ItemProposalsTab from "@/components/ItemProposalsTab";
-import { ProposalStatus } from "@/utils/constant";
+import {ProposalStatus} from "@/utils/constant";
 import ProposalHeader from "@/components/proposal/ProposalHeader.vue"
 import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
 import ProposalChart from "@/components/proposal/ProposalChart.vue"
 import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
 import ProposalNoData from "@/components/proposal/ProposalNoData.vue"
-import { mapMutations, mapState } from "vuex";
+import {mapMutations, mapState} from "vuex";
 
 export default {
     name: "proposals",
     components: {
-        ItemProposalsTab, 
-        Login, 
+        ItemProposalsTab,
+        Login,
         ProposalHeader,
         ProposalVoteInfo,
         ProposalChart,
@@ -215,6 +216,7 @@ export default {
             proposalsForStatus: [],
             option: -1,
             proposalDetail: {},
+            check: false
         }
     },
     async created() {
@@ -251,12 +253,12 @@ export default {
                 const res = await this.wallet.getListProposal(this.statusProposal.UNRECOGNIZED, "", "")
                 this.proposals = res.proposals
             } catch (err) {
-                 this.$toast.error(err.message);
+                this.$toast.error(err.message);
             }
             this.hideLoading(loader)
         },
         async vote(proposalId, option) {
-             try {
+            try {
                 const voter = await KelprWallet.getAddress()
                 const keplrWallet = await KelprWallet.getKeplrWallet()
                 await keplrWallet.vote(voter, proposalId, option)
@@ -273,7 +275,7 @@ export default {
         },
         async formatProposals() {
             const proposals = [...this.proposals]
-            for await (const data of proposals) { 
+            for await (const data of proposals) {
                 data.des = WalletHelper.convertContent(data.content.value)
                 data.proposer = await this.getProposal(data.proposalId)
             }
@@ -288,15 +290,20 @@ export default {
             this.proposals.forEach(item => {
                 if (item.proposalId.low === val) {
                     this.proposalDetail = item
+                    if (item.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD) {
+                        console.log(item.status)
+                        this.check = true
+                    }
                     return
                 }
             })
-           
+
         },
         closeModal() {
             this.$refs.modal.classList.toggle("in")
             document.body.classList.toggle("modal-open");
             this.$refs.modal.style.display = "none"
+            this.check = false
             this.setIsOpen(false)
         },
         getProposalByStatus(status) {
@@ -318,6 +325,15 @@ export default {
         },
         hideLoading(loader) {
             loader.hide()
+        },
+        showVote() {
+            console.log(this.status, 'dd')
+            if (this.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD) {
+                this.check = true
+            } else {
+                this.check = false
+            }
+
         }
     }
 }

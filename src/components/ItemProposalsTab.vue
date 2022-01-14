@@ -2,7 +2,7 @@
     <a href="javascript:void(0)" @click="eventModal">
         <li>
             <div class="item-proposal-detail">
-                <ProposalHeader 
+                <ProposalHeader
                     :id="index + 1"
                     :status="status"
                     :title="des.typeUrl"
@@ -13,7 +13,7 @@
                              style="height: 100px!important;,width: 350px;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 5;-webkit-box-orient: vertical;">
                             {{ des.content }}
                         </div>
-                        <ProposalInfo 
+                        <ProposalInfo
                             :proposer="proposer"
                             :submitTime="submitTime"
                             :votingStartTime="votingStartTime"
@@ -21,7 +21,7 @@
                         />
                     </div>
                     <div class="right-item-proposal">
-                        <ProposalChart 
+                        <ProposalChart
                             :yes="vote.yes"
                             :no="vote.no"
                             :abstain="vote.abstain"
@@ -33,8 +33,8 @@
                             :abstain="vote.abstain"
                             :noWithVeto="vote.noWithVeto"
                         />
-                        <div class="cnt-vote">
-                            <button class="btn btn-vote" @click="handelVote(proposalId)">Vote</button>
+                        <div class="cnt-vote" v-show="check">
+                            <button class="btn btn-vote" >Vote</button>
                         </div>
                     </div>
                 </div>
@@ -45,11 +45,12 @@
 </template>
 
 <script>
-import { WalletHelper } from "../utils/wallet";
+import {WalletHelper} from "../utils/wallet";
 import ProposalHeader from "@/components/proposal/ProposalHeader.vue"
 import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
 import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
 import ProposalChart from "@/components/proposal/ProposalChart.vue"
+import {ProposalStatus} from "../utils/constant";
 
 export default {
     name: "ItemProposalsTab",
@@ -68,8 +69,8 @@ export default {
         votingEndTime: {type: Date},
         vote: {
             type: Object,
-            default: function (){
-                return  {
+            default: function () {
+                return {
                     yes: '',
                     no: '',
                     noWithVeto: '',
@@ -83,18 +84,32 @@ export default {
             default: ''
         }
     },
+    data: function () {
+        return {
+            check: false
+        }
+    },
     computed: {
         des() {
-            return  WalletHelper.convertContent(this.title)
+            return WalletHelper.convertContent(this.title)
         },
         proposerAddress() {
             return this.proposer
-        }
+        },
+    },
+    created() {
+        this.showVote()
     },
     methods: {
         eventModal() {
             this.$emit('showModal')
         },
+        showVote() {
+            if (this.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD) {
+                this.check = true
+            }
+
+        }
     }
 }
 </script>

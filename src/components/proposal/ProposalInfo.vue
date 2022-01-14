@@ -6,14 +6,14 @@
         </li>
         <li>
             <span class="title">Submitted on:</span>
-            <span class="info"> 
+            <span class="info">
                 {{ submitTime | formatDateTime }}
             </span>
         </li>
         <li>
             <span class="title">Voting Period:</span>
-            <span class="info"> 
-                {{ votingStartTime | formatDateTime }} to 
+            <span class="info">
+                {{ votingStartTime | formatDateTime }} to
                 {{ votingEndTime | formatDateTime }}
             </span>
         </li>
@@ -30,9 +30,9 @@ export default {
     },
     filters: {
         formatDateTime(dateTime) {
-            const a = moment(dateTime, "dddd, MMMM Do YYYY, h:mm:ss").toString()
+            const a = moment(dateTime, "YYYY.MM.DD HH:mm").toString()
             return a.split(' ').slice(0, 5).join(' ');
-        }, 
+        },
     }
 }
 </script>

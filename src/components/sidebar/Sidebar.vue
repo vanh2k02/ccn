@@ -25,7 +25,7 @@ export default {
     components: {
         TabSideBar,
         Logo,
-    }, 
+    },
     computed: {
         ...mapState('auth', ['address'])
     },

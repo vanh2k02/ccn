@@ -14,7 +14,7 @@ export default {
         noWithVeto: String,
         no: String,
         abstain: String,
-    }, 
+    },
     computed: {
         chartData() {
             const {yes, no, noWithVeto, abstain} = this

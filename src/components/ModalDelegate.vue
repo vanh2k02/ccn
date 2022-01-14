@@ -28,7 +28,7 @@
                         class="number">{{ Number(coin) / 10 ** 6 }}</span></div>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-vote" @click="sendRequest"  :disabled="error||title=='Select validator'||token==''?'':disabled">STAKE</button>
+                    <button class="btn btn-vote" @click="sendRequest"  ::disabled="clickSubmit">STAKE</button>
                 </div>
             </div>
         </div>
@@ -98,6 +98,12 @@ export default {
                 this.error = ''
                 this.formInvalid.borderColor = ''
             }
+        },
+        clickSubmit() {
+            if (this.error || this.title == 'Select validator' || this.token == '') {
+                return ''
+            }
+            return 'disabled'
         }
     }
 }
