@@ -191,6 +191,7 @@ import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
 import ProposalChart from "@/components/proposal/ProposalChart.vue"
 import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
 import ProposalNoData from "@/components/proposal/ProposalNoData.vue"
+import { mapMutations } from "vuex";
 
 export default {
     name: "proposals",
@@ -217,16 +218,18 @@ export default {
         }
     },
     async created() {
-        this.getAddressFromLocalStorage()
         await this.getWallet()
-        await this.getProposals()
         await this.getStargetClient()
+        await this.getProposals()
         await this.formatProposals()
+        this.$store.subscribe(mutation => {
+            if (mutation.type === 'auth/setAddress') {
+                this.address = mutation.payload
+            }
+        })
     },
     methods: {
-        getAddressFromLocalStorage() {
-            this.address = localStorage.getItem('address', "")
-        },
+        ...mapMutations("modal", ["setIsOpen"]),
         checkClick(key, status) {
             this.class = key
             this.proposalsForStatus = []
@@ -282,6 +285,7 @@ export default {
             this.$refs.modal.classList.toggle("in")
             document.body.classList.toggle("modal-open");
             this.$refs.modal.style.display = "block"
+            this.setIsOpen(true)
             this.i = index // remove i
             this.proposals.forEach(item => {
                 if (item.proposalId.low === val) {
@@ -289,11 +293,13 @@ export default {
                     return
                 }
             })
+           
         },
         closeModal() {
             this.$refs.modal.classList.toggle("in")
             document.body.classList.toggle("modal-open");
             this.$refs.modal.style.display = "none"
+            this.setIsOpen(false)
         },
         getProposalByStatus(status) {
             this.proposalsForStatus = this.proposals.filter(x => x.status === status)
