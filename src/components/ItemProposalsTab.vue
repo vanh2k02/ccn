@@ -33,7 +33,7 @@
                             :abstain="vote.abstain"
                             :noWithVeto="vote.noWithVeto"
                         />
-                        <div class="cnt-vote">
+                        <div class="cnt-vote" v-show="check">
                             <button class="btn btn-vote" >Vote</button>
                         </div>
                     </div>
@@ -45,11 +45,12 @@
 </template>
 
 <script>
-import { WalletHelper } from "../utils/wallet";
+import {WalletHelper} from "../utils/wallet";
 import ProposalHeader from "@/components/proposal/ProposalHeader.vue"
 import ProposalInfo from "@/components/proposal/ProposalInfo.vue"
 import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo.vue"
 import ProposalChart from "@/components/proposal/ProposalChart.vue"
+import {ProposalStatus} from "../utils/constant";
 
 export default {
     name: "ItemProposalsTab",
@@ -68,8 +69,8 @@ export default {
         votingEndTime: {type: Date},
         vote: {
             type: Object,
-            default: function (){
-                return  {
+            default: function () {
+                return {
                     yes: '',
                     no: '',
                     noWithVeto: '',
@@ -83,18 +84,32 @@ export default {
             default: ''
         }
     },
+    data: function () {
+        return {
+            check: false
+        }
+    },
     computed: {
         des() {
-            return  WalletHelper.convertContent(this.title)
+            return WalletHelper.convertContent(this.title)
         },
         proposerAddress() {
             return this.proposer
-        }
+        },
+    },
+    created() {
+        this.showVote()
     },
     methods: {
         eventModal() {
             this.$emit('showModal')
         },
+        showVote() {
+            if (this.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD) {
+                this.check = true
+            }
+
+        }
     }
 }
 </script>
