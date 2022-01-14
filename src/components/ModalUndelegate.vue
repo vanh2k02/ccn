@@ -5,11 +5,12 @@
             <div class="form-token">
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}" href="#"
-                                             @click="clickDropdown()">{{title}}<i
+                                             @click="clickDropdown()">{{ title }}<i
                         class="fa fa-angle-down"></i></a>
                         <ul class="js-dropdown-list" :style="{display: style}">
                             <li v-for="(stakedValidator,index) in stakedValidators" :key="index">
-                                <div class="item-stake" @click="chooseStaked(stakedValidator.operatorAddress,stakedValidator.description.moniker)">
+                                <div class="item-stake"
+                                     @click="chooseStaked(stakedValidator.operatorAddress,stakedValidator.description.moniker)">
                                     <div class="icon"></div>
                                     <div class="name">{{ stakedValidator.description.moniker }}</div>
                                 </div>
@@ -18,8 +19,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <input class="form-control" type="text" v-model="token"
-                           placeholder="Enter tokens to Stake"/>
+                    <input class="form-control" :style="formInvalid" type="text" v-model="token"
+                           placeholder="Enter tokens to Stake" @keyup="checkRequest"/>
+                    <span class="error">{{ error }}</span>
                     <div class="text-max" @click="maxToken()"><a href="#" style="color: #00B6ED">Max</a></div>
                 </div>
                 <div class="form-group">
@@ -28,7 +30,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-vote" @click="sendRequest">STAKE</button>
+                    <button class="btn btn-vote" @click="sendRequest" :disabled="error||title=='Select validator'||token==''?'':disabled">STAKE</button>
                 </div>
             </div>
         </div>
@@ -45,14 +47,18 @@ export default {
         return {
             dropdown: false,
             style: 'none',
-            token: 0,
+            token: '',
             tokenStaked: 0,
             addressDelegator: '',
             amount: {
                 demon: DEMON,
                 amount: this.token
             },
-            title:'Select validator'
+            title: 'Select validator',
+            error: '',
+            formInvalid: {
+                borderColor: ''
+            }
         }
     },
     props: {
@@ -72,8 +78,8 @@ export default {
         maxToken() {
             this.token = this.tokenStaked
         },
-        chooseStaked(address,title) {
-            this.title=title
+        chooseStaked(address, title) {
+            this.title = title
             this.addressDelegator = address
             this.delegate.forEach(item => {
                 if (item.delegation.validatorAddress === address) {
@@ -92,11 +98,27 @@ export default {
             } catch (err) {
                 this.$toast.error(err.message);
             }
+        },
+        checkRequest() {
+            if (Number(this.token) > Number(this.tokenStaked)) {
+                this.error = 'Invalid Amount'
+                this.formInvalid.borderColor = 'red'
+            } else {
+                this.error = ''
+                this.formInvalid.borderColor = ''
+            }
         }
     }
 }
 </script>
 
 <style scoped>
-
+.error {
+    color: red;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 30px;
+    position: absolute;
+    bottom: -20px;
+}
 </style>

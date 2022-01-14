@@ -4,7 +4,8 @@
             <div class="title-popup-stake">Redelegate</div>
             <div class="form-token">
                 <div class="form-group">
-                    <div class="dropdown"><a :class="{'js-link active':srcRef.dropdown,'js-link':!srcRef.dropdown}" href="#"
+                    <div class="dropdown"><a :class="{'js-link active':srcRef.dropdown,'js-link':!srcRef.dropdown}"
+                                             href="#"
                                              @click="clickDropdown('srcRef')">{{ titleStakedValidator }}<i
                         class="fa fa-angle-down"></i></a>
                         <ul class="js-dropdown-list" ref="srcRef" :style="{display: srcRef.style}">
@@ -19,7 +20,8 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="dropdown"><a :class="{'js-link active':dstRef.dropdown,'js-link':!dstRef.dropdown}" href="#"
+                    <div class="dropdown"><a :class="{'js-link active':dstRef.dropdown,'js-link':!dstRef.dropdown}"
+                                             href="#"
                                              @click="clickDropdown('dstRef')">{{ titleValidator }}<i
                         class="fa fa-angle-down"></i></a>
                         <ul class="js-dropdown-lists" :style="{display: dstRef.style}">
@@ -34,8 +36,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <input class="form-control" type="text" v-model="token"
-                           placeholder="Enter tokens to Stake"/>
+                    <input class="form-control" :style="formInvalid" type="text" v-model="token"
+                           placeholder="Enter tokens to Stake" @keyup="checkRequest"/>
+                    <span class="error">{{ error }}</span>
                     <div class="text-max" @click="maxToken">Max</div>
                 </div>
                 <div class="form-group">
@@ -44,7 +47,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-vote" @click="sendData()">STAKE</button>
+                    <button class="btn btn-vote" @click="sendData()"  :disabled="error||title=='Select validator'||token==''?'':disabled">STAKE</button>
                 </div>
             </div>
         </div>
@@ -63,7 +66,7 @@ export default {
             style: 'none',
             style2: 'none',
             tokenStaked: 0,
-            token: 0,
+            token: '',
             dstValidatorAddress: '',
             srcValidatorAddress: '',
             amount: {
@@ -79,7 +82,10 @@ export default {
             srcRef: {
                 style: 'none',
                 dropdown: false
-            },
+            }, error: '',
+            formInvalid: {
+                borderColor: ''
+            }
         }
     },
     props: {
@@ -100,7 +106,7 @@ export default {
             this.srcValidatorAddress = address
             this.delegate.forEach(item => {
                 if (item.delegation.validatorAddress === address) {
-                    this.tokenStaked = Number(item.balance.amount) / 10**8
+                    this.tokenStaked = Number(item.balance.amount) / 10 ** 8
                 }
             })
             this.hideDropDown(ref)
@@ -127,15 +133,31 @@ export default {
                 const delegatorAddress = await KelprWallet.getAddress()
                 await keplrWallet.redelegateTokens(delegatorAddress, this.srcValidatorAddress, this.dstValidatorAddress, this.amount)
                 this.$toast.success("Redelegate success");
-            } catch(err){
+            } catch (err) {
                 this.$toast.error(err.message);
             }
-            
+
+        },
+        checkRequest() {
+            if (Number(this.token) > Number(this.tokenStaked)) {
+                this.error = 'Invalid Amount'
+                this.formInvalid.borderColor = 'red'
+            } else {
+                this.error = ''
+                this.formInvalid.borderColor = ''
+            }
         }
     }
 }
 </script>
 
 <style scoped>
-
+.error {
+    color: red;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 30px;
+    position: absolute;
+    bottom: -20px;
+}
 </style>
