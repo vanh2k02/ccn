@@ -58,10 +58,10 @@
                                     <div class="content-detail">
                                         <div class="cos-table-list">
                                             <div class="table-responsive" ref="validatorTable">
-                                                <ValidatorTable 
-                                                    :validators="allValidators.validators" 
-                                                    :isStake="false" 
-                                                    @showModal="showModal" 
+                                                <ValidatorTable
+                                                    :validators="allValidators.validators"
+                                                    :isStake="false"
+                                                    @showModal="showModal"
                                                 />
                                             </div>
                                         </div>
@@ -72,9 +72,9 @@
                                     <div class="content-detail">
                                         <div class="cos-table-list">
                                             <div class="table-responsive">
-                                                <ValidatorTable 
-                                                    :validators="stakedValidators.validators" 
-                                                    :isStake="true" 
+                                                <ValidatorTable
+                                                    :validators="stakedValidators.validators"
+                                                    :isStake="true"
                                                     @showModal="showModal"
                                                 />
                                             </div>
@@ -188,11 +188,11 @@ const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 export default {
     name: "Dashboard",
     components: {
-        ModalDelegate, 
-        ModalUndelegate, 
-        ModalRelegate, 
-        ModalStake, 
-        ItemProposals, 
+        ModalDelegate,
+        ModalUndelegate,
+        ModalRelegate,
+        ModalStake,
+        ItemProposals,
         Login,
         ValidatorTable
     },
@@ -245,13 +245,18 @@ export default {
             return ''
         },
         showModal(title, refName) {
-            if(refName == 'modalDelegate') {
-                this.titleDelegate = title
+            if (this.address === '') {
+                this.$toast.error('Account not connected. Please connect to wallet')
+            }else {
+                if(refName == 'modalDelegate') {
+                    this.titleDelegate = title
+                }
+                this.$refs[refName].classList.toggle("in")
+                document.body.classList.toggle("modal-open")
+                this.$refs[refName].style.display = "block"
+                this.setIsOpen(true)
             }
-            this.$refs[refName].classList.toggle("in")
-            document.body.classList.toggle("modal-open")
-            this.$refs[refName].style.display = "block"
-            this.setIsOpen(true)
+
         },
         closeModal(refName) {
             this.$refs[refName].classList.toggle("in")
@@ -260,7 +265,7 @@ export default {
             this.setIsOpen(false)
         },
         async getWallet() {
-            try {   
+            try {
                 this.wallet = await WalletHelper.connect()
             } catch (err) {
                 this.$toast.error(err.message);
@@ -298,7 +303,7 @@ export default {
         async formatProposals() {
             const proposals = [...this.proposals]
             const stargateClient = await this.getStargetClient()
-            for await (const data of this.proposals) { 
+            for await (const data of this.proposals) {
                 data.des = WalletHelper.convertContent(data.content.value)
                 data.proposer = await this.getProposal(stargateClient, data.proposalId)
             }
@@ -352,7 +357,7 @@ export default {
             try {
                 const kelprWallet = await KelprWallet.getKeplrWallet()
                 const address = await KelprWallet.getAddress()
-                for await (const data of this.listReward) { 
+                for await (const data of this.listReward) {
                     await kelprWallet.claimRewards(address, data.validatorAddress)
                 }
             } catch (err) {
