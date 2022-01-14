@@ -8,15 +8,17 @@
                         <div class="status-items">
                             <div class="title">Available Tokens</div>
                             <div class="number">{{ availableTokens.toFixed(2) }}</div>
-                            <div class="list-link"><a href="javascript:void (0)" @click="showModal('', 'modalStake')">Stake</a>
+                            <div class="list-link"><a href="javascript:void (0)"
+                                                      @click="showModal('', 'modalStake','','')">Stake</a>
                             </div>
                         </div>
                         <div class="status-items">
                             <div class="title">Staked Tokens</div>
                             <div class="number">{{ stakedTokens.toFixed(1) }}</div>
                             <div class="list-link"><a class="active" href="javascript:void (0)"
-                                                      @click="showModal('', 'modalUnDelegate')">UNDELEGATE</a><a
-                                href="javascript:void (0)" @click="showModal('', 'modalReDelegate')">REDELEGATE</a>
+                                                      @click="showModal('', 'modalUnDelegate','','')">UNDELEGATE</a><a
+                                href="javascript:void (0)"
+                                @click="showModal('', 'modalReDelegate','','')">REDELEGATE</a>
                             </div>
                         </div>
                         <div class="status-items">
@@ -108,6 +110,7 @@
                                                    :vote="proposal.finalTallyResult"
                                                    :title="proposal.content.value"
                                                    :des="proposal.des"
+                                                   @showModal="showModal('','modalProposal',proposal.proposalId.low,index+1)"
                                     />
                                 </ul>
                             </div>
@@ -169,6 +172,60 @@
                 </div>
             </div>
         </div>
+        <div class="modal modal-dialog-centered fade popup_customer" id="contentDetailProposal" tabindex="-1"
+             role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" ref="modalProposal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" type="button" data-dismiss="modal" aria-hidden="true"
+                                @click="closeModal('modalProposal')"><span aria-hidden="true"></span></button>
+                    </div>
+                    <div class="modal-body" v-if="!isEmpty(proposalDetail)">
+                        <div class="item-proposal-detail">
+                            <ProposalHeader
+                                :id="i"
+                                :status="proposalDetail.status"
+                                :title="proposalDetail.des.typeUrl"
+                            />
+                        </div>
+                        <div class="box-item-detail-proposal">
+                            <div class="left-item-detail">
+                                <div class="box-left-detail">
+                                    <ProposalInfo
+                                        :proposer="proposalDetail.proposer"
+                                        :submitTime="proposalDetail.submitTime"
+                                        :votingStartTime="proposalDetail.votingStartTime"
+                                        :votingEndTime="proposalDetail.votingEndTime"
+                                    />
+                                    <p>{{ proposalDetail.des.content }}</p>
+                                </div>
+                            </div>
+                            <div class="right-item-proposal">
+                                <div class="cnt-proposal">
+                                    <ProposalChart
+                                        :yes="proposalDetail.finalTallyResult.yes"
+                                        :no="proposalDetail.finalTallyResult.no"
+                                        :noWithVeto="proposalDetail.finalTallyResult.noWithVeto"
+                                        :abstain="proposalDetail.finalTallyResult.abstain"
+                                    />
+                                    <ProposalVoteInfo
+                                        :yes="proposalDetail.finalTallyResult.yes"
+                                        :no="proposalDetail.finalTallyResult.no"
+                                        :noWithVeto="proposalDetail.finalTallyResult.noWithVeto"
+                                        :abstain="proposalDetail.finalTallyResult.abstain"
+                                        @changeOption="handelChangeOption"
+                                    />
+                                    <div class="cnt-vote">
+                                        <button class="btn btn-vote" @click="handelVote">Vote</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -184,11 +241,19 @@ import ModalDelegate from "@/components/ModalDelegate";
 import ValidatorTable from "@/components/validator/ValidatorTable.vue"
 import {ProposalStatus} from "@/utils/constant"
 import {mapMutations} from "vuex";
+import ProposalInfo from "../../components/proposal/ProposalInfo";
+import ProposalChart from "../../components/proposal/ProposalChart";
+import ProposalVoteInfo from "../../components/proposal/ProposalVoteInfo";
+import ProposalHeader from "../../components/proposal/ProposalHeader";
 
 const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 export default {
     name: "Dashboard",
     components: {
+        ProposalHeader,
+        ProposalVoteInfo,
+        ProposalChart,
+        ProposalInfo,
         ModalDelegate,
         ModalUndelegate,
         ModalRelegate,
@@ -213,6 +278,9 @@ export default {
             titleDelegate: '',
             address: '',
             listReward: [],
+            proposalDetail: [],
+            i: 0,
+            option: -1,
         }
     },
     async mounted() {
@@ -245,12 +313,21 @@ export default {
             }
             return ''
         },
-        showModal(title, refName) {
+        showModal(title, refName, proposalId, index) {
             if (this.address === '') {
                 this.$toast.error('Account not connected. Please connect to wallet')
             } else {
                 if (refName == 'modalDelegate') {
                     this.titleDelegate = title
+                }
+                if (proposalId) {
+                    this.i = index
+                    this.proposals.forEach(item => {
+                        if (item.proposalId.low === proposalId) {
+                            this.proposalDetail = item
+                            return
+                        }
+                    })
                 }
                 this.$refs[refName].classList.toggle("in")
                 document.body.classList.toggle("modal-open")
@@ -376,7 +453,26 @@ export default {
         hideLoading(loader) {
             loader.hide()
         },
-    },
+        async handelVote() {
+            await this.vote(this.proposalDetail.proposalId, this.option)
+        },
+        async vote(proposalId, option) {
+            try {
+                const voter = await KelprWallet.getAddress()
+                const keplrWallet = await KelprWallet.getKeplrWallet()
+                await keplrWallet.vote(voter, proposalId, option)
+                this.$toast.success("Vote success");
+            } catch (err) {
+                this.$toast.error(err.message);
+            }
+        },
+        handelChangeOption(option) {
+            this.option = option
+        },
+        isEmpty(obj) {
+            return Object.keys(obj).length === 0;
+        },
+    }
 }
 </script>
 
