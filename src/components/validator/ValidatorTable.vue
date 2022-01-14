@@ -58,7 +58,7 @@ export default {
         },
         getRate(validator) {
             if (validator.commission.commissionRates.rate) {
-                return (validator.commission.commissionRates.rate) / 10 ** 18 * 100 +'%'
+                return ((validator.commission.commissionRates.rate) / 10 ** 18 * 100).toFixed(2) +'%'
             }
         },
     },
