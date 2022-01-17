@@ -31,3 +31,7 @@
 .page-content .content-wallet .content-proposal-detail .cnt-proppsals .content-tab-proposal .item-proposal-detail .box-item-detail-proposal .left-item-detail {
     padding-right: 15px;
 }
+#popupStakeTokens .content-stake .dropdown ul, #popupUndelegate .content-stake .dropdown ul, #popupRedelega .content-stake .dropdown ul{
+    max-height: 300px;
+    overflow-y: auto;
+}
