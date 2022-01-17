@@ -1,7 +1,7 @@
 <template>
     <div class="modal-body">
         <div class="content-stake">
-            <div class="title-popup-stake">Redelegate</div>
+            <div class="title-popup-stake">Redelegate Tokens</div>
             <div class="form-token">
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':srcRef.dropdown,'js-link':!srcRef.dropdown}"
@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-vote" @click="sendData()" ::disabled="clickSubmit">STAKE</button>
+                    <button class="btn btn-vote" @click="sendData()" :disabled=clickSubmit>REDELEGATE</button>
                 </div>
             </div>
         </div>
@@ -92,6 +92,14 @@ export default {
         stakedValidators: Array,
         validators: Array,
         delegate: Array
+    },
+    computed:{
+        clickSubmit() {
+            if (this.error || this.title == 'Select validator' || this.token == '') {
+                return 'disabled'
+            }
+            return ''
+        }
     },
     methods: {
         clickDropdown(ref) {
@@ -147,16 +155,18 @@ export default {
                 this.formInvalid.borderColor = ''
             }
         },
-        clickSubmit() {
-            if (this.error || this.title == 'Select validator' || this.token == '') {
-                return ''
-            }
-            return 'disabled'
-        }
+
     }
 }
 </script>
 
 <style scoped>
+input[type='number'] {
+    -moz-appearance:textfield;
+}
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
 </style>
