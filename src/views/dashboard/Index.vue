@@ -170,7 +170,7 @@
                                 @click="closeModal('modalDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate"/>
+                    <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate" />
                 </div>
             </div>
         </div>

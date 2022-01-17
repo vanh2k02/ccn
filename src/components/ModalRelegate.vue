@@ -93,12 +93,12 @@ export default {
         validators: Array,
         delegate: Array
     },
-    computed:{
+    computed: {
         clickSubmit() {
             if (this.error || this.title == 'Select validator' || this.token == '') {
-                return 'disabled'
+                return true
             }
-            return ''
+            return false
         }
     },
     methods: {
@@ -155,14 +155,20 @@ export default {
                 this.formInvalid.borderColor = ''
             }
         },
-
+        closeModal() {
+            this.token = ''
+            this.titleStakedValidator = 'Select validator from'
+            this.titleValidator = 'Select validator to'
+            this.error = ''
+            this.formInvalid.borderColor = ''
+        }
     }
 }
 </script>
 
 <style scoped>
 input[type='number'] {
-    -moz-appearance:textfield;
+    -moz-appearance: textfield;
 }
 
 input::-webkit-outer-spin-button,

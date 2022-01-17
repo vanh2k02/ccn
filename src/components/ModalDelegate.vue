@@ -46,7 +46,8 @@ export default {
             dropdown: false,
             style: 'none',
             addressDelegator: '',
-            token: '',
+            token:'',
+            title:'Select validator',
             amount: {
                 denom: DENOM,
                 amount: this.token
@@ -60,14 +61,14 @@ export default {
     props: {
         validators: Array,
         coin: String,
-        titleDelegate: String
+        titleDelegate: String,
     },
     computed: {
         clickSubmit() {
             if (this.error || this.title == 'Select validator' || this.token == '') {
-                return 'disabled'
+                return true
             }
-            return ''
+            return false
         }
     },
     methods: {
@@ -107,8 +108,7 @@ export default {
                 this.error = ''
                 this.formInvalid.borderColor = ''
             }
-        },
-
+        }
     }
 }
 </script>

@@ -34,7 +34,7 @@
                 </div>
                 <div class="form-group">
                     <button class="btn btn-vote" @click="sendRequest"
-                            :disabled=clickSubmit>STAKE
+                            :disabled="clickSubmit">STAKE
                     </button>
                 </div>
             </div>
@@ -53,28 +53,29 @@ export default {
             dropdown: false,
             style: 'none',
             addressDelegator: '',
-            token: '',
             amount: {
                 denom: DENOM,
                 amount: this.token
             },
-            title: 'Select validator',
             error: '',
             formInvalid: {
                 borderColor: ''
-            }
+            },
+            token: '',
+            title: 'Select validator',
         }
     },
     props: {
         validators: Array,
-        coin: String
+        coin: String,
+
     },
     computed: {
         clickSubmit() {
             if (this.error || this.title === 'Select validator' || this.token === '') {
-                return 'disabled'
+                return true
             }
-            return ''
+            return false
         }
     },
     methods: {
@@ -114,6 +115,13 @@ export default {
                 this.error = ''
                 this.formInvalid.borderColor = ''
             }
+        },
+        closeModal() {
+            console.log('abc')
+            this.token = ''
+            this.title = 'Select validator'
+            this.error = ''
+            this.formInvalid.borderColor = ''
         },
 
     }
