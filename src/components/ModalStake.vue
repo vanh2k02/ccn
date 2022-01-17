@@ -117,7 +117,6 @@ export default {
             }
         },
         closeModal() {
-            console.log('abc')
             this.token = ''
             this.title = 'Select validator'
             this.error = ''

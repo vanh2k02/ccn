@@ -128,10 +128,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModal('modalStake')">
+                                @click="closeModal('modalStake','closeStake')">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalStake :validators="validators" :coin="coin"/>
+                    <ModalStake :validators="validators" :coin="coin" ref="closeStake"/>
                 </div>
             </div>
         </div>
@@ -141,10 +141,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModal('modalUnDelegate')">
+                                @click="closeModal('modalUnDelegate','closeUnDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalUndelegate :stakedValidators="stakedValidators.validators" :delegate="delegate"/>
+                    <ModalUndelegate :stakedValidators="stakedValidators.validators" :delegate="delegate" ref="closeUnDelegate"/>
                 </div>
             </div>
         </div>
@@ -154,11 +154,11 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModal('modalReDelegate')">
+                                @click="closeModal('modalReDelegate','closeRelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
                     <ModalRelegate :stakedValidators="stakedValidators.validators" :validators="validators"
-                                   :delegate="delegate"/>
+                                   :delegate="delegate" ref="closeRelegate"/>
                 </div>
             </div>
         </div>
@@ -171,7 +171,7 @@
                                 @click="closeModal('modalDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate"/>
+                    <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate" />
                 </div>
             </div>
         </div>
@@ -344,7 +344,8 @@ export default {
             this.setIsOpen(true)
 
         },
-        closeModal(refName) {
+        closeModal(refName,refCloseName) {
+            this.$refs[refCloseName].closeModal()
             this.$refs[refName].classList.toggle("in")
             document.body.classList.toggle("modal-open")
             this.$refs[refName].style.display = "none"
@@ -445,7 +446,7 @@ export default {
                     const kelprWallet = await KelprWallet.getKeplrWallet()
                     const address = await KelprWallet.getAddress()
 
-                    for await (const data of this.listReward.rewards) {
+                    for await (const data of this.listReward) {
                         await kelprWallet.claimRewards(address, data.validatorAddress)
                         console.log(this.listReward,'abc')
                     }
