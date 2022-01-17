@@ -398,10 +398,11 @@ export default {
         },
         async getRewards() {
             if (this.address) {
-                const response = await this.wallet.getRewards(this.address)
+                const response = await this.wallet.getRewards('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
                 response.total.forEach(item => {
                     if (item.denom === DENOM) {
                         this.reward = item.amount / 10 ** 24
+
                     }
                 })
                 this.listReward = response.rewards
@@ -442,22 +443,21 @@ export default {
             }
         },
         async claim() {
-            if (this.listReward.rewards>0){
+
                 try {
                     const kelprWallet = await KelprWallet.getKeplrWallet()
                     const address = await KelprWallet.getAddress()
-
+                    console.log(this.listReward,'abc')
                     for await (const data of this.listReward) {
                         await kelprWallet.claimRewards(address, data.validatorAddress)
-                        console.log(this.listReward,'abc')
+
                     }
 
                 } catch (err) {
                     console.log(err)
                     this.$toast.error(err.message);
                 }
-            }
-            return
+
 
         },
         showLoadling(refName) {
