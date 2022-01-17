@@ -25,7 +25,7 @@
                 </td>
                 <td>{{ validator | getTokens }}</td>
                 <td>{{ validator | getRate }}</td>
-                <td>no tokens</td>
+                <td>{{ getUnbondingBalance(validator.operatorAddress) }}</td>
                 <td><a href="javascript:void(0)" @click="delegate(validator.description.moniker)">DELEGATE</a></td>
             </tr>
             <ValidatorNoData :validators="validators" :isStake="isStake" @connectSuccess="connectSuccess"/>
@@ -42,6 +42,7 @@ export default {
     },
     props: {
         validators: Array,
+        unbondings: Array,
         isStake: Boolean
     },
     data () {
@@ -129,7 +130,7 @@ export default {
                     if(sortField == "commission.commissionRates.rate") {
                         return a.commission.commissionRates.rate - b.commission.commissionRates.rate;
                     } else if(sortField == "description.moniker") {
-                        return a.description.moniker - b.description.moniker;
+                        return b.description.moniker === a.description.moniker ? 0 : b.description.moniker < a.description.moniker ? 1 : -1; 
                     }
                     return a[sortField] - b[sortField];
                 });
@@ -138,7 +139,7 @@ export default {
                     if(sortField == "commission.commissionRates.rate") {
                         return b.commission.commissionRates.rate - a.commission.commissionRates.rate;
                     } else if(sortField == "description.moniker") {
-                        return b.description.moniker - a.description.moniker;
+                        return b.description.moniker === a.description.moniker ? 0 : b.description.moniker < a.description.moniker ? -1 : 1; 
                     }
                     return b[sortField] - a[sortField];
                 });
@@ -149,6 +150,18 @@ export default {
         },
         setSortType(type){
             this.sort_type = type
+        },
+        getUnbondingBalance(validatorAddress) {
+            let balance = 0;
+            this.unbondings.forEach(item => {
+                if (item.validatorAddress === validatorAddress) {
+                    balance = item.entries.reduce((a, b) => parseInt(a.balance) + parseInt(b.balance), 0)
+                }
+            })
+            if(balance == 0) {
+                return "No tokens"
+            }
+            return balance
         }
     }
 }
