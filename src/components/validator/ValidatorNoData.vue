@@ -4,7 +4,7 @@
         <td v-if="validators.length == 0 && isStake && !address" colspan="6" style="text-align: center;">
             <button class="" @click="connectWallet">Connect</button>
         </td>
-        <td v-else-if="validators.length == 0" colspan="6" style="text-align: center;">
+        <td v-else-if="validators.length == 0" colspan="6" class="no-data">
             No data found
         </td>
     </tr>

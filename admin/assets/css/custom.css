@@ -1,0 +1,30 @@
+.table-bordered > thead > tr > th .sorting_asc {
+    float: right;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding-top: 2px;
+}
+
+.table-bordered > thead > tr > th .sorting_asc .fa {
+    line-height: 10px;
+}
+.connect-button {
+    background: #004469;
+    border: 0;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 25px;
+    color: #fff;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+.no-data {
+    color: #004469;
+    font-size: 16px;
+    font-weight: 600
+}
