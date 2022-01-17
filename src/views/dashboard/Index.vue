@@ -289,7 +289,8 @@ export default {
     computed: {
         ...mapState('auth', ["address"]),
         checkClaim(){
-            if (this.listReward.rewards>0){
+            for
+            if (this.listReward>0){
                 return ''
             }
             return 'disable'
@@ -407,8 +408,7 @@ export default {
                         this.reward = item.amount / 10 ** 24
                     }
                 })
-                this.listReward = response
-                console.log(this.listReward)
+                this.listReward = response.rewards
             }
         },
         async getBalances() {
@@ -448,9 +448,10 @@ export default {
                 try {
                     const kelprWallet = await KelprWallet.getKeplrWallet()
                     const address = await KelprWallet.getAddress()
+
                     for await (const data of this.listReward) {
                         await kelprWallet.claimRewards(address, data.validatorAddress)
-                        console.log(this.listReward)
+                        console.log(this.listReward,'abc')
                     }
 
                 } catch (err) {
