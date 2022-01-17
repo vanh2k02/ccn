@@ -65,7 +65,7 @@ export default {
     },
     computed: {
         clickSubmit() {
-            if (this.error || this.title == 'Select validator' || this.token == '') {
+            if (this.error || this.token === '') {
                 return true
             }
             return false
@@ -108,7 +108,12 @@ export default {
                 this.error = ''
                 this.formInvalid.borderColor = ''
             }
-        }
+        },
+        closeModal() {
+            this.token = ''
+            this.error = ''
+            this.formInvalid.borderColor = ''
+        },
     }
 }
 </script>

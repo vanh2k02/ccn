@@ -168,10 +168,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModal('modalDelegate')">
+                                @click="closeModal('modalDelegate','closeDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate" />
+                    <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate" ref="closeDelegate"/>
                 </div>
             </div>
         </div>
@@ -299,7 +299,7 @@ export default {
         await this.getRewards()
         await this.getBalances()
         await this.getDelegation()
-        // this.unbonding()
+        this.unbonding()
         await this.getProposals()
         this.$store.subscribe(mutation => {
             if (mutation.type === 'auth/setAddress') {
@@ -420,8 +420,9 @@ export default {
         },
         async unbonding() {
             if (this.address) {
-                const response = await this.wallet.getUnbonding(this.address)
+                const response = await this.wallet.getUnbonding('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
                 this.unbondings = response.unbondingResponses
+                console.log(this.unbondings)
             }
         },
         async getDelegation() {
