@@ -64,7 +64,7 @@ export default {
     },
     methods: {
         delegate(moniker) {
-            this.$emit('showModal', moniker, "modalDelegate")
+            this.$emit('showModal', moniker, "modalDelegate",'','')
         },
         connectSuccess() {
             this.$emit('connectSuccess', 1)
