@@ -2,12 +2,13 @@
     <table class="table table-striped table-bordered table-hover text-center">
         <thead>
             <tr>
-                <th>Validator</th>
-                <th>Status</th>
-                <th>Voting Power</th>
-                <th>Commission</th>
-                <th>Tokens Staked</th>
-                <th>Action</th>
+                <th @click="handleSort(item)" v-for="(item, index) in tableHeader" v-bind:key="index">
+                    {{ item.name }}
+                    <div class="sorting_asc" v-if="item.sortable">
+                        <i class="fa fa-caret-up" v-if="sort_type == 'asc' && sort_field == item.key" aria-hidden="true"></i>
+                        <i class="fa fa-caret-down" v-if="sort_type == 'desc' && sort_field == item.key" aria-hidden="true"></i>
+                    </div>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -43,6 +44,44 @@ export default {
         validators: Array,
         isStake: Boolean
     },
+    data () {
+        return {
+            tableHeader:[
+                {
+                    key: "description.moniker",
+                    name: "Validator",
+                    sortable: true,
+                },
+                {
+                    key: "status",
+                    name: "Status",
+                    sortable: false,
+                },
+                {
+                    key: "tokens",
+                    name: "Voting Power",
+                    sortable: true,
+                },
+                {
+                    key: "commission.commissionRates.rate",
+                    name: "Commission",
+                    sortable: true,
+                },
+                {
+                    key: "token_staked",
+                    name: "Tokens Staked",
+                    sortable: false,
+                },
+                {
+                    key: "action",
+                    name: "Action",
+                    sortable: false,
+                },
+            ],
+            sort_type: "",
+            sort_field: ""
+        }
+    },
     filters: {
         getMoniker(validator) {
             if (validator.description) {
@@ -69,6 +108,48 @@ export default {
         connectSuccess() {
             this.$emit('connectSuccess', 1)
         },
+        handleSort(item){
+            if(!item.sortable){
+                return false
+            }
+            const sortField = item.key
+            let sortType = 'desc'
+            if(sortField == this.sort_field){
+                sortType = this.sort_type == 'desc' ? 'asc' : 'desc'
+            }
+            this.setSortType(sortType)
+            this.setSortField(sortField)
+            this.sort()
+            return true
+        },
+        sort () {
+            const sortField = this.sort_field
+            if(this.sort_type == 'asc'){ 
+                this.validators.sort(function (a, b) {
+                    if(sortField == "commission.commissionRates.rate") {
+                        return a.commission.commissionRates.rate - b.commission.commissionRates.rate;
+                    } else if(sortField == "description.moniker") {
+                        return a.description.moniker - b.description.moniker;
+                    }
+                    return a[sortField] - b[sortField];
+                });
+            } else {
+                this.validators.sort(function (a, b) {
+                    if(sortField == "commission.commissionRates.rate") {
+                        return b.commission.commissionRates.rate - a.commission.commissionRates.rate;
+                    } else if(sortField == "description.moniker") {
+                        return b.description.moniker - a.description.moniker;
+                    }
+                    return b[sortField] - a[sortField];
+                });
+            }
+        },
+        setSortField(field){
+            this.sort_field = field
+        },
+        setSortType(type){
+            this.sort_type = type
+        }
     }
 }
 </script>
