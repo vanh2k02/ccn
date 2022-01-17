@@ -441,9 +441,13 @@ export default {
             try {
                 const kelprWallet = await KelprWallet.getKeplrWallet()
                 const address = await KelprWallet.getAddress()
-                await kelprWallet.claimRewards(address, this.listReward.validatorAddress)
+                for await (const data of this.listReward) {
+                     await kelprWallet.claimRewards(address, data.validatorAddress)
+                    console.log(this.listReward)
+                }
 
             } catch (err) {
+                console.log(err)
                 this.$toast.error(err.message);
             }
         },
