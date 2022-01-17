@@ -1,7 +1,7 @@
 <template>
     <div class="modal-body">
         <div class="content-stake">
-            <div class="title-popup-stake">Stake Tokens</div>
+            <div class="title-popup-stake">Delegate Tokens</div>
             <div class="form-token">
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}"
