@@ -24,7 +24,7 @@
                         <div class="status-items">
                             <div class="title">Rewards</div>
                             <div class="number">{{ reward.toFixed(1) }}</div>
-                            <div class="list-link"><a href="javascript:void(0)" @click="claim">CLAIM</a>
+                            <div class="list-link"><a  href="javascript:void(0)" @click="claim" >CLAIM</a>
                             </div>
                         </div>
                         <div class="status-items">
@@ -287,7 +287,14 @@ export default {
         }
     },
     computed: {
-        ...mapState('auth', ["address"])
+        ...mapState('auth', ["address"]),
+        // checkClaim(){
+        //     for
+        //     if (this.listReward>0){
+        //         return ''
+        //     }
+        //     return 'disable'
+        // }
     },
     async mounted() {
         await this.getWallet()
@@ -401,8 +408,7 @@ export default {
                         this.reward = item.amount / 10 ** 24
                     }
                 })
-                this.listReward = response
-                console.log(this.listReward)
+                this.listReward = response.rewards
             }
         },
         async getBalances() {
@@ -438,18 +444,23 @@ export default {
             }
         },
         async claim() {
-            try {
-                const kelprWallet = await KelprWallet.getKeplrWallet()
-                const address = await KelprWallet.getAddress()
-                for await (const data of this.listReward) {
-                     await kelprWallet.claimRewards(address, data.validatorAddress)
-                    console.log(this.listReward)
-                }
+            if (this.listReward.rewards>0){
+                try {
+                    const kelprWallet = await KelprWallet.getKeplrWallet()
+                    const address = await KelprWallet.getAddress()
 
-            } catch (err) {
-                console.log(err)
-                this.$toast.error(err.message);
+                    for await (const data of this.listReward) {
+                        await kelprWallet.claimRewards(address, data.validatorAddress)
+                        console.log(this.listReward,'abc')
+                    }
+
+                } catch (err) {
+                    console.log(err)
+                    this.$toast.error(err.message);
+                }
             }
+            return
+
         },
         showLoadling(refName) {
             const loader = this.$loading.show({

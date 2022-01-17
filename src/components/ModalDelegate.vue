@@ -1,7 +1,7 @@
 <template>
     <div class="modal-body">
         <div class="content-stake">
-            <div class="title-popup-stake">Stake Tokens</div>
+            <div class="title-popup-stake">Delegate Tokens</div>
             <div class="form-token">
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}"
@@ -19,7 +19,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <input class="form-control" type="text" :style="formInvalid" placeholder="Enter tokens to Stake"
+                    <input class="form-control" type="number" :style="formInvalid" placeholder="Enter tokens to Stake"
                            v-model="token" @keyup="checkRequest"/>
                     <span class="error">{{ error }}</span>
                     <div class="text-max" @click="maxAvailable">Max</div>

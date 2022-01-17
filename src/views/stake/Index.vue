@@ -84,7 +84,6 @@ export default {
             wallet: '',
             titleDelegate: '',
             coin: '0',
-            address: ''
         }
     },
     async mounted() {
@@ -134,6 +133,7 @@ export default {
             }
         },
         showModal(title, refName) {
+            console.log(this.address)
             if (this.address == '') {
                 this.$toast.error('Account not connected. Please connect to wallet')
                 return

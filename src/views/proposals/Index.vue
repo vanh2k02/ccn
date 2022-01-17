@@ -147,7 +147,9 @@
                                         :votingStartTime="proposalDetail.votingStartTime"
                                         :votingEndTime="proposalDetail.votingEndTime"
                                     />
-                                    <p>{{ proposalDetail.des.content }}</p>
+                                    <div class="decription-proposal">
+                                        <p >{{ proposalDetail.des.content }}</p>
+                                    </div>
                                 </div>
                             </div>
                             <div class="right-item-proposal">
@@ -336,3 +338,18 @@ export default {
     }
 }
 </script>
+<style>
+.decription-proposal{
+    max-height: 60vh;
+    overflow-y: auto;
+}
+.decription-proposal p{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-wrap;
+    width: 100%;
+    font-family: "Blinker",sans-serif;
+    line-height: 130%;
+    height: unset;
+}
+</style>
