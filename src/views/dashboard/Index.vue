@@ -444,7 +444,6 @@ export default {
                 await kelprWallet.claimRewards(address, this.listReward.validatorAddress)
 
             } catch (err) {
-                console.log(err)
                 this.$toast.error(err.message);
             }
         },
