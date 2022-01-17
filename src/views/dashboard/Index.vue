@@ -112,7 +112,9 @@
                                                    :des="proposal.des"
                                                    @showModal="showModal('','modalProposal',proposal.proposalId.low,index+1)"
                                     />
+                                    <ProposalNoData :proposals="proposals"/>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
@@ -245,11 +247,13 @@ import ProposalInfo from "@/components/proposal/ProposalInfo";
 import ProposalChart from "@/components/proposal/ProposalChart";
 import ProposalVoteInfo from "@/components/proposal/ProposalVoteInfo";
 import ProposalHeader from "@/components/proposal/ProposalHeader";
+import ProposalNoData from "../../components/proposal/ProposalNoData";
 
 const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 export default {
     name: "Dashboard",
     components: {
+        ProposalNoData,
         ProposalHeader,
         ProposalVoteInfo,
         ProposalChart,
