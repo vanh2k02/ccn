@@ -51,10 +51,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModal('modalDelegate')">
+                                @click="closeModal('modalDelegate','closeDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalDelegate :validators="allValidators.validators" :coin="coin" :titleDelegate="titleDelegate"/>
+                    <ModalDelegate :validators="allValidators.validators" :coin="coin" :titleDelegate="titleDelegate" ref="closeDelegate"/>
                 </div>
             </div>
         </div>
@@ -152,7 +152,8 @@ export default {
             this.$refs[refName].style.display = "block"
             this.setIsOpen(true)
         },
-        closeModal(refName) {
+        closeModal(refName,closeRefName) {
+            this.$refs[closeRefName].closeModal()
             this.$refs[refName].classList.toggle("in")
             document.body.classList.toggle("modal-open")
             this.$refs[refName].style.display = "none"
