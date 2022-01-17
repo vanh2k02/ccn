@@ -129,7 +129,7 @@ export default {
                     if(sortField == "commission.commissionRates.rate") {
                         return a.commission.commissionRates.rate - b.commission.commissionRates.rate;
                     } else if(sortField == "description.moniker") {
-                        return a.description.moniker - b.description.moniker;
+                        return b.description.moniker === a.description.moniker ? 0 : b.description.moniker < a.description.moniker ? 1 : -1; 
                     }
                     return a[sortField] - b[sortField];
                 });
@@ -138,7 +138,7 @@ export default {
                     if(sortField == "commission.commissionRates.rate") {
                         return b.commission.commissionRates.rate - a.commission.commissionRates.rate;
                     } else if(sortField == "description.moniker") {
-                        return b.description.moniker - a.description.moniker;
+                        return b.description.moniker === a.description.moniker ? 0 : b.description.moniker < a.description.moniker ? -1 : 1; 
                     }
                     return b[sortField] - a[sortField];
                 });
