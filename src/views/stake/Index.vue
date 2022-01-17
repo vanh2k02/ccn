@@ -127,13 +127,17 @@ export default {
                 this.$toast.error(err.message)
             }
             this.hideLoading(loader)
-        }, 
+        },
         async stakeds() {
             if(this.address){
                 this.stakedValidators = await this.wallet.getStakedValidators(this.address)
             }
         },
         showModal(title, refName) {
+            if (this.address == '') {
+                this.$toast.error('Account not connected. Please connect to wallet')
+                return
+            }
             if(refName == 'modalDelegate') {
                 this.titleDelegate = title
             }
