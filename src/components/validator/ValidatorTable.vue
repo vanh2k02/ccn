@@ -25,7 +25,7 @@
                 </td>
                 <td>{{ validator | getTokens }}</td>
                 <td>{{ validator | getRate }}</td>
-                <td>no tokens</td>
+                <td>{{ getUnbondingBalance(validator.operatorAddress) }}</td>
                 <td><a href="javascript:void(0)" @click="delegate(validator.description.moniker)">DELEGATE</a></td>
             </tr>
             <ValidatorNoData :validators="validators" :isStake="isStake" @connectSuccess="connectSuccess"/>
@@ -42,6 +42,7 @@ export default {
     },
     props: {
         validators: Array,
+        unbondings: Array,
         isStake: Boolean
     },
     data () {
@@ -149,6 +150,18 @@ export default {
         },
         setSortType(type){
             this.sort_type = type
+        },
+        getUnbondingBalance(validatorAddress) {
+            let balance = 0;
+            this.unbondings.forEach(item => {
+                if (item.validatorAddress === validatorAddress) {
+                    balance = item.entries.reduce((a, b) => parseInt(a.balance) + parseInt(b.balance), 0)
+                }
+            })
+            if(balance == 0) {
+                return "No tokens"
+            }
+            return balance
         }
     }
 }

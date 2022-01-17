@@ -64,6 +64,7 @@
                                                 <ValidatorTable
                                                     :validators="allValidators.validators"
                                                     :isStake="false"
+                                                    :unbondings="unbondings"
                                                     @showModal="showModal"
                                                 />
                                             </div>
@@ -78,6 +79,7 @@
                                                 <ValidatorTable
                                                     :validators="stakedValidators.validators"
                                                     :isStake="true"
+                                                    :unbondings="unbondings"
                                                     @showModal="showModal"
                                                 />
                                             </div>
@@ -269,6 +271,7 @@ export default {
     data: function () {
         return {
             allValidators: [],
+            unbondings: [],
             activeTab: "allValidators",
             stakedValidators: [],
             wallet: '',
@@ -288,13 +291,6 @@ export default {
     },
     computed: {
         ...mapState('auth', ["address"]),
-        // checkClaim(){
-        //     for
-        //     if (this.listReward>0){
-        //         return ''
-        //     }
-        //     return 'disable'
-        // }
     },
     async mounted() {
         await this.getWallet()
@@ -424,7 +420,8 @@ export default {
         },
         async unbonding() {
             if (this.address) {
-                await this.wallet.getUnbonding(this.address)
+                const response = await this.wallet.getUnbonding(this.address)
+                this.unbondings = response.unbondingResponses
             }
         },
         async getDelegation() {
@@ -449,13 +446,10 @@ export default {
                     const kelprWallet = await KelprWallet.getKeplrWallet()
                     const address = await KelprWallet.getAddress()
 
-                    for await (const data of this.listReward) {
+                    for await (const data of this.listReward.rewards) {
                         await kelprWallet.claimRewards(address, data.validatorAddress)
-                        console.log(this.listReward,'abc')
                     }
-
                 } catch (err) {
-                    console.log(err)
                     this.$toast.error(err.message);
                 }
             }

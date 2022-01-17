@@ -24,7 +24,7 @@
                                     <div class="content-detail">
                                         <div class="cos-table-list">
                                             <div class="table-responsive" ref="validatorTable">
-                                                <ValidatorTable :validators="allValidators.validators" @showModal="showModal" :isStake="false"/>
+                                                <ValidatorTable :unbondings="unbondings" :validators="allValidators.validators" @showModal="showModal" :isStake="false"/>
                                             </div>
                                         </div>
                                     </div>
@@ -34,7 +34,7 @@
                                     <div class="content-detail">
                                         <div class="cos-table-list">
                                             <div class="table-responsive">
-                                                <ValidatorTable :validators="stakedValidators.validators" @showModal="showModal" :isStake="true"/>
+                                                <ValidatorTable :unbondings="unbondings" :validators="stakedValidators.validators" @showModal="showModal" :isStake="true"/>
                                             </div>
                                         </div>
                                     </div>
@@ -79,6 +79,7 @@ export default {
     data: function () {
         return {
             allValidators: [],
+            unbondings: [],
             activeTab: "allValidators",
             stakedValidators: [],
             wallet: '',
@@ -132,8 +133,13 @@ export default {
                 this.stakedValidators = await this.wallet.getStakedValidators(this.address)
             }
         },
+        async unbonding() {
+            if (this.address) {
+                const response = await this.wallet.getUnbonding(this.address)
+                this.unbondings = response.unbondingResponses
+            }
+        },
         showModal(title, refName) {
-            console.log(this.address)
             if (this.address == '') {
                 this.$toast.error('Account not connected. Please connect to wallet')
                 return
