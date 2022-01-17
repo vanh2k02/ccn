@@ -24,7 +24,7 @@
                         <div class="status-items">
                             <div class="title">Rewards</div>
                             <div class="number">{{ reward.toFixed(1) }}</div>
-                            <div class="list-link"><a :class="checkClaim" href="javascript:void(0)" @click="claim" >CLAIM</a>
+                            <div class="list-link"><a  href="javascript:void(0)" @click="claim" >CLAIM</a>
                             </div>
                         </div>
                         <div class="status-items">
@@ -288,13 +288,13 @@ export default {
     },
     computed: {
         ...mapState('auth', ["address"]),
-        checkClaim(){
-            for
-            if (this.listReward>0){
-                return ''
-            }
-            return 'disable'
-        }
+        // checkClaim(){
+        //     for
+        //     if (this.listReward>0){
+        //         return ''
+        //     }
+        //     return 'disable'
+        // }
     },
     async mounted() {
         await this.getWallet()

@@ -19,7 +19,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <input class="form-control" type="text" :style="formInvalid" placeholder="Enter tokens to Stake"
+                    <input class="form-control" type="number" :style="formInvalid" placeholder="Enter tokens to Stake"
                            v-model="token" @keyup="checkRequest"/>
                     <span class="error">{{ error }}</span>
                     <div class="text-max" @click="maxAvailable">Max</div>

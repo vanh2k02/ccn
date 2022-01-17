@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <input class="form-control" :style="formInvalid" type="text" v-model="token"
+                    <input class="form-control" :style="formInvalid" type="number" v-model="token"
                            placeholder="Enter tokens to Stake" @keyup="checkRequest"/>
                     <span class="error">{{ error }}</span>
                     <div class="text-max" @click="maxToken">Max</div>
