@@ -288,13 +288,7 @@ export default {
     },
     computed: {
         ...mapState('auth', ["address"]),
-        // checkClaim(){
-        //     for
-        //     if (this.listReward>0){
-        //         return ''
-        //     }
-        //     return 'disable'
-        // }
+
     },
     async mounted() {
         await this.getWallet()
