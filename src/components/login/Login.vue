@@ -15,6 +15,9 @@
                     </div>
                 </div>
             </div>
+            <div class="content-logout">
+                <button>Logout</button>
+            </div>
         </div>
     </div>
 </template>

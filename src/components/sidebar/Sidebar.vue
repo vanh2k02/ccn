@@ -5,11 +5,6 @@
             <ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
                 <TabSideBar/>
             </ul>
-            <div class="content-logout">
-                <ul>
-                    <li><a href="javascript:void (0)" @click="logout" v-if="address"> <span>Disconnect</span></a></li>
-                </ul>
-            </div>
         </div>
     </div>
 </template>
