@@ -492,27 +492,26 @@ ul {
   padding-bottom: 5px;
 }
 .page-content .content-wallet .cnt-acount-user .name-acount .cnt-link-copy {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+
 }
 .page-content .content-wallet .cnt-acount-user .name-acount .cnt-link-copy .link {
-  font-size: 12px;
+  font-size: 16px;
   line-height: 15px;
   color: #212121;
   padding-right: 5px;
+  font-weight: 600;
 }
 .page-content .content-wallet .cnt-acount-user .name-acount .cnt-link-copy .btn-copy {
-  font-size: 10px;
-  line-height: 14px;
-  padding: 2px 7px;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 7px 10px;
   border-radius: 10px;
   background-color: #E5E5E5;
   color: #212121;
   font-weight: 700;
+  max-width: 120px;
+  width: 100%;
+
 }
 .page-content .content-wallet .cnt-acount-user .icon {
   width: 48px;
@@ -1404,7 +1403,15 @@ ul {
     right: 10px;
     top: calc(50% - 6px);
 }
-
+.content-logout button{ 
+  max-width: 120px;
+  border: 0;
+  width: 100%;
+  background-color: #0f4469;
+  padding: 10px;
+  border-radius: 8px;
+  color: #fff;
+}
 @media (min-width: 1025px) {
   .container {
     padding: 0!important;
