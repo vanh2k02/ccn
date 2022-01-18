@@ -103,6 +103,7 @@ export default {
     },
     computed: {
         clickSubmit() {
+
             if (this.error || this.title == 'Select validator' || this.token == '') {
                 return true
             }
@@ -171,7 +172,7 @@ export default {
             this.formInvalid.borderColor = ''
             this.hideDropDown('srcRef')
             this.hideDropDown('dstRef')
-        }
+        },
     }
 }
 </script>

@@ -72,6 +72,7 @@ export default {
             },
             token: '',
             title: 'Select validator',
+
         }
     },
     props: {
@@ -80,7 +81,9 @@ export default {
 
     },
     computed: {
+
         clickSubmit() {
+
             if (this.error || this.title === 'Select validator' || this.token === '') {
                 return true
             }
@@ -147,6 +150,7 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
+
 ::placeholder {
     color: #C0B1B1B8 !important;
 }

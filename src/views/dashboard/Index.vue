@@ -130,7 +130,7 @@
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
                                 @click="closeModal('modalStake','closeStake')">
-                            <span aria-hidden="true"></span></button>
+                            <span aria-hidden="true" class="icon-close-modal" ></span></button>
                     </div>
                     <ModalStake :validators="validators" :coin="coin" ref="closeStake"/>
                 </div>
@@ -157,7 +157,7 @@
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
                                 @click="closeModal('modalReDelegate','closeRelegate')">
-                            <span aria-hidden="true"></span></button>
+                            <span aria-hidden="true" class="icon-close-modal"></span></button>
                     </div>
                     <ModalRelegate :stakedValidators="stakedValidators.validators" :validators="validators"
                                    :delegate="delegate" ref="closeRelegate"/>
@@ -171,7 +171,7 @@
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
                                 @click="closeModal('modalDelegate','closeDelegate')">
-                            <span aria-hidden="true"></span></button>
+                            <span aria-hidden="true" class="icon-close-modal"></span></button>
                     </div>
                     <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate"
                                    ref="closeDelegate"/>
@@ -184,7 +184,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true"
-                                @click="closeModal('modalProposal')"><span aria-hidden="true"></span></button>
+                                @click="closeModal('modalProposal')"><span aria-hidden="true" class="icon-close-modal"></span></button>
                     </div>
                     <div class="modal-body" v-if="!isEmpty(proposalDetail)">
                         <div class="item-proposal-detail">

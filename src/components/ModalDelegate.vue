@@ -6,18 +6,14 @@
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}"
                                              href="#" @click="clickDropdown()">
-                        <div class="icon">
-                            <img
-                                src="https://s3.amazonaws.com/keybase_processed_uploads/ee492dacfab4015625e68c3e0f1da505_360_360.jpg"
-                                alt="">
-                        </div>
+                        <ValidatorImage :identity="icon" />
                         {{ titleDelegate }}<i
                         class="fa fa-angle-down"></i></a>
                         <ul class="js-dropdown-list" :style="{display: style}">
                             <li v-for="(validator,index) in validators" :key="index">
                                 <div class="item-stake"
-                                     @click="chooseValidator(validator.operatorAddress,validator.description.moniker)">
-                                    <ValidatorImage :identity="validator.description.identity" ref="resetValidator"/>
+                                     @click="chooseValidator(validator.operatorAddress,validator.description.moniker,validator.description.identity)">
+                                    <ValidatorImage :identity="validator.description.identity" />
                                     <div class="name">{{ validator.description.moniker }}</div>
                                 </div>
                             </li>
@@ -64,7 +60,8 @@ export default {
             error: '',
             formInvalid: {
                 borderColor: ''
-            }
+            },
+            icon:''
         }
     },
     props: {
@@ -74,6 +71,7 @@ export default {
     },
     computed: {
         clickSubmit() {
+
             if (this.error || this.token === '') {
                 return true
             }
@@ -90,11 +88,12 @@ export default {
                 this.dropdown = true
             }
         },
-        chooseValidator(address, title) {
+        chooseValidator(address, title,icon) {
             this.addressDelegator = address
             this.dropdown = false
             this.style = 'none'
             this.titleDelegate = title
+                this.icon=icon
         },
         async sendRequest() {
             try {
