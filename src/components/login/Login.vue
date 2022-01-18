@@ -15,7 +15,7 @@
                         <div class="button-link-logout">
                             <button class="btn btn-copy" @click="doCopy">Copy</button>
                             <div class="content-logout">
-                                <button>Disconnect</button>
+                                <button @click="logout">Disconnect</button>
                             </div>
                         </div>
                     </div>
@@ -65,7 +65,11 @@ export default {
             if (address) {
                 this.setAddress(address)
             }
-        }
+        },
+        logout() {
+            localStorage.removeItem('address')
+            this.setAddress('')
+        },
     }
 }
 </script>

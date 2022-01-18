@@ -13,7 +13,6 @@
 
 import Logo from "@/components/sidebar/Logo";
 import TabSideBar from "./TabSideBar";
-import { mapMutations, mapState } from "vuex";
 
 export default {
     name: "SideBar",
@@ -21,18 +20,6 @@ export default {
         TabSideBar,
         Logo,
     },
-    computed: {
-        ...mapState('auth', ['address'])
-    },
-    methods: {
-        ...mapMutations("auth", [
-            'setAddress'
-        ]),
-        logout() {
-            localStorage.removeItem('address')
-            this.setAddress('')
-        },
-    }
 }
 </script>
 
