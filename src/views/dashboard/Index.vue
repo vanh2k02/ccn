@@ -35,7 +35,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-5 float-left">
+            <div class="col-md-5 float-right">
                 <Login/>
             </div>
         </div>
