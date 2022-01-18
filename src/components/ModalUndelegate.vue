@@ -68,9 +68,9 @@ export default {
     computed: {
         clickSubmit() {
             if (this.error || this.title == 'Select validator' || this.token == '') {
-                return 'disabled'
+                return true
             }
-            return ''
+            return false
         }
     },
     methods: {
@@ -116,7 +116,12 @@ export default {
                 this.formInvalid.borderColor = ''
             }
         },
-
+        closeModal() {
+            this.token = ''
+            this.title = 'Select validator'
+            this.error = ''
+            this.formInvalid.borderColor = ''
+        }
     }
 }
 </script>

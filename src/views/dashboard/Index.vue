@@ -79,7 +79,6 @@
                                                 <ValidatorTable
                                                     :validators="stakedValidators.validators"
                                                     :isStake="true"
-                                                    :unbondings="unbondings"
                                                     @showModal="showModal"
                                                 />
                                             </div>
@@ -129,10 +128,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModal('modalStake')">
+                                @click="closeModal('modalStake','closeStake')">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalStake :validators="validators" :coin="coin"/>
+                    <ModalStake :validators="validators" :coin="coin" ref="closeStake"/>
                 </div>
             </div>
         </div>
@@ -142,10 +141,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModal('modalUnDelegate')">
+                                @click="closeModal('modalUnDelegate','closeUnDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalUndelegate :stakedValidators="stakedValidators.validators" :delegate="delegate"/>
+                    <ModalUndelegate :stakedValidators="stakedValidators.validators" :delegate="delegate" ref="closeUnDelegate"/>
                 </div>
             </div>
         </div>
@@ -155,11 +154,11 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModal('modalReDelegate')">
+                                @click="closeModal('modalReDelegate','closeRelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
                     <ModalRelegate :stakedValidators="stakedValidators.validators" :validators="validators"
-                                   :delegate="delegate"/>
+                                   :delegate="delegate" ref="closeRelegate"/>
                 </div>
             </div>
         </div>
@@ -169,10 +168,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
-                                @click="closeModal('modalDelegate')">
+                                @click="closeModal('modalDelegate','closeDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate"/>
+                    <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate" ref="closeDelegate"/>
                 </div>
             </div>
         </div>
@@ -300,7 +299,7 @@ export default {
         await this.getRewards()
         await this.getBalances()
         await this.getDelegation()
-        // this.unbonding()
+        this.unbonding()
         await this.getProposals()
         this.$store.subscribe(mutation => {
             if (mutation.type === 'auth/setAddress') {
@@ -345,7 +344,8 @@ export default {
             this.setIsOpen(true)
 
         },
-        closeModal(refName) {
+        closeModal(refName,refCloseName) {
+            this.$refs[refCloseName].closeModal()
             this.$refs[refName].classList.toggle("in")
             document.body.classList.toggle("modal-open")
             this.$refs[refName].style.display = "none"
@@ -398,10 +398,11 @@ export default {
         },
         async getRewards() {
             if (this.address) {
-                const response = await this.wallet.getRewards(this.address)
+                const response = await this.wallet.getRewards('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
                 response.total.forEach(item => {
                     if (item.denom === DENOM) {
                         this.reward = item.amount / 10 ** 24
+
                     }
                 })
                 this.listReward = response.rewards
@@ -420,8 +421,9 @@ export default {
         },
         async unbonding() {
             if (this.address) {
-                const response = await this.wallet.getUnbonding(this.address)
+                const response = await this.wallet.getUnbonding('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
                 this.unbondings = response.unbondingResponses
+                console.log(this.unbondings)
             }
         },
         async getDelegation() {
@@ -441,19 +443,21 @@ export default {
             }
         },
         async claim() {
-            if (this.listReward.rewards>0){
+
                 try {
                     const kelprWallet = await KelprWallet.getKeplrWallet()
                     const address = await KelprWallet.getAddress()
-
-                    for await (const data of this.listReward.rewards) {
+                    console.log(this.listReward,'abc')
+                    for await (const data of this.listReward) {
                         await kelprWallet.claimRewards(address, data.validatorAddress)
+
                     }
+
                 } catch (err) {
+                    console.log(err)
                     this.$toast.error(err.message);
                 }
-            }
-            return
+
 
         },
         showLoadling(refName) {
