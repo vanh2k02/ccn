@@ -16,9 +16,7 @@
                 </div>
             </div>
             <div class="content-logout">
-                <ul>
-                    <li><a href="javascript:void (0)" @click="logout" v-if="address"> <span>Disconnect</span></a></li>
-                </ul>
+                <button>Logout</button>
             </div>
         </div>
     </div>
