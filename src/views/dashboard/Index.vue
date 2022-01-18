@@ -472,7 +472,7 @@ export default {
         },
         async stakeds() {
             if (this.address) {
-                this.stakedValidators = await this.wallet.getStakedValidators('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+                this.stakedValidators = await this.wallet.getStakedValidators(this.address)
             }
         },
         async claim() {
