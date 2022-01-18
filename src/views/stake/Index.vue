@@ -125,7 +125,6 @@ export default {
                 const res = await this.wallet.getValidators("BOND_STATUS_BONDED")
                 this.allValidators = res.validators
                 await this.getValidatorImage(0, this.allValidators, "allValidators")
-                console.log(this.allValidators)
             } catch (err) {
                 this.$toast.error(err.message)
             }

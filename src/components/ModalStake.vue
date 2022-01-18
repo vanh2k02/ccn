@@ -79,7 +79,6 @@ export default {
     },
     computed: {
         clickSubmit() {
-            console.log(this.validators)
             if (this.error || this.title === 'Select validator' || this.token === '') {
                 return true
             }
