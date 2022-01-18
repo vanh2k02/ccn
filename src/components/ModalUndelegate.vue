@@ -5,7 +5,13 @@
             <div class="form-token">
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}" href="#"
-                                             @click="clickDropdown()">{{ title }}<i
+                                             @click="clickDropdown()">
+                        <div class="icon">
+                            <img
+                                src="https://s3.amazonaws.com/keybase_processed_uploads/ee492dacfab4015625e68c3e0f1da505_360_360.jpg"
+                                alt="">
+                        </div>
+                        {{ title }}<i
                         class="fa fa-angle-down"></i></a>
                         <ul class="js-dropdown-list" :style="{display: style}">
                             <li v-for="(stakedValidator,index) in stakedValidators" :key="index">
@@ -121,6 +127,8 @@ export default {
             this.title = 'Select validator'
             this.error = ''
             this.formInvalid.borderColor = ''
+            this.dropdown = false
+            this.style = 'none'
         }
     }
 }
@@ -135,4 +143,5 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
+
 </style>
