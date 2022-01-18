@@ -472,7 +472,7 @@ export default {
         },
         async stakeds() {
             if (this.address) {
-                const response = await this.wallet.getStakedValidators('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+                const response = await this.wallet.getStakedValidators(this.address)
                 this.stakedValidators = response.validators
                 await this.getValidatorImage(0, this.stakedValidators, "stakedValidators")
             }
