@@ -185,4 +185,7 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
+::placeholder {
+    color: #C0B1B1B8 !important;
+}
 </style>
