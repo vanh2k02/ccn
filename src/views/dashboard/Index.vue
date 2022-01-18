@@ -1,7 +1,7 @@
 <template>
     <div class="content-wallet">
         <div class="row">
-            <Login/>
+
             <div class="col-md-7 float-left">
                 <div class="content-wall-left">
                     <div class="blocks-status">
@@ -34,6 +34,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-5 float-left">
+                <Login/>
             </div>
         </div>
         <div class="content-validate-detail">
@@ -130,7 +133,7 @@
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
                                 @click="closeModal('modalStake','closeStake')">
-                            <span aria-hidden="true"></span></button>
+                            <span aria-hidden="true" class="icon-close-modal" ></span></button>
                     </div>
                     <ModalStake :validators="validators" :coin="coin" ref="closeStake"/>
                 </div>
@@ -157,7 +160,7 @@
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
                                 @click="closeModal('modalReDelegate','closeRelegate')">
-                            <span aria-hidden="true"></span></button>
+                            <span aria-hidden="true" class="icon-close-modal"></span></button>
                     </div>
                     <ModalRelegate :stakedValidators="stakedValidators.validators" :validators="validators"
                                    :delegate="delegate" ref="closeRelegate"/>
@@ -171,7 +174,7 @@
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
                                 @click="closeModal('modalDelegate','closeDelegate')">
-                            <span aria-hidden="true"></span></button>
+                            <span aria-hidden="true" class="icon-close-modal"></span></button>
                     </div>
                     <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate"
                                    ref="closeDelegate"/>
@@ -184,7 +187,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true"
-                                @click="closeModal('modalProposal')"><span aria-hidden="true"></span></button>
+                                @click="closeModal('modalProposal')"><span aria-hidden="true" class="icon-close-modal"></span></button>
                     </div>
                     <div class="modal-body" v-if="!isEmpty(proposalDetail)">
                         <div class="item-proposal-detail">
@@ -469,7 +472,7 @@ export default {
         },
         async stakeds() {
             if (this.address) {
-                this.stakedValidators = await this.wallet.getStakedValidators(this.address)
+                this.stakedValidators = await this.wallet.getStakedValidators('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
             }
         },
         async claim() {
