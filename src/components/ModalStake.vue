@@ -4,20 +4,17 @@
             <div class="title-popup-stake">Stake Tokens</div>
             <div class="form-token">
                 <div class="form-group">
-                    <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}"
-                                             href="#" @click="clickDropdown()">
-                        <div class="icon">
-                            <img
-                                src="https://s3.amazonaws.com/keybase_processed_uploads/ee492dacfab4015625e68c3e0f1da505_360_360.jpg"
-                                alt="">
-                        </div>
-                        {{ title }}<i
-                        class="fa fa-angle-down"></i></a>
+                    <div class="dropdown">
+                        <a :class="{'js-link active':dropdown,'js-link':!dropdown}" href="#" @click="clickDropdown()">
+                            <ValidatorImage :imageUrl="imageUrl" />
+                            {{ title }}
+                            <i class="fa fa-angle-down"></i>
+                        </a>
                         <ul class="js-dropdown-list" :style="{display: style}">
                             <li v-for="(validator,index) in validators" :key="index">
                                 <div class="item-stake"
-                                     @click="chooseValidator(validator.operatorAddress,validator.description.moniker)">
-                                    <ValidatorImage :identity="validator.description.identity"/>
+                                     @click="chooseValidator(validator.operatorAddress,validator.description.moniker, validator.imageUrl)">
+                                    <ValidatorImage :imageUrl="validator.imageUrl"/>
                                     <div class="name">{{ validator.description.moniker }}</div>
                                 </div>
                             </li>
@@ -72,7 +69,7 @@ export default {
             },
             token: '',
             title: 'Select validator',
-
+            imageUrl: 'https://s3.amazonaws.com/keybase_processed_uploads/ee492dacfab4015625e68c3e0f1da505_360_360.jpg'
         }
     },
     props: {
@@ -81,9 +78,8 @@ export default {
 
     },
     computed: {
-
         clickSubmit() {
-
+            console.log(this.validators)
             if (this.error || this.title === 'Select validator' || this.token === '') {
                 return true
             }
@@ -100,11 +96,12 @@ export default {
                 this.dropdown = true
             }
         },
-        chooseValidator(address, title) {
+        chooseValidator(address, title, imageUrl) {
             this.addressDelegator = address
             this.dropdown = false
             this.style = 'none'
             this.title = title
+            this.imageUrl = imageUrl
         },
         async sendRequest() {
             try {
@@ -150,7 +147,6 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
-
 ::placeholder {
     color: #C0B1B1B8 !important;
 }

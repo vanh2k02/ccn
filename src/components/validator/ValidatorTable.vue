@@ -16,7 +16,9 @@
                 :key="index">
                 <td>
                     <div class="td-acount">
-                        <ValidatorImage :identity="validator.description.identity" />
+                        <div class="icon">
+                            <img :src="validator.imageUrl" style="max-width: 100%;height: auto">
+                        </div>
                         <span>{{ validator | getMoniker }}</span>
                     </div>
                 </td>
@@ -34,11 +36,9 @@
 </template>
 <script>
 import ValidatorNoData from "@/components/validator/ValidatorNoData.vue"
-import ValidatorImage from "@/components/validator/ValidatorImage.vue"
 export default {
     components: {
         ValidatorNoData,
-        ValidatorImage
     },
     props: {
         validators: Array,
@@ -80,7 +80,7 @@ export default {
                 },
             ],
             sort_type: "",
-            sort_field: ""
+            sort_field: "",
         }
     },
     filters: {

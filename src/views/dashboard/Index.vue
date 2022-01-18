@@ -1,7 +1,7 @@
 <template>
     <div class="content-wallet">
         <div class="row">
-            <Login/>
+
             <div class="col-md-7 float-left">
                 <div class="content-wall-left">
                     <div class="blocks-status">
@@ -35,6 +35,9 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-5 float-left">
+                <Login/>
+            </div>
         </div>
         <div class="content-validate-detail">
             <div class="row">
@@ -63,7 +66,7 @@
                                         <div class="cos-table-list">
                                             <div class="table-responsive" ref="validatorTable">
                                                 <ValidatorTable
-                                                    :validators="allValidators.validators"
+                                                    :validators="allValidators"
                                                     :isStake="false"
                                                     :unbondings="unbondings"
                                                     @showModal="showModal"
@@ -272,7 +275,6 @@ export default {
     },
     data: function () {
         return {
-            allValidators: [],
             unbondings: [],
             activeTab: "allValidators",
             stakedValidators: [],
@@ -293,6 +295,10 @@ export default {
     },
     computed: {
         ...mapState('auth', ["address"]),
+        allValidators() {
+            const validators = [...this.validators]
+            return validators.splice(0, 10)
+        }
     },
     async mounted() {
         await this.getWallet()
@@ -369,12 +375,37 @@ export default {
             try {
                 const data = await this.wallet.getValidators("BOND_STATUS_BONDED")
                 this.validators = [...data.validators]
-                data.validators.splice(10, data.validators.length - 10)
-                this.allValidators = data
+                await this.getValidatorImage(0)
             } catch (err) {
                 this.$toast.error(err.message);
             }
             this.hideLoading(loader)
+        },
+        async getValidatorImage(index) {
+            const { validators } = this
+            const array = [];
+            for (let i = 0; i < 3; i++) {
+                if (validators[index + i]) {
+                    const value = validators[index + i];
+                    if (value && value.description && value.description.identity) {
+                        array.push(this.getKeyBaseImage(value.description.identity));
+                    }
+                } else {
+                    break;
+                }
+            }
+            Promise.all(array).then((data) => {
+                data.forEach((item, i) => {
+                    this.$set(this.validators[index + i], 'imageUrl', item)
+                })
+                if (index + 3 <= validators.length - 1) {
+                    this.getValidatorImage(index + 3);
+                }
+            });
+        },
+        async getKeyBaseImage (identity) {
+            const response = await this.axios.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
+            return response.data.them[0].pictures.primary.url
         },
         async getProposals() {
             const loader = this.showLoadling("proposalTable")
@@ -424,9 +455,8 @@ export default {
         },
         async unbonding() {
             if (this.address) {
-                const response = await this.wallet.getUnbonding('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+                const response = await this.wallet.getUnbonding(this.address)
                 this.unbondings = response.unbondingResponses
-                console.log(this.unbondings)
             }
         },
         async getDelegation() {

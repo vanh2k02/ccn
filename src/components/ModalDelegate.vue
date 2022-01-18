@@ -6,14 +6,14 @@
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}"
                                              href="#" @click="clickDropdown()">
-                        <ValidatorImage :identity="icon" />
+                        <ValidatorImage :imageUrl="imageUrl" />
                         {{ titleDelegate }}<i
                         class="fa fa-angle-down"></i></a>
                         <ul class="js-dropdown-list" :style="{display: style}">
                             <li v-for="(validator,index) in validators" :key="index">
                                 <div class="item-stake"
-                                     @click="chooseValidator(validator.operatorAddress,validator.description.moniker,validator.description.identity)">
-                                    <ValidatorImage :identity="validator.description.identity" />
+                                     @click="chooseValidator(validator.operatorAddress,validator.description.moniker, validator.imageUrl)">
+                                    <ValidatorImage :imageUrl="validator.imageUrl" ref="resetValidator"/>
                                     <div class="name">{{ validator.description.moniker }}</div>
                                 </div>
                             </li>
@@ -61,7 +61,7 @@ export default {
             formInvalid: {
                 borderColor: ''
             },
-            icon:''
+            imageUrl: 'https://s3.amazonaws.com/keybase_processed_uploads/ee492dacfab4015625e68c3e0f1da505_360_360.jpg'
         }
     },
     props: {
@@ -71,7 +71,6 @@ export default {
     },
     computed: {
         clickSubmit() {
-
             if (this.error || this.token === '') {
                 return true
             }
@@ -88,12 +87,12 @@ export default {
                 this.dropdown = true
             }
         },
-        chooseValidator(address, title,icon) {
+        chooseValidator(address, title, imageUrl) {
             this.addressDelegator = address
             this.dropdown = false
             this.style = 'none'
             this.titleDelegate = title
-                this.icon=icon
+            this.imageUrl = imageUrl
         },
         async sendRequest() {
             try {
