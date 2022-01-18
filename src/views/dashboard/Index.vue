@@ -24,7 +24,8 @@
                         <div class="status-items">
                             <div class="title">Rewards</div>
                             <div class="number">{{ reward.toFixed(1) }}</div>
-                            <div class="list-link"><a  href="javascript:void(0)" @click="claim" >CLAIM</a>
+                            <div class="list-link"><a :class="reward===0?'disable':''" href="javascript:void(0)"
+                                                      @click="claim">CLAIM</a>
                             </div>
                         </div>
                         <div class="status-items">
@@ -144,7 +145,8 @@
                                 @click="closeModal('modalUnDelegate','closeUnDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalUndelegate :stakedValidators="stakedValidators.validators" :delegate="delegate" ref="closeUnDelegate"/>
+                    <ModalUndelegate :stakedValidators="stakedValidators.validators" :delegate="delegate"
+                                     ref="closeUnDelegate"/>
                 </div>
             </div>
         </div>
@@ -171,7 +173,8 @@
                                 @click="closeModal('modalDelegate','closeDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate" ref="closeDelegate"/>
+                    <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate"
+                                   ref="closeDelegate"/>
                 </div>
             </div>
         </div>
@@ -344,7 +347,7 @@ export default {
             this.setIsOpen(true)
 
         },
-        closeModal(refName,refCloseName) {
+        closeModal(refName, refCloseName) {
             this.$refs[refCloseName].closeModal()
             this.$refs[refName].classList.toggle("in")
             document.body.classList.toggle("modal-open")
@@ -398,7 +401,7 @@ export default {
         },
         async getRewards() {
             if (this.address) {
-                const response = await this.wallet.getRewards('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+                const response = await this.wallet.getRewards(this.address)
                 response.total.forEach(item => {
                     if (item.denom === DENOM) {
                         this.reward = item.amount / 10 ** 24
@@ -443,20 +446,15 @@ export default {
             }
         },
         async claim() {
-
-                try {
-                    const kelprWallet = await KelprWallet.getKeplrWallet()
-                    const address = await KelprWallet.getAddress()
-                    console.log(this.listReward,'abc')
-                    for await (const data of this.listReward) {
-                        await kelprWallet.claimRewards(address, data.validatorAddress)
-
-                    }
-
-                } catch (err) {
-                    console.log(err)
-                    this.$toast.error(err.message);
+            try {
+                const kelprWallet = await KelprWallet.getKeplrWallet()
+                const address = await KelprWallet.getAddress()
+                for await (const data of this.listReward) {
+                    await kelprWallet.claimRewards(address, data.validatorAddress)
                 }
+            } catch (err) {
+                this.$toast.error(err.message);
+            }
 
 
         },
@@ -490,6 +488,7 @@ export default {
         isEmpty(obj) {
             return Object.keys(obj).length === 0;
         },
+
     }
 }
 </script>
