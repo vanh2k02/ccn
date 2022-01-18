@@ -28,7 +28,7 @@
                             <li v-for="(validator,index) in validators" :key="index">
                                 <div class="item-stake"
                                      @click="chooseValidator(validator.operatorAddress,validator.description.moniker, 'dstRef')">
-                                    <div class="icon"></div>
+                                    <ValidatorImage :identity="validator.description.identity" />
                                     <div class="name">{{ validator.description.moniker }}</div>
                                 </div>
                             </li>
@@ -56,9 +56,11 @@
 
 <script>
 import {KelprWallet} from "../utils/connectKeplr";
+import ValidatorImage from "./validator/ValidatorImage";
 
 export default {
     name: "ModalRelegate",
+    components: {ValidatorImage},
     data: function () {
         return {
             dropdown: false,

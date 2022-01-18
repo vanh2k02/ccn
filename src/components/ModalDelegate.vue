@@ -11,7 +11,7 @@
                             <li v-for="(validator,index) in validators" :key="index">
                                 <div class="item-stake"
                                      @click="chooseValidator(validator.operatorAddress,validator.description.moniker)">
-                                    <div class="icon"></div>
+                                    <ValidatorImage :identity="validator.description.identity" ref="resetValidator"/>
                                     <div class="name">{{ validator.description.moniker }}</div>
                                 </div>
                             </li>
@@ -36,11 +36,13 @@
     </div>
 </template>
 <script>
+import ValidatorImage from "./validator/ValidatorImage";
 const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 import {KelprWallet} from "@/utils/connectKeplr";
 
 export default {
     name: "ModalDelegate",
+    components: {ValidatorImage},
     data: function () {
         return {
             dropdown: false,
