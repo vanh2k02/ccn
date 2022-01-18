@@ -22,13 +22,19 @@
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':dstRef.dropdown,'js-link':!dstRef.dropdown}"
                                              href="#"
-                                             @click="clickDropdown('dstRef')">{{ titleValidator }}<i
+                                             @click="clickDropdown('dstRef')">
+                        <div class="icon">
+                            <img
+                                src="https://s3.amazonaws.com/keybase_processed_uploads/ee492dacfab4015625e68c3e0f1da505_360_360.jpg"
+                                alt="">
+                        </div>
+                        {{ titleValidator }}<i
                         class="fa fa-angle-down"></i></a>
                         <ul class="js-dropdown-lists" :style="{display: dstRef.style}">
                             <li v-for="(validator,index) in validators" :key="index">
                                 <div class="item-stake"
                                      @click="chooseValidator(validator.operatorAddress,validator.description.moniker, 'dstRef')">
-                                    <ValidatorImage :identity="validator.description.identity" />
+                                    <ValidatorImage :identity="validator.description.identity"/>
                                     <div class="name">{{ validator.description.moniker }}</div>
                                 </div>
                             </li>
@@ -163,6 +169,8 @@ export default {
             this.titleValidator = 'Select validator to'
             this.error = ''
             this.formInvalid.borderColor = ''
+            this.hideDropDown('srcRef')
+            this.hideDropDown('dstRef')
         }
     }
 }

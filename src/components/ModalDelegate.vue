@@ -5,7 +5,13 @@
             <div class="form-token">
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}"
-                                             href="#" @click="clickDropdown()">{{ titleDelegate }}<i
+                                             href="#" @click="clickDropdown()">
+                        <div class="icon">
+                            <img
+                                src="https://s3.amazonaws.com/keybase_processed_uploads/ee492dacfab4015625e68c3e0f1da505_360_360.jpg"
+                                alt="">
+                        </div>
+                        {{ titleDelegate }}<i
                         class="fa fa-angle-down"></i></a>
                         <ul class="js-dropdown-list" :style="{display: style}">
                             <li v-for="(validator,index) in validators" :key="index">
@@ -37,6 +43,7 @@
 </template>
 <script>
 import ValidatorImage from "./validator/ValidatorImage";
+
 const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 import {KelprWallet} from "@/utils/connectKeplr";
 
@@ -48,8 +55,8 @@ export default {
             dropdown: false,
             style: 'none',
             addressDelegator: '',
-            token:'',
-            title:'Select validator',
+            token: '',
+            title: 'Select validator',
             amount: {
                 denom: DENOM,
                 amount: this.token
@@ -115,6 +122,8 @@ export default {
             this.token = ''
             this.error = ''
             this.formInvalid.borderColor = ''
+            this.dropdown = false
+            this.style = 'none'
         },
     }
 }
@@ -130,4 +139,5 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
+
 </style>
