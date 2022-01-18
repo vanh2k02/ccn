@@ -81,8 +81,9 @@
                                         <div class="cos-table-list">
                                             <div class="table-responsive">
                                                 <ValidatorTable
-                                                    :validators="stakedValidators.validators"
+                                                    :validators="stakedValidators"
                                                     :isStake="true"
+                                                    :unbondings="unbondings"
                                                     @showModal="showModal"
                                                 />
                                             </div>
@@ -148,7 +149,7 @@
                                 @click="closeModal('modalUnDelegate','closeUnDelegate')">
                             <span aria-hidden="true"></span></button>
                     </div>
-                    <ModalUndelegate :stakedValidators="stakedValidators.validators" :delegate="delegate"
+                    <ModalUndelegate :stakedValidators="stakedValidators" :delegate="delegate"
                                      ref="closeUnDelegate"/>
                 </div>
             </div>
@@ -162,7 +163,7 @@
                                 @click="closeModal('modalReDelegate','closeRelegate')">
                             <span aria-hidden="true" class="icon-close-modal"></span></button>
                     </div>
-                    <ModalRelegate :stakedValidators="stakedValidators.validators" :validators="validators"
+                    <ModalRelegate :stakedValidators="stakedValidators" :validators="validators"
                                    :delegate="delegate" ref="closeRelegate"/>
                 </div>
             </div>
@@ -375,14 +376,13 @@ export default {
             try {
                 const data = await this.wallet.getValidators("BOND_STATUS_BONDED")
                 this.validators = [...data.validators]
-                await this.getValidatorImage(0)
+                await this.getValidatorImage(0, this.validators, "validators")
             } catch (err) {
                 this.$toast.error(err.message);
             }
             this.hideLoading(loader)
         },
-        async getValidatorImage(index) {
-            const { validators } = this
+        async getValidatorImage(index, validators, property) {
             const array = [];
             for (let i = 0; i < 3; i++) {
                 if (validators[index + i]) {
@@ -396,10 +396,10 @@ export default {
             }
             Promise.all(array).then((data) => {
                 data.forEach((item, i) => {
-                    this.$set(this.validators[index + i], 'imageUrl', item)
+                    this.$set(this[property][index + i], 'imageUrl', item)
                 })
                 if (index + 3 <= validators.length - 1) {
-                    this.getValidatorImage(index + 3);
+                    this.getValidatorImage(index + 3, validators, property);
                 }
             });
         },
@@ -472,7 +472,9 @@ export default {
         },
         async stakeds() {
             if (this.address) {
-                this.stakedValidators = await this.wallet.getStakedValidators('juno196ax4vc0lwpxndu9dyhvca7jhxp70rmcl99tyh')
+                const response = await this.wallet.getStakedValidators(this.address)
+                this.stakedValidators = response.validators
+                await this.getValidatorImage(0, this.stakedValidators, "stakedValidators")
             }
         },
         async claim() {
