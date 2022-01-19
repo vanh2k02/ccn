@@ -76,6 +76,7 @@ export default {
             this.validators.forEach(item => {
                 if(item.description.moniker == value) {
                     this.addressDelegator = item.operatorAddress
+                    this.imageUrl = item.imageUrl
                 }
             })
         }
