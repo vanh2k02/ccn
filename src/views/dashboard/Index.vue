@@ -107,7 +107,7 @@
                                 <ul>
                                     <ItemProposals v-for="(proposal,index) in proposals" :key="index"
                                                    :proposer="proposal.proposer"
-                                                   :index="index"
+                                                   :index="proposal.proposalId.low"
                                                    :proposalId="proposal.proposalId.low"
                                                    :status="proposal.status"
                                                    :submitTime="proposal.submitTime"
@@ -134,7 +134,7 @@
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
                                 @click="closeModal('modalStake','closeStake')">
-                            <span aria-hidden="true" class="icon-close-modal"></span></button>
+                            <span aria-hidden="true" class="icon-close-modal" ></span></button>
                     </div>
                     <ModalStake :validators="validators" :coin="coin" ref="closeStake"/>
                 </div>
@@ -305,13 +305,7 @@ export default {
     },
     async mounted() {
         await this.getWallet()
-        await this.getAllValidators()
-        await this.stakeds()
-        // this.detailValidator()
-        await this.getRewards()
-        await this.getBalances()
-        await this.getDelegation()
-        this.unbonding()
+        await this.getData()
         await this.getProposals()
         this.$store.subscribe(mutation => {
             if (mutation.type === 'auth/setAddress') {
@@ -330,10 +324,13 @@ export default {
             }
             return ''
         },
-        getData() {
-            this.getRewards()
-            this.getBalances()
-            this.getDelegation()
+        async getData() {
+            await this.getRewards()
+            await this.getBalances()
+            await this.getAllValidators()
+            await this.stakeds()
+            await this.getDelegation()
+            await this.unbonding()
         },
         showModal(title, refName, proposalId, index) {
             if (this.address == '' && proposalId == '') {
@@ -410,7 +407,7 @@ export default {
                 }
             });
         },
-        async getKeyBaseImage(identity) {
+        async getKeyBaseImage (identity) {
             const response = await this.axios.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
             return response.data.them[0].pictures.primary.url
         },
@@ -419,6 +416,7 @@ export default {
             try {
                 const res = await this.wallet.getListProposal(ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD, '', '')
                 this.proposals = res.proposals
+                this.sortProposal()
                 await this.formatProposals()
             } catch (err) {
                 this.$toast.error(err.message)
@@ -468,11 +466,12 @@ export default {
         },
         async getDelegation() {
             if (this.address) {
+                this.stakedTokens = 0
                 const delegation = await this.wallet.getDelegation(this.address)
                 delegation.delegationResponses.forEach(item => {
                     if (item.balance.denom === DENOM) {
                         this.delegate.push(item)
-                        this.stakedTokens += item.balance.amount / 10 ** 8
+                        this.stakedTokens += item.balance.amount / 10 ** 6
                     }
                 })
             }
@@ -526,6 +525,11 @@ export default {
         },
         isEmpty(obj) {
             return Object.keys(obj).length === 0;
+        },
+        sortProposal() {
+            this.proposals.sort(function (a, b) {
+                return b.proposalId.low - a.proposalId.low;
+            });
         },
         changeTitleDelegate(title) {
             this.titleDelegate = title

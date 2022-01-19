@@ -6,7 +6,7 @@
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}"
                                              href="#" @click="clickDropdown()">
-                        <ValidatorImage :imageUrl="imageUrl"/>
+                        <ValidatorImage :imageUrl="imageUrl" />
                         {{ titleDelegate }}<i
                         class="fa fa-angle-down"></i></a>
                         <ul class="js-dropdown-list" :style="{display: style}">
@@ -55,7 +55,7 @@ export default {
             formInvalid: {
                 borderColor: ''
             },
-            imageUrl: 'https://s3.amazonaws.com/keybase_processed_uploads/ee492dacfab4015625e68c3e0f1da505_360_360.jpg'
+            imageUrl: ''
         }
     },
     props: {
@@ -74,7 +74,7 @@ export default {
     watch: {
         "titleDelegate": function (value) {
             this.validators.forEach(item => {
-                if (item.description.moniker == value) {
+                if(item.description.moniker == value) {
                     this.addressDelegator = item.operatorAddress
                     this.imageUrl = item.imageUrl
                 }
@@ -100,17 +100,21 @@ export default {
             this.emitChangeTitle()
         },
         async sendRequest() {
+            const loader = this.showLoadling("delegateModalBody")
             try {
                 const keplrWallet = await KelprWallet.getKeplrWallet()
                 const delegatorAddress = await KelprWallet.getAddress()
                 await keplrWallet.delegateTokens(delegatorAddress, this.addressDelegator, this.token)
-                this.$toast.success('Stake success');
+                this.$toast.success('Delegate success')
+                this.$parent.closeModal('modalDelegate','closeDelegate')
+                await this.$parent.getData();
             } catch (err) {
                 this.$toast.error(err.message);
             }
+            this.hideLoading(loader)
         },
         maxAvailable() {
-            this.token = this.coin
+            this.token = Number(this.coin) / 10 ** 6
         },
         checkRequest() {
             if (Number(this.token) > Number(this.coin)) {
@@ -130,7 +134,18 @@ export default {
         },
         emitChangeTitle() {
             this.$emit('changeTitleDelegate',this.title)
-        }
+        },
+        showLoadling(refName) {
+            const loader = this.$loading.show({
+                container: this.$refs[refName],
+                canCancel: true,
+                onCancel: this.onCancel,
+            });
+            return loader
+        },
+        hideLoading(loader) {
+            loader.hide()
+        },
     }
 }
 </script>
@@ -145,7 +160,6 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
-
 ::placeholder {
     color: #C0B1B1B8 !important;
 }
