@@ -134,7 +134,7 @@
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
                                 @click="closeModal('modalStake','closeStake')">
-                            <span aria-hidden="true" class="icon-close-modal" ></span></button>
+                            <span aria-hidden="true" class="icon-close-modal"></span></button>
                     </div>
                     <ModalStake :validators="validators" :coin="coin" ref="closeStake"/>
                 </div>
@@ -178,7 +178,7 @@
                             <span aria-hidden="true" class="icon-close-modal"></span></button>
                     </div>
                     <ModalDelegate :validators="validators" :coin="coin" :titleDelegate="titleDelegate"
-                                   ref="closeDelegate"/>
+                                   ref="closeDelegate" @changeTitleDelegate="changeTitleDelegate"/>
                 </div>
             </div>
         </div>
@@ -188,7 +188,8 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true"
-                                @click="closeModal('modalProposal','')"><span aria-hidden="true" class="icon-close-modal"></span></button>
+                                @click="closeModal('modalProposal','')"><span aria-hidden="true"
+                                                                              class="icon-close-modal"></span></button>
                     </div>
                     <div class="modal-body" v-if="!isEmpty(proposalDetail)">
                         <div class="item-proposal-detail">
@@ -314,9 +315,7 @@ export default {
         await this.getProposals()
         this.$store.subscribe(mutation => {
             if (mutation.type === 'auth/setAddress') {
-                this.getRewards()
-                this.getBalances()
-                this.getDelegation()
+                this.getData()
             }
         })
     },
@@ -330,6 +329,11 @@ export default {
                 return 'active'
             }
             return ''
+        },
+        getData() {
+            this.getRewards()
+            this.getBalances()
+            this.getDelegation()
         },
         showModal(title, refName, proposalId, index) {
             if (this.address == '' && proposalId == '') {
@@ -356,7 +360,7 @@ export default {
 
         },
         closeModal(refName, refCloseName) {
-            if (refCloseName){
+            if (refCloseName) {
                 this.$refs[refCloseName].closeModal()
             }
             this.$refs[refName].classList.toggle("in")
@@ -406,7 +410,7 @@ export default {
                 }
             });
         },
-        async getKeyBaseImage (identity) {
+        async getKeyBaseImage(identity) {
             const response = await this.axios.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
             return response.data.them[0].pictures.primary.url
         },
@@ -523,7 +527,9 @@ export default {
         isEmpty(obj) {
             return Object.keys(obj).length === 0;
         },
-
+        changeTitleDelegate(title) {
+            this.titleDelegate = title
+        }
     }
 }
 </script>

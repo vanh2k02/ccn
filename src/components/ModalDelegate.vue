@@ -39,8 +39,6 @@
 </template>
 <script>
 import ValidatorImage from "./validator/ValidatorImage";
-
-const DENOM = process.env.VUE_APP_COIN_MINIMAL_DENOM
 import {KelprWallet} from "@/utils/connectKeplr";
 
 export default {
@@ -52,25 +50,18 @@ export default {
             style: 'none',
             addressDelegator: '',
             token: '',
-            amount: {
-                denom: DENOM,
-                amount: this.token
-            },
+            title: 'Select validator',
             error: '',
             formInvalid: {
                 borderColor: ''
             },
-            imageUrl: 'https://s3.amazonaws.com/keybase_processed_uploads/ee492dacfab4015625e68c3e0f1da505_360_360.jpg',
-            title:''
+            imageUrl: 'https://s3.amazonaws.com/keybase_processed_uploads/ee492dacfab4015625e68c3e0f1da505_360_360.jpg'
         }
     },
     props: {
         validators: Array,
         coin: String,
-        titleDelegate:String
-    },
-    mounted() {
-        this.title=this.titleDelegate
+        titleDelegate: String,
     },
     computed: {
         clickSubmit() {
@@ -78,6 +69,16 @@ export default {
                 return true
             }
             return false
+        }
+    },
+    watch: {
+        "titleDelegate": function (value) {
+            this.validators.forEach(item => {
+                if (item.description.moniker == value) {
+                    this.addressDelegator = item.operatorAddress
+                    this.imageUrl = item.imageUrl
+                }
+            })
         }
     },
     methods: {
@@ -91,18 +92,18 @@ export default {
             }
         },
         chooseValidator(address, title, imageUrl) {
-            console.log(title)
             this.addressDelegator = address
             this.dropdown = false
             this.style = 'none'
             this.title = title
             this.imageUrl = imageUrl
+            this.emitChangeTitle()
         },
         async sendRequest() {
             try {
                 const keplrWallet = await KelprWallet.getKeplrWallet()
                 const delegatorAddress = await KelprWallet.getAddress()
-                await keplrWallet.delegateTokens(delegatorAddress, this.addressDelegator, this.amount)
+                await keplrWallet.delegateTokens(delegatorAddress, this.addressDelegator, this.token)
                 this.$toast.success('Stake success');
             } catch (err) {
                 this.$toast.error(err.message);
@@ -127,6 +128,9 @@ export default {
             this.dropdown = false
             this.style = 'none'
         },
+        emitChangeTitle() {
+            this.$emit('changeTitleDelegate',this.title)
+        }
     }
 }
 </script>
