@@ -303,13 +303,7 @@ export default {
     },
     async mounted() {
         await this.getWallet()
-        await this.getAllValidators()
-        await this.stakeds()
-        // this.detailValidator()
-        await this.getRewards()
-        await this.getBalances()
-        await this.getDelegation()
-        this.unbonding()
+        await this.getData()
         await this.getProposals()
         this.$store.subscribe(mutation => {
             if (mutation.type === 'auth/setAddress') {
@@ -328,10 +322,13 @@ export default {
             }
             return ''
         },
-        getData() {
-            this.getRewards()
-            this.getBalances()
-            this.getDelegation()
+        async getData() {
+            await this.getRewards()
+            await this.getBalances()
+            await this.getAllValidators()
+            await this.stakeds()
+            await this.getDelegation()
+            await this.unbonding()
         },
         showModal(title, refName, proposalId, index) {
             if (this.address == '' && proposalId == '') {
@@ -464,11 +461,12 @@ export default {
         },
         async getDelegation() {
             if (this.address) {
+                this.stakedTokens = 0
                 const delegation = await this.wallet.getDelegation(this.address)
                 delegation.delegationResponses.forEach(item => {
                     if (item.balance.denom === DENOM) {
                         this.delegate.push(item)
-                        this.stakedTokens += item.balance.amount / 10 ** 8
+                        this.stakedTokens += item.balance.amount / 10 ** 6
                     }
                 })
             }
