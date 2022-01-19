@@ -6,7 +6,7 @@
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}"
                                              href="#" @click="clickDropdown()">
-                        <ValidatorImage :imageUrl="imageUrl" />
+                        <ValidatorImage :imageUrl="imageUrl"/>
                         {{ titleDelegate }}<i
                         class="fa fa-angle-down"></i></a>
                         <ul class="js-dropdown-list" :style="{display: style}">
@@ -52,7 +52,7 @@ export default {
             style: 'none',
             addressDelegator: '',
             token: '',
-            title: 'Select validator',
+            title: this.titleDelegate,
             amount: {
                 denom: DENOM,
                 amount: this.token
@@ -122,6 +122,7 @@ export default {
             this.formInvalid.borderColor = ''
             this.dropdown = false
             this.style = 'none'
+            this.t = ''
         },
     }
 }
@@ -137,6 +138,7 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
+
 ::placeholder {
     color: #C0B1B1B8 !important;
 }
