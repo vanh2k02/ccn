@@ -107,7 +107,7 @@
                                 <ul>
                                     <ItemProposals v-for="(proposal,index) in proposals" :key="index"
                                                    :proposer="proposal.proposer"
-                                                   :index="index"
+                                                   :index="proposal.proposalId.low"
                                                    :proposalId="proposal.proposalId.low"
                                                    :status="proposal.status"
                                                    :submitTime="proposal.submitTime"
@@ -412,6 +412,7 @@ export default {
             try {
                 const res = await this.wallet.getListProposal(ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD, '', '')
                 this.proposals = res.proposals
+                this.sortProposal()
                 await this.formatProposals()
             } catch (err) {
                 this.$toast.error(err.message)
@@ -521,7 +522,11 @@ export default {
         isEmpty(obj) {
             return Object.keys(obj).length === 0;
         },
-
+        sortProposal() {
+            this.proposals.sort(function (a, b) {
+                return b.proposalId.low - a.proposalId.low;
+            });
+        }
     }
 }
 </script>
