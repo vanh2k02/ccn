@@ -31,7 +31,7 @@
                         class="number">{{ Number(coin) / 10 ** 6 }}</span></div>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-vote" @click="sendRequest" :disabled=clickSubmit>STAKE</button>
+                    <button class="btn btn-vote" @click="sendRequest" :disabled="clickSubmit">STAKE</button>
                 </div>
             </div>
         </div>
@@ -122,7 +122,7 @@ export default {
             this.formInvalid.borderColor = ''
             this.dropdown = false
             this.style = 'none'
-            this.t = ''
+
         },
     }
 }

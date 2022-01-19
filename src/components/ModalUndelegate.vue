@@ -4,11 +4,12 @@
             <div class="title-popup-stake">Undelegate Tokens</div>
             <div class="form-token">
                 <div class="form-group">
-                    <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}" href="#"
-                                             @click="clickDropdown()">
-
-                        {{ title }}<i
-                        class="fa fa-angle-down"></i></a>
+                    <div class="dropdown">
+                        <a :class="{'js-link active':dropdown,'js-link':!dropdown}" href="#" @click="clickDropdown()">
+                            <ValidatorImage :imageUrl="imageUrl" v-if="imageUrl"/>
+                            {{ title }}
+                            <i class="fa fa-angle-down"></i>
+                        </a>
                         <ul class="js-dropdown-list" :style="{display: style}">
                             <li v-for="(stakedValidator,index) in stakedValidators" :key="index">
                                 <div class="item-stake"
@@ -32,7 +33,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-vote" @click="sendRequest" :disabled=clickSubmit>UNDELEGATE</button>
+                    <button class="btn btn-vote" @click="sendRequest" :disabled="clickSubmit">UNDELEGATE</button>
                 </div>
             </div>
         </div>

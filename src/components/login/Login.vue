@@ -10,14 +10,18 @@
                         <div class="name"></div>
                         <div class="cnt-link-copy">
                             <div class="link">{{ address }}</div>
+                            
+                        </div>
+                        <div class="button-link-logout">
                             <button class="btn btn-copy" @click="doCopy">Copy</button>
+                            <div class="content-logout">
+                                <button @click="logout">Disconnect</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="content-logout">
-                <button>Logout</button>
-            </div>
+            
         </div>
     </div>
 </template>
@@ -61,7 +65,11 @@ export default {
             if (address) {
                 this.setAddress(address)
             }
-        }
+        },
+        logout() {
+            localStorage.removeItem('address')
+            this.setAddress('')
+        },
     }
 }
 </script>
