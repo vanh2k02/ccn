@@ -52,7 +52,6 @@ export default {
             style: 'none',
             addressDelegator: '',
             token: '',
-            title: this.titleDelegate,
             amount: {
                 denom: DENOM,
                 amount: this.token
@@ -61,13 +60,17 @@ export default {
             formInvalid: {
                 borderColor: ''
             },
-            imageUrl: 'https://s3.amazonaws.com/keybase_processed_uploads/ee492dacfab4015625e68c3e0f1da505_360_360.jpg'
+            imageUrl: 'https://s3.amazonaws.com/keybase_processed_uploads/ee492dacfab4015625e68c3e0f1da505_360_360.jpg',
+            title:''
         }
     },
     props: {
         validators: Array,
         coin: String,
-        titleDelegate: String,
+        titleDelegate:String
+    },
+    mounted() {
+        this.title=this.titleDelegate
     },
     computed: {
         clickSubmit() {
@@ -88,10 +91,11 @@ export default {
             }
         },
         chooseValidator(address, title, imageUrl) {
+            console.log(title)
             this.addressDelegator = address
             this.dropdown = false
             this.style = 'none'
-            this.titleDelegate = title
+            this.title = title
             this.imageUrl = imageUrl
         },
         async sendRequest() {
@@ -122,7 +126,6 @@ export default {
             this.formInvalid.borderColor = ''
             this.dropdown = false
             this.style = 'none'
-
         },
     }
 }

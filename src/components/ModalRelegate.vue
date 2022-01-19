@@ -168,6 +168,8 @@ export default {
         },
         closeModal() {
             this.token = ''
+            this.dstImageUrl = ''
+            this.srcImageUrl = ''
             this.titleStakedValidator = 'Select validator from'
             this.titleValidator = 'Select validator to'
             this.error = ''

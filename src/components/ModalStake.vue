@@ -126,6 +126,7 @@ export default {
         },
         closeModal() {
             this.token = ''
+            this.imageUrl = ''
             this.title = 'Select validator'
             this.error = ''
             this.formInvalid.borderColor = ''

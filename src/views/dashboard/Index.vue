@@ -147,7 +147,7 @@
                     <div class="modal-header">
                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close"
                                 @click="closeModal('modalUnDelegate','closeUnDelegate')">
-                            <span aria-hidden="true"></span></button>
+                            <span aria-hidden="true" class="icon-close-modal"></span></button>
                     </div>
                     <ModalUndelegate :stakedValidators="stakedValidators" :delegate="delegate"
                                      ref="closeUnDelegate"/>
