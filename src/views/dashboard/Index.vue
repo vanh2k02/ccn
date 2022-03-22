@@ -441,7 +441,7 @@ export default {
                 response.total.forEach(item => {
                     if (item.denom === DENOM) {
                         this.reward = item.amount / 10 ** 24
-
+                        console.log(this.reward)
                     }
                 })
                 this.listReward = response.rewards
@@ -493,8 +493,6 @@ export default {
             } catch (err) {
                 this.$toast.error(err.message);
             }
-
-
         },
         showLoadling(refName) {
             const loader = this.$loading.show({

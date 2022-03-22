@@ -6,7 +6,7 @@
                 <div class="form-group">
                     <div class="dropdown"><a :class="{'js-link active':dropdown,'js-link':!dropdown}"
                                              href="#" @click="clickDropdown()">
-                        <ValidatorImage :imageUrl="imageUrl" />
+                        <ValidatorImage :imageUrl="imageUrl"/>
                         {{ titleDelegate }}<i
                         class="fa fa-angle-down"></i></a>
                         <ul class="js-dropdown-list" :style="{display: style}">
@@ -74,7 +74,7 @@ export default {
     watch: {
         "titleDelegate": function (value) {
             this.validators.forEach(item => {
-                if(item.description.moniker == value) {
+                if (item.description.moniker == value) {
                     this.addressDelegator = item.operatorAddress
                     this.imageUrl = item.imageUrl
                 }
@@ -106,7 +106,7 @@ export default {
                 const delegatorAddress = await KelprWallet.getAddress()
                 await keplrWallet.delegateTokens(delegatorAddress, this.addressDelegator, this.token)
                 this.$toast.success('Delegate success')
-                this.$parent.closeModal('modalDelegate','closeDelegate')
+                this.$parent.closeModal('modalDelegate', 'closeDelegate')
                 await this.$parent.getData();
             } catch (err) {
                 this.$toast.error(err.message);
@@ -133,7 +133,7 @@ export default {
             this.style = 'none'
         },
         emitChangeTitle() {
-            this.$emit('changeTitleDelegate',this.title)
+            this.$emit('changeTitleDelegate', this.title)
         },
         showLoadling(refName) {
             const loader = this.$loading.show({
@@ -154,12 +154,14 @@ export default {
 <style scoped>
 input[type='number'] {
     -moz-appearance: textfield;
+    
 }
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
+
 ::placeholder {
     color: #C0B1B1B8 !important;
 }
